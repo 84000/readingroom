@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" output="test-classes" path="test"/>
+	<classpathentry kind="con" path="com.google.gwt.eclipse.core.GWT_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/activation.jar"/>
+	<classpathentry kind="lib" path="lib/commons-email-1.2.jar"/>
+	<classpathentry kind="lib" path="lib/exist-optional.jar"/>
+	<classpathentry kind="lib" path="lib/exist.jar"/>
+	<classpathentry kind="lib" path="lib/gwt-dev.jar"/>
+	<classpathentry kind="lib" path="lib/gwt-dnd-2.6.5.jar"/>
+	<classpathentry kind="lib" path="lib/gwt-log-3.3.0.jar"/>
+	<classpathentry kind="lib" path="lib/gwt-visualization.jar"/>
+	<classpathentry kind="lib" path="lib/icu4j-4_2_1.jar"/>
+	<classpathentry kind="lib" path="lib/log4j-1.2.15.jar"/>
+	<classpathentry kind="lib" path="lib/mail.jar"/>
+	<classpathentry kind="lib" path="lib/rsslib4j-0.2.jar"/>
+	<classpathentry kind="lib" path="lib/ws-commons-util-1.0.2.jar"/>
+	<classpathentry kind="lib" path="lib/xml-apis-1.3.04.jar"/>
+	<classpathentry kind="lib" path="lib/xmldb.jar"/>
+	<classpathentry kind="lib" path="lib/xmlrpc-client-3.1.2.jar"/>
+	<classpathentry kind="lib" path="lib/xmlrpc-common-3.1.2.jar"/>
+	<classpathentry kind="output" path="war/WEB-INF/classes"/>
+</classpath>

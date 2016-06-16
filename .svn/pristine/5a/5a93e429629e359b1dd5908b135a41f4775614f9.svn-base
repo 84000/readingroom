@@ -1,0 +1,85 @@
+package org.tbrc.readingroom.client;
+
+import java.util.Stack;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.logical.shared.ResizeEvent;
+import com.google.gwt.event.logical.shared.ResizeHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.History;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.DeckPanel;
+import com.google.gwt.user.client.ui.Widget;
+
+import org.tbrc.readingroom.shared.Constants;
+
+
+public class Main extends Composite implements ValueChangeHandler<String> {
+
+	private static MainUiBinder uiBinder = GWT.create(MainUiBinder.class);
+	
+	interface MainUiBinder extends UiBinder<Widget, Main> {
+	}
+
+	@UiField Header header;
+	@UiField DeckPanel deckPanel;
+	@UiField Lobby lobby;
+	@UiField Section section;
+	
+	public Stack<Section> subsections = new Stack<Section>();
+	
+	public Main()
+	{
+		initWidget(uiBinder.createAndBindUi(this));
+		
+//		deckPanel.showWidget(Constants.LOBBY_INDEX);
+//		History.newItem("lobby");
+//		onViewportSizeChange();
+
+		// Add history listener
+	    History.addValueChangeHandler(this);
+	    
+	    if (History.getToken().equals(""))
+	    	History.newItem("lobby");
+	    
+	    History.fireCurrentHistoryState();
+		onViewportSizeChange();
+
+		// Add window resize handler (responsive design)
+		Window.addResizeHandler(new ResizeHandler() {
+			public void onResize(ResizeEvent event)
+			{
+				onViewportSizeChange();
+			}
+		});
+	}
+
+	private void onViewportSizeChange()
+	{
+		int newWidth = Window.getClientWidth();
+		
+		header.onViewportSizeChange(newWidth);
+		if (deckPanel.getVisibleWidget() == Constants.LOBBY_INDEX)
+			lobby.onViewportSizeChange(Window.getClientWidth());
+		else if (deckPanel.getVisibleWidget() == Constants.SECTION_INDEX)
+			section.onViewportSizeChange(Window.getClientWidth());
+	}
+	
+	public void showPage(int pageIndex)
+	{
+		deckPanel.showWidget(pageIndex);
+		onViewportSizeChange();
+	}
+
+	public void onValueChange(ValueChangeEvent<String> event)
+	{
+		if (event.getValue().equals("lobby") || event.getValue().equals(""))
+			deckPanel.showWidget(Constants.LOBBY_INDEX);
+		else if (event.getValue().equals("section"))
+			deckPanel.showWidget(Constants.SECTION_INDEX);
+	}
+}

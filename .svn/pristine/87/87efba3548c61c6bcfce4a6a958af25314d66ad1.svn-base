@@ -1,0 +1,270 @@
+/** Base (most-commonly used) font that can be modified as needed
+Trade Gothic W01 Light								"LEARN MORE ABOUT THE KANGYUR"
+Trade Gothic W01 Light Oblique
+Trade Gothic W01 Roman								"TRANSLATING THE WORDS OF THE BUDDHA", 
+Trade Gothic W01 Oblique
+Trade Gothic W01 Bold								Nav-bar button text, "The Kangyur"
+Trade Gothic W01 Bold Oblique
+Trade Gothic W01 Bold #2							"Discipline"
+Trade Gothic W01 Bold #2 Oblique
+Trade Gothic W01 Condensed #18
+Trade Gothic W01 Condensed #18 Oblique
+Trade Gothic W01 Condensed Bold #20
+Trade Gothic W01 Condensed Bold #20 Oblique
+*/
+
+.mainFont {
+	/* font-family: 'Oswald', sans-serif;
+    letter-spacing: 1px;
+	font-weight: 400; */
+	font-family: 'Trade Gothic W02 Roman';
+	color: #818181;
+	font-size: 14pt;
+	text-align: center;
+}
+
+.subtitleFont {
+	font-family: Georgia, Serif;
+	font-size: 12pt;
+	color: #444444;
+}
+
+.bigTitleFont {
+	/* font-family: 'Oswald', sans-serif;
+	font-weight: 400;
+    letter-spacing: 1px; */
+	font-family: 'Trade Gothic W02 Bold';
+	font-size: 32pt;
+	text-align: left;
+	color: #FFFFFF;
+	margin: 20px 10px 20px 20px;
+}
+
+.bigTitleTFont {
+	font-family: Georgia, Serif;
+	font-size: 36pt;
+	text-align: left;
+	color: #FFFFFF;
+	margin: 10px auto 0px 10px;
+}
+
+.itemTitleFont {
+	font-family: "Arial", Serif;
+	font-weight: bold;
+	font-size: 17pt;
+	text-align: center;
+	color: #426b9c;
+	/* margin: 10px auto 0px 10px; */
+    border: 0;
+    background: #FFFFFF;
+	margin: 5px 1px 1px 1px;
+}
+.itemTitleFont:hover {
+	color: #892629;
+}
+.itemTitleFont:focus {
+    outline: 0;
+}
+
+.itemSubTitleFont {
+	font-family: "Georgia", Serif;
+	font-style: italic;
+	font-size: 13pt;
+	text-align: center;
+	color: #426b9c;
+	/* margin: 10px auto 0px 10px; */
+    border: 0;
+    background: #FFFFFF;
+	margin: 1px auto 1px auto;
+}
+.itemSubTitleFont:hover {
+	color: #892629;
+}
+.itemSubTitleFont:focus {
+    outline: 0;
+}
+
+
+.itemDescFont {
+	font-family: "Georgia", Serif;
+	font-size: 10pt;
+	text-align: center;
+	line-height: 140%;
+	color: #888888;
+    border: 0;
+	background-color: Transparent;
+	margin: 4px auto 1px auto;
+}
+.itemDescFont:hover {
+	color: #222222;
+}
+.itemDescFont:focus {
+    outline: 0;
+}
+
+.itemStatsFont {
+	font-family: 'Trade Gothic W02 Roman';
+	color: #FFFFFF;
+	font-size: 11pt;
+	text-align: left;
+}
+
+.alignRight {
+	text-align: right;
+}
+
+.catalogDesc {
+	margin: 6px auto 1px 20px;
+	text-align: left;
+}
+
+.catalogTitle {
+	text-align: left;
+	font-size: 15pt;
+	background-color: Transparent;
+}
+
+/** Standard colors across system */
+.tealColor { color: #426b9c; }
+.orangeColor { color: #cf7a34; }
+.redColor {	color: #892629; }
+.blackColor { color: #000000; }
+.greyColor { color: #666666; }
+.whiteColor { color: #FFFFFF; }
+
+.tealBackground { background-color: #426b9c; }
+.orangeBackground { background-color: #cf7a34; }
+.redBackground { background-color: #892629; }
+.blackBackground { background-color: #000000; }
+.greyBackground { background-color: #666666; }
+.whiteBackground { background-color: #FFFFFF; }
+.transparentBackground { background-color: Transparent; }
+
+.flowPanel_inline {
+    display:inline-block;
+}
+
+/** Main-page features */
+.background {
+	background-image: url("background-pattern.png");
+}
+
+.header {
+	width: 100%;
+	margin: 0px 0px 0px 0px;
+	background-color: #FFFFFF;
+}
+ 
+.navBar {
+	width: 100%;
+	margin: 0px 0px 0px 0px;
+	background-color: #CCCCCC;
+}
+
+.navBarButton {
+    background: #CCCCCC;
+    color: #444444;
+	font-family: 'Trade Gothic W02 Bold';
+	/*font-family: 'Oswald', sans-serif;
+	font-weight: 700;
+    letter-spacing: 1px; */
+    font-size: 18px;
+    padding-left: 15px;
+    padding-right: 15px;
+    height: 40px;
+    /* width: 160px; */
+    margin: 0px 0px;
+    text-align: center;
+    border: 0;
+    transition: all 0.3s ease 0s;
+}
+
+.navBarButton:hover {
+	background: #426B9C;
+	color: #FFFFFF;
+}
+
+.learnMoreButton
+{
+	margin: 10;
+	padding: 8px 15px 8px 15px;
+  /* text-decoration: none;
+	cursor: pointer;
+	cursor: hand;
+	font-size:medium; */
+	font-family: 'Trade Gothic W02 Roman';
+	/* font-family: 'Oswald', sans-serif;
+	font-weight: 300;
+    letter-spacing: 1px; */
+    font-size: 14px;
+	white-space: pre;
+	background-color: #426b9c;
+	color: #FFFFFF;
+	border:none;
+  /**border-bottom: none;
+  border-bottom: 2px solid white; */
+	outline-style: none;
+	border-radius: 6px;
+}
+
+.catalogButton
+{
+	margin: 10;
+	padding: 8px 15px 8px 15px;
+  /* text-decoration: none;
+	cursor: pointer;
+	cursor: hand;
+	font-size:medium; */
+	font-family: 'Trade Gothic W02 Roman';
+	/* font-family: 'Oswald', sans-serif;
+	font-weight: 300;
+    letter-spacing: 1px; */
+    font-size: 14px;
+	white-space: pre;
+	background-color: #f5e4d6;
+	color: #426b9c;
+	border:none;
+  /**border-bottom: none;
+  border-bottom: 2px solid white; */
+	outline-style: none;
+	border-radius: 6px;
+}
+
+.mainPage {
+	width: 94%;
+	background-color: #FFFFFF;
+	margin: 60px 3% 20px 3%;
+    box-shadow: 0px 4px 25px #222222;
+}
+
+/** Example rules used by the template application (remove for your app) */
+h1 {
+	font-size: 2em;
+	font-weight: bold;
+	color: #777777;
+	margin: 40px 0px 70px;
+	text-align: center;
+}
+
+.sendButton {
+	display: block;
+	font-size: 16pt;
+}
+
+/** Most GWT widgets already have a style name defined */
+.gwt-DialogBox {
+	width: 400px;
+}
+
+.dialogVPanel {
+	margin: 0px;
+}
+
+.serverResponseLabelError {
+	color: red;
+}
+
+/** Set ids using widget.getElement().setId("idOfElement") */
+#closeButton {
+	margin: 15px 6px 6px;
+}

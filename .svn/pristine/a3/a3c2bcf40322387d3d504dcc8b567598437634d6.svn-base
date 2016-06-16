@@ -1,0 +1,356 @@
+package org.tbrc.readingroom.client;
+
+import java.util.ArrayList;
+
+import org.tbrc.readingroom.shared.TextData;
+
+import com.allen_sauer.gwt.log.client.Log;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.HasAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.InlineHTML;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
+
+public class TextPage extends Composite
+{
+	Reader reader = null;
+	private TextData textData = new TextData();
+	private ArrayList<InlineHTML> glossTerms = new ArrayList<InlineHTML>();
+	private ArrayList<InlineHTML> milestones = new ArrayList<InlineHTML>();
+	private ArrayList<InlineHTML> notes = new ArrayList<InlineHTML>();
+	private PopupInfoPanel infoPopup = new PopupInfoPanel();
+	private String title = "";
+	
+	private static TextPageUiBinder uiBinder = GWT
+			.create(TextPageUiBinder.class);
+
+	interface TextPageUiBinder extends UiBinder<Widget, TextPage> {
+	}
+
+	public TextPage() {
+		initWidget(uiBinder.createAndBindUi(this));
+	}
+	
+	public TextPage(String title, String subtitle, String prevLabel, String nextLabel) {
+		initWidget(uiBinder.createAndBindUi(this));
+
+		// Set up page-navigation buttons
+		if (prevLabel == "")
+			prevButton.setText("");
+		else
+			prevButton.setText("Prev: " + prevLabel);
+			
+		if (nextLabel == "")
+			nextButton.setText("");
+		else
+			nextButton.setText("Next: " + nextLabel);
+
+		prevButton.setVisible(false);
+		nextButton.setVisible(false);
+
+		// Populate titles
+		setDisplayTitles(title, subtitle);
+		setTitle(title);
+	}
+
+	@UiField HTMLPanel htmlPanel;
+	@UiField HorizontalPanel mainPanel;
+	@UiField VerticalPanel pagePanel;
+	@UiField VerticalPanel spacerPanel;
+	@UiField HTMLPanel titlePanel;
+	@UiField Label subtitleLabel;
+	@UiField Label titleLabel;
+	@UiField HTMLPanel contentPanel;
+	@UiField HorizontalPanel buttonPanel;
+	@UiField Button prevButton;
+	@UiField Button nextButton;
+	
+	public void setDisplayTitles(String title, String subtitle)
+	{
+		if (subtitle == null || subtitle == "")
+		{
+			titleLabel.setText(title);
+			//titlePanel.remove(subtitleLabel);
+			subtitleLabel.setVisible(false);
+		}
+		else
+		{
+			// Note that title/subtitle are reversed when both are present (per design)
+			titleLabel.setText(subtitle);
+			subtitleLabel.setVisible(true);
+			subtitleLabel.setText(title);		
+		}
+	}
+
+	public void setTitle(String title) { this.title = title; }
+	//public String getTitle()	{ return titleLabel.getText(); }
+	public String getTitle()	{ return title; }
+	public String getSubtitle()	{ return subtitleLabel.getText(); }
+	
+	public void setPrevText(String text)
+	{
+		if (text == "")
+			prevButton.setVisible(false);
+		else
+		{
+			prevButton.setVisible(true);
+			prevButton.setText("Prev: " + text);
+		}
+	}
+
+	public void setNextText(String text)
+	{
+		if (text == "")
+			nextButton.setVisible(false);
+		else
+		{
+			nextButton.setVisible(true);
+			nextButton.setText("Next: " + text);
+		}
+	}
+
+	public void setReader(Reader r)
+	{
+		reader = r;
+	}
+
+	public void setData(TextData tData)
+	{
+		textData = tData;
+
+		// Add HTML content to panel
+		contentPanel.clear();
+		HTML contentHtml = new HTML(textData.getContent());
+		contentHtml.setStyleName("contentText");
+		contentPanel.add(contentHtml);
+		
+		// Turn on appropriate nav buttons
+		activateNavButtons();
+
+		// Add title to panel
+		// NOT NECESSARY, now just use "<cite>" for titles
+		//		InlineHTML titleHtml = new InlineHTML(data.getTitle());
+		//		titleHtml.setStyleName("itemTitleFont");
+		//		contentPanel.add(titleHtml, "title");
+
+		// Create and add glossary term widgets to panel
+		glossTerms.clear();
+		for (int i = 0; i < textData.glossItems.size(); i++)
+		{
+			InlineHTML glossTerm = new InlineHTML(textData.glossItems.get(i).name);
+			glossTerm.setStyleName("glossLink");
+			contentPanel.add(glossTerm, textData.glossItems.get(i).id);
+			glossTerms.add(glossTerm);
+
+			glossTerm.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					int j;
+					for (j = 0; j < textData.glossItems.size(); j++)
+					{
+						if (event.getSource() == glossTerms.get(j))
+							break;
+					}
+					//Window.alert(textData.glossItems.get(j).def);
+					String html = textData.glossItems.get(j).name;
+					if (textData.glossItems.get(j).nameBo.length() > 0)
+					{
+						html += "<hr style='border: 0; border-bottom: 1px solid #e2af85; background: #e2af85;'>";
+						html += textData.glossItems.get(j).nameBo;
+					}
+					if (textData.glossItems.get(j).nameSa.length() > 0)
+					{
+						html += "<hr style='border: 0; border-bottom: 1px solid #e2af85; background: #e2af85;'>";
+						html += textData.glossItems.get(j).nameSa;
+					}
+					if (textData.glossItems.get(j).def.length() > 0)
+					{
+						html += "<hr style='border: 0; border-bottom: 1px solid #e2af85; background: #e2af85;'>";
+						html += textData.glossItems.get(j).def;
+					}
+					infoPopup.setHtml(html);
+					//infoPopup.center();
+					InlineHTML obj = (InlineHTML)event.getSource();
+					infoPopup.showRelativeTo(obj);
+				}
+			});
+		}
+
+		// Create and add milestone widgets to panel
+		milestones.clear();
+		for (int i = 0; i < textData.milestoneItems.size(); i++)
+		{
+			InlineHTML milestone = new InlineHTML(textData.milestoneItems.get(i).id);
+			//Anchor milestone = new Anchor(data.milestoneItems.get(i).id);
+			milestone.setStyleName("milestone");
+			contentPanel.add(milestone, textData.milestoneItems.get(i).id);
+			milestones.add(milestone);
+		}
+
+		// Create and add glossary term widgets to panel
+		notes.clear();
+		for (int i = 0; i < textData.noteItems.size(); i++)
+		{
+			InlineHTML note = new InlineHTML(textData.noteItems.get(i).id);
+			note.setStyleName("glossLink");
+			note.addStyleName("addSuper");
+			contentPanel.add(note, textData.noteItems.get(i).id);
+			notes.add(note);
+
+			note.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					int j;
+					for (j = 0; j < textData.noteItems.size(); j++)
+					{
+						if (event.getSource() == notes.get(j))
+							break;
+					}
+					String html = textData.noteItems.get(j).text;
+					infoPopup.setHtml(html);
+					//infoPopup.center();
+					InlineHTML obj = (InlineHTML)event.getSource();
+					infoPopup.showRelativeTo(obj);
+				}
+			});
+		}
+	}
+	
+	public void setTitleData(TextItem tItem)
+	{
+		activateNavButtons();
+		
+		titlePanel.setVisible(false);
+		
+		contentPanel.setStyleName("textTitlePanel");
+		Label mainTiLabel = new Label(tItem.mainTitleTi);
+		mainTiLabel.setStyleName("textTitleAll");
+		mainTiLabel.addStyleName("textTitleH1-ti");
+		Label mainEnLabel = new Label(tItem.mainTitleEn);
+		mainEnLabel.setStyleName("textTitleAll");
+		mainEnLabel.addStyleName("textTitleH1-en");
+		Label mainSaLabel = new Label(tItem.mainTitleSa);
+		mainSaLabel.setStyleName("textTitleAll");
+		mainSaLabel.addStyleName("textTitleH1-sa");
+
+		Label longTiLabel = new Label(tItem.longTitleTi);
+		longTiLabel.setStyleName("textTitleAll");
+		longTiLabel.addStyleName("textTitleH2-ti");
+		Label longWyLabel = new Label(tItem.longTitleWy);
+		longWyLabel.setStyleName("textTitleAll");
+		longWyLabel.addStyleName("textTitleH2-sa");
+		Label longEnLabel = new Label(tItem.longTitleEn);
+		longEnLabel.setStyleName("textTitleAll");
+		longEnLabel.addStyleName("textTitleH2-en");
+		Label longSaLabel = new Label(tItem.longTitleSa);
+		longSaLabel.setStyleName("textTitleAll");
+		longSaLabel.addStyleName("textTitleH2-sa");
+		
+		Label tohLabel = new Label(tItem.toh);
+		tohLabel.setStyleName("textTitleNotice");
+		tohLabel.addStyleName("addBold");
+		Label scopeLabel = new Label(tItem.biblScope);
+		scopeLabel.setStyleName("textTitleNotice");
+		//Label noticeLabel = new Label("Translated by the Dharmachakra Translation Committee under the patronage and supervision of 84000: Translating the Word of the Buddha");
+		Label noticeLabel = new Label(tItem.translator);
+		noticeLabel.setStyleName("textTitleNotice");
+		noticeLabel.addStyleName("textTitleNotice-bg");
+		
+		Label editionLabel = new Label(tItem.edition + ", " + tItem.publishDate);
+		editionLabel.setStyleName("pubNotice");
+		
+		HTMLPanel pubNoticeHtml = new HTMLPanel(tItem.publisher);
+		pubNoticeHtml.setStyleName("pubNotice");
+		
+		//String html = "<div>" + tItem.licenseText + "</div>";
+		HTMLPanel licNoticeHtml = new HTMLPanel(tItem.licenseText);
+		licNoticeHtml.setStyleName("licNotice");
+		
+		VerticalPanel vPanel = new VerticalPanel();
+		vPanel.setHorizontalAlignment(HasAlignment.ALIGN_CENTER);
+		VerticalPanel innerPanel = new VerticalPanel();
+		innerPanel.setHorizontalAlignment(HasAlignment.ALIGN_CENTER);
+		
+		innerPanel.add(mainTiLabel);
+		innerPanel.add(mainEnLabel);
+		innerPanel.add(mainSaLabel);
+		
+		innerPanel.add(longTiLabel);
+		innerPanel.add(longWyLabel);
+		innerPanel.add(longEnLabel);
+		innerPanel.add(longSaLabel);
+		
+		innerPanel.add(tohLabel);
+		innerPanel.add(scopeLabel);
+		innerPanel.add(noticeLabel);
+
+		innerPanel.add(editionLabel);
+		innerPanel.add(pubNoticeHtml);
+		innerPanel.add(licNoticeHtml);
+		
+		innerPanel.add(nextButton);
+		vPanel.add(innerPanel);
+		innerPanel.setWidth("90%");
+		contentPanel.add(vPanel);
+		vPanel.setWidth("100%");
+
+	}
+	
+	private void activateNavButtons()
+	{
+		if (prevButton.getText() != "")
+			prevButton.setVisible(true);
+		if (nextButton.getText() != "")
+			nextButton.setVisible(true);
+	}
+	
+	public void showData()
+	{
+		//Window.alert("Data: {" + textData.getContent() + "}");
+		Log.info("Data: {" + textData.getContent() + "}"); 		
+	}
+	
+	public boolean isDataSet()
+	{
+		if (textData.getContent() == "")
+			return false;
+		else
+			return true;
+	}
+	
+	public void accommodateNavPanel(boolean navPresent)
+	{
+		if (navPresent)
+		{
+			int panelWidth = (int)(Window.getClientWidth() * 0.2);
+			spacerPanel.setWidth("" + panelWidth + "px");
+			spacerPanel.setVisible(true);
+		}
+		else
+			spacerPanel.setVisible(false);
+	}
+	
+	@UiHandler("prevButton")
+	void onPrevClick(ClickEvent e)
+	{
+		reader.prev();
+	}
+
+	@UiHandler("nextButton")
+	void onNextClick(ClickEvent e)
+	{
+		reader.next();
+	}
+}

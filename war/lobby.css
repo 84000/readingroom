@@ -1,0 +1,135 @@
+/*
+------------------------------------------------------------------------------------------
+Lobby Styles
+------------------------------------------------------------------------------------------
+*/
+
+.titleSmall  { padding: 0; }
+.titleMedium { margin: 0em 0px; padding: 0; }
+.titleLarge  { margin: 0em 3.0% 0px 3.0%; padding-top: 30px; }
+
+.section {
+	text-align: center;
+	padding: 2em 0 0 0;
+	margin-bottom: 1em;
+	background:
+		url(images/section-ornament.svg) no-repeat top center,
+		url(images/section-corner-left.svg) no-repeat top left,
+		url(images/section-corner-right.svg) no-repeat top right,
+		url(images/section-top.svg) repeat-x top center,
+		url(images/section-sides.svg) repeat-y top left,
+		url(images/section-sides.svg) repeat-y top right;
+	background-size:
+		50px,
+		18px,
+		18px,
+		50px,
+		6px,
+		6px;
+	background-color: #fff;
+}
+
+.table {
+	border-bottom-left-radius: .75em;
+	border-bottom-right-radius: .75em;
+}
+
+.tableTexts {
+	font-family: Arial,Helvetica,sans-serif;
+	font-size: 10pt;
+	color: #fff;
+	background: #cf7a34;
+	line-height: 1.8em; /* 24px */
+	width: 100%;
+}
+
+.tableType { text-align: left; }
+.tableCount { text-align: right; }
+.tableUnderscore { border-bottom: 1px solid #994c2d; }
+
+.pointerCursor { cursor: pointer; outline: none; }
+
+.itemTitleFont {
+	font-family: "Arial", Serif;
+	font-weight: bold;
+	font-size: 17pt;
+	text-align: center;
+	color: #426b9c;
+    border: 0;
+    background: #FFFFFF;
+	margin: 5px 1px 1px 1px;
+}
+.itemTitleFont:hover {
+	color: #892629;
+	cursor: pointer;
+}
+.itemTitleFont:focus {
+    outline: 0;
+}
+
+.itemTitle {
+	line-height: 1.7em;
+/*	border-bottom: 1px solid #e2af85; */
+}
+
+.itemSubTitleFont {
+	font-family: "Georgia", Serif;
+	font-style: italic;
+	font-size: 13pt;
+	text-align: center;
+	color: #426b9c;
+    border: 0;
+    background: #FFFFFF;
+	margin: 1px auto 1px auto;
+}
+.itemSubTitleFont:hover {
+	color: #892629;
+	cursor: pointer;
+}
+.itemSubTitleFont:focus {
+    outline: 0;
+}
+
+.itemStatsFont {
+	font-family: 'Trade Gothic W02 Roman';
+	color: #FFFFFF;
+	font-size: 11pt;
+	text-align: left;
+}
+
+/* TEST TEST TEST */
+.TEST {
+	position: fixed;
+	right: 0;
+	top: 0;
+	
+	padding: 2.0%; /* 320/12 */
+	background: #f5e4d6;
+	border-radius: .75em;
+	width: 48%;
+	/* max-width: 75em; /* 1200px */
+	/* min-width: 25em; /* 400px */
+	margin-bottom: 20px;
+}
+/* TEST TEST TEST */
+
+.catalog {
+	padding: 2.0%; /* 320/12 */
+	background: #f5e4d6;
+	border-radius: .75em;
+	width: 48%;
+	/* max-width: 75em; /* 1200px */
+	/* min-width: 25em; /* 400px */
+	margin-bottom: 20px;
+}
+
+.catalogDesc {
+	margin: 6px auto 1px 20px;
+	text-align: left;
+}
+
+.catalogTitle {
+	text-align: left;
+	font-size: 15pt;
+	background-color: Transparent;
+}

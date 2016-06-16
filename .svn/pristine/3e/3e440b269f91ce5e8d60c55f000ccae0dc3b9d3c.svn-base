@@ -1,0 +1,8 @@
+package org.tbrc.readingroom.client;
+
+import com.google.gwt.user.client.ui.VerticalPanel;
+
+public class SectionItemPanel extends VerticalPanel
+{
+
+}

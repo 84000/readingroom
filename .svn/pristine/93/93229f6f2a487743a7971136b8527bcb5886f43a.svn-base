@@ -1,0 +1,135 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style>
+	.important {
+		font-weight: bold;
+	}
+	</ui:style>
+
+	<g:HTMLPanel ui:field="lobbyPage" styleName="mainPage">
+    	<!-- Kangyur title bar -->
+		<g:HTMLPanel ui:field="kangyurTitlePanel" styleName="titleMedium">
+	    	<g:VerticalPanel ui:field="kangyurTitleBar" width="100%" styleName="redBackground">
+	    		<g:HorizontalPanel ui:field="kangyurTitleInner">
+			    	<g:Label ui:field="kangyurTitleEn" styleName="bigTitleFont">The Kangyur</g:Label>
+			    	<g:Label ui:field="kangyurTitleTi" styleName="bigTitleTFont">བཀའ་འགྱུར།</g:Label>
+    			</g:HorizontalPanel>
+    		</g:VerticalPanel>
+		</g:HTMLPanel>
+		
+		<!-- Main title section (only for non-top-level cards-style views -->
+    	<g:VerticalPanel width="100%" horizontalAlignment="ALIGN_CENTER">
+	    	<g:VerticalPanel ui:field="titleBlockPanel" width="60%" horizontalAlignment="ALIGN_CENTER" spacing="0">
+				<g:Label ui:field="titleEnLabel" width="100%" horizontalAlignment="ALIGN_CENTER" styleName="sectionTitleEn" addStyleNames="blackColor">
+					Loading...
+				</g:Label>
+				<g:HTML><hr size="1" width="100%" align="CENTER" color="#cf7a34" /></g:HTML>
+				 
+				<g:Grid ui:field="titleTiWyGrid" width="100%" cellSpacing="10">
+					<g:row>
+						<g:customCell>
+							<g:Label ui:field="titleTiLabel" styleName="sectionTitleTi">Loading...</g:Label>
+						</g:customCell>
+						<g:customCell>
+							<g:Label ui:field="titleWyLabel" styleName="sectionTitleWy">Loading...</g:Label>
+						</g:customCell>
+					</g:row>
+				</g:Grid>
+				
+				<g:HTML><hr size="1" width="100%" align="CENTER" color="#cf7a34" /></g:HTML>
+				<g:Label ui:field="titleSaLabel" styleName="sectionTitleSa">Loading...</g:Label>
+				<g:HTML><hr size="1" width="100%" align="CENTER" color="#cf7a34" /></g:HTML>
+				<g:HTML ui:field="desc" styleName="sectionTitleDesc">Loading...</g:HTML>
+    		</g:VerticalPanel>
+    	</g:VerticalPanel>
+		
+		<!-- Main content panel for Kangyur -->
+		<g:VerticalPanel ui:field="kangyurContentPanel" width="100%" spacing="10" horizontalAlignment="ALIGN_CENTER">
+	    	<g:VerticalPanel ui:field="kangyurLearnMorePanel" width="60%" horizontalAlignment="ALIGN_CENTER" spacing="10">
+	    		<!-- Subtitle and "learn more" button -->
+				<g:HTML ui:field="kangyurDesc" width="100%" horizontalAlignment="ALIGN_CENTER" styleName="subtitleFont">
+					Loading...
+				</g:HTML>
+				<g:Button ui:field="kLearnMoreButton" styleName="infoButton" addStyleNames="ss-info">
+					&nbsp;LEARN MORE ABOUT THE KANGYUR
+				</g:Button>
+			 	<g:HTML ui:field="kLearnMoreDisclosure" horizontalAlignment="LEFT" visible="false">
+					[More information will be made available soon]
+				</g:HTML>
+	    	</g:VerticalPanel>
+	    	<!-- Grid containing section items -->
+			<g:Grid ui:field="kangyurGrid" width="100%" cellSpacing="20" />
+			<!-- Catalog panel -->
+			<g:FocusPanel ui:field="kangyurCatPanel" styleName="pointerCursor">
+				<g:Grid ui:field="kangyurCatGrid" styleName="catalog">
+					<g:row>
+						<g:customCell styleName="halfWidth">
+							<g:VerticalPanel ui:field="kCatBottomPanel" width="100%">
+								<g:Label ui:field="kCatTitleEnLabel" width="100%" styleName="itemTitleFont" addStyleNames="catalogTitle" horizontalAlignment="center">Kangyur Catalogue</g:Label>
+								<g:HTML><hr size="1" width="96%" align="LEFT" color="#cf7a34" /></g:HTML>
+								<g:Label ui:field="kCatTitleWyLabel" width="100%" styleName="itemSubTitleFont" addStyleNames="transparentBackground">bka 'gyur dkar chag</g:Label>
+							</g:VerticalPanel>
+						</g:customCell>
+						<g:customCell>
+							<g:VerticalPanel ui:field="kCatSidePanel">
+								<g:Label ui:field="kCatDescLabel" styleName="descFont" addStyleNames="catalogDesc">
+									Loading...
+								</g:Label>
+							</g:VerticalPanel>
+						</g:customCell>
+					</g:row>
+				</g:Grid>
+			</g:FocusPanel>
+		</g:VerticalPanel>
+		
+    	<!-- Tengyur title bar -->
+		<g:HTMLPanel ui:field="tengyurTitlePanel" styleName="titleMedium">
+	    	<g:VerticalPanel ui:field="tengyurTitleBar" width="100%" styleName="redBackground">
+	    		<g:HorizontalPanel ui:field="tengyurTitleInner">
+			    	<g:Label ui:field="tengyurTitleEn" styleName="bigTitleFont">The Tengyur</g:Label>
+			    	<g:Label ui:field="tengyurTitleTi" styleName="bigTitleTFont">བསྟན་འགྱུར།</g:Label>
+    			</g:HorizontalPanel>
+    		</g:VerticalPanel>
+		</g:HTMLPanel>
+		
+		<!-- Main content panel for Tengyur -->
+		<g:VerticalPanel ui:field="tengyurContentPanel" width="100%" spacing="10" horizontalAlignment="ALIGN_CENTER">
+	    	<g:VerticalPanel ui:field="tengyurLearnMorePanel" width="60%" horizontalAlignment="ALIGN_CENTER" spacing="10">
+	    		<!-- Subtitle and "learn more" button -->
+				<g:HTML ui:field="tengyurDesc" width="100%" horizontalAlignment="ALIGN_CENTER" styleName="subtitleFont">
+					Loading...
+				</g:HTML>
+				<g:Button ui:field="tLearnMoreButton" styleName="infoButton" addStyleNames="ss-info">
+					&nbsp;LEARN MORE ABOUT THE TENGYUR
+				</g:Button>
+				<g:HTML ui:field="tLearnMoreDisclosure" horizontalAlignment="LEFT" visible="false">
+					[More information will be made available soon]
+				</g:HTML>
+	    	</g:VerticalPanel>
+	    	<!-- Grid containing section items -->
+			<g:Grid ui:field="tengyurGrid" width="100%" cellSpacing="20" />
+			<!-- Catalog panel -->
+			<g:FocusPanel ui:field="tengyurCatPanel" styleName="pointerCursor">
+				<g:Grid ui:field="tengyurCatGrid" styleName="catalog">
+					<g:row>
+						<g:customCell styleName="halfWidth">
+							<g:VerticalPanel ui:field="tCatBottomPanel" width="100%">
+								<g:Label ui:field="tCatTitleEnLabel" width="100%" styleName="itemTitleFont" addStyleNames="catalogTitle" horizontalAlignment="center">Tengyur Catalogue</g:Label>
+								<g:HTML><hr size="1" width="96%" align="LEFT" color="#cf7a34" /></g:HTML>
+								<g:Label ui:field="tCatTitleWyLabel" width="100%" styleName="itemSubTitleFont" addStyleNames="transparentBackground">bstan 'gyur dkar chag</g:Label>
+							</g:VerticalPanel>
+						</g:customCell>
+						<g:customCell>
+							<g:VerticalPanel ui:field="tCatSidePanel">
+								<g:Label ui:field="tCatDescLabel" styleName="descFont" addStyleNames="catalogDesc">
+									Loading...
+								</g:Label>
+							</g:VerticalPanel>
+						</g:customCell>
+					</g:row>
+				</g:Grid>
+			</g:FocusPanel>
+		</g:VerticalPanel>	<!-- catalogue panel -->
+	</g:HTMLPanel>			<!-- main panel -->
+</ui:UiBinder> 

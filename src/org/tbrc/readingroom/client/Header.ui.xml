@@ -1,0 +1,49 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style>
+	.important {
+		font-weight: bold;
+	}
+	</ui:style>
+	
+	<g:HTMLPanel>
+		<!-- Header bar -->
+    	<g:VerticalPanel ui:field="topPanel" styleName="header">
+    		<g:HorizontalPanel ui:field="sidePanel" verticalAlignment="ALIGN_MIDDLE" styleName="headerTitle" spacing="12">
+    			<g:Image ui:field="logoImage" url="84000-logo.png"></g:Image>
+    			<!--
+				<g:Label ui:field="subtitleLabel" styleName="mainFont" addStyleNames="tealColor">
+					TRANSLATING THE WORDS OF THE BUDDHA
+				</g:Label>
+				-->
+    			<g:Image ui:field="titleImage" url="title.png"></g:Image>
+    			<g:Image ui:field="menuImage" url="menu_icon.png"></g:Image>
+    		</g:HorizontalPanel>
+    		<g:VerticalPanel ui:field="bottomPanel" horizontalAlignment="ALIGN_LEFT" styleName="headerContent" spacing="12">
+    			<!-- Subtitle label moves here for smaller viewports -->
+    		</g:VerticalPanel>
+    	</g:VerticalPanel>
+    	<!-- Nav bar -->
+    	<g:VerticalPanel styleName="navBar" horizontalAlignment="ALIGN_LEFT">
+    		<g:HorizontalPanel ui:field="navBarContent" styleName="headerContent">
+    			<g:Button ui:field="homeButton" styleName="navBarButton">HOME</g:Button>
+    			<g:Button ui:field="newsButton" styleName="navBarButton">NEWS</g:Button>
+    			<g:Button ui:field="rrButton" styleName="navBarButton">READING ROOM</g:Button>
+    			<g:Button ui:field="resourcesButton" styleName="navBarButton">RESOURCES</g:Button>
+    			<g:Button ui:field="aboutButton" styleName="navBarButton">ABOUT</g:Button>
+    			<g:Button ui:field="helpButton" styleName="navBarButton">HOW YOU CAN HELP</g:Button>
+    		</g:HorizontalPanel>
+    		<g:HorizontalPanel ui:field="navBarContentLine2" styleName="headerContent">
+    		</g:HorizontalPanel>
+    	</g:VerticalPanel>
+    	<!-- Bread crumbs -->
+    	<g:VerticalPanel ui:field="breadCrumbPanel" styleName="headerContent" spacing="10" width="100%">
+    		<!--
+    		<g:BreadCrumb></g:BreadCrumb>
+    		<g:Label ui:field="homeBreadCrumb" styleName="breadCrumb">Home /</g:Label>
+    		<g:Label ui:field="rrBreadCrumb" styleName="breadCrumb" addStyleNames="blackColor">Reading Room</g:Label>
+    		-->
+    	</g:VerticalPanel>
+	</g:HTMLPanel>
+</ui:UiBinder> 

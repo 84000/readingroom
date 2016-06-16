@@ -1,0 +1,382 @@
+package org.tbrc.readingroom.client;
+
+import java.util.ArrayList;
+
+import org.tbrc.readingroom.shared.Constants;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
+
+public class Lobby extends Composite {
+
+	private static LobbyUiBinder uiBinder = GWT.create(LobbyUiBinder.class);
+	
+	interface LobbyUiBinder extends UiBinder<Widget, Lobby> {}
+
+	@UiField HTMLPanel lobbyPage;
+
+	@UiField Grid kangyurGrid;
+	@UiField Grid kangyurCatGrid;
+	@UiField VerticalPanel kangyurTitleBar;
+	@UiField HorizontalPanel kangyurTitleInner;
+	@UiField Button kLearnMoreButton;
+	@UiField HTMLPanel kangyurTitlePanel;
+	@UiField VerticalPanel kangyurContentPanel;
+	@UiField Label kangyurTitleEn;
+	@UiField Label kangyurTitleTi;
+	@UiField Label kangyurDescLabel;
+	
+	@UiField Grid tengyurGrid;
+	@UiField Grid tengyurCatGrid;
+	@UiField VerticalPanel tengyurTitleBar;
+	@UiField HorizontalPanel tengyurTitleInner;
+	@UiField Button tLearnMoreButton;
+	@UiField HTMLPanel tengyurTitlePanel;
+	@UiField VerticalPanel tengyurContentPanel;
+	@UiField Label tengyurTitleEn;
+	@UiField Label tengyurTitleTi;
+	@UiField Label tengyurDescLabel;
+	
+	@UiField Label kCatTitleEnLabel;
+	@UiField Label kCatTitleWyLabel;
+	@UiField Label kCatDescLabel;
+	@UiField VerticalPanel kCatBottomPanel;
+	@UiField VerticalPanel kCatSidePanel;
+	@UiField Label tCatTitleEnLabel;
+	@UiField Label tCatTitleWyLabel;
+	@UiField Label tCatDescLabel;
+	@UiField VerticalPanel tCatBottomPanel;
+	@UiField VerticalPanel tCatSidePanel;
+	
+	private int kGridRows = 0, tGridRows = 0;
+	private int gridCols = 0;
+	private String colWidth = "25%";
+	private int lastPortWidth = 0;
+	private boolean isLobbyLevel = true;
+
+	private ArrayList<DataItem> kangyurItems = new ArrayList<DataItem>();
+	private ArrayList<DataItem> tengyurItems = new ArrayList<DataItem>();
+	
+	public Lobby(boolean isLobbyLevel)
+	{
+		initWidget(uiBinder.createAndBindUi(this));
+
+		// Establish whether this is our top-level lobby view or not
+		this.isLobbyLevel = isLobbyLevel;
+		if (!isLobbyLevel)
+		{
+			// Catalogues are not used except for the main lobby view
+			kangyurCatGrid.setVisible(false);
+			tengyurCatGrid.setVisible(false);
+		}
+		
+		// Establish initial rows & cols based on viewport size
+		int width = Window.getClientWidth();
+		if (width >= Constants.LARGE_VIEWPORT_MIN_WIDTH)
+		{
+			gridCols = 4;
+			colWidth = "25%";
+		}
+		else if (width >= Constants.MEDIUM_VIEWPORT_MIN_WIDTH)
+		{
+			gridCols = 2;
+			colWidth = "50%";
+		}
+		else // width < med min
+		{
+			gridCols = 1;
+			colWidth = "100%";
+		}
+	}
+
+	@UiHandler("kLearnMoreButton")
+	void onMoreKClick(ClickEvent e) { Window.alert("Page not yet available."); }
+	
+	@UiHandler("kCatTitleEnLabel")
+	void onkCatTitleEnClick(ClickEvent e) {
+		Readingroom.main.newPage(kangyurItems.get(kangyurItems.size()-1), kCatTitleEnLabel);
+	}
+
+	@UiHandler("tLearnMoreButton")
+	void onMoreTClick(ClickEvent e) { Window.alert("Page not yet available."); }
+
+	@UiHandler("tCatTitleEnLabel")
+	void ontCatTitleEnClick(ClickEvent e) {
+		Readingroom.main.newPage(tengyurItems.get(tengyurItems.size()-1), tCatTitleEnLabel);
+	}
+
+	public void onViewportSizeChange(int newWidth)
+	{
+		// Only invoke changes if we cross a viewport-change width
+		if (Utils.viewPortChanged(newWidth, lastPortWidth))
+		{
+			if (newWidth >= Constants.LARGE_VIEWPORT_MIN_WIDTH)
+			{
+				gridCols = 4;
+				colWidth = "25%";
+
+				kLearnMoreButton.setText("   LEARN MORE ABOUT THE KANGYUR");
+				tLearnMoreButton.setText("   LEARN MORE ABOUT THE TENGYUR");
+
+				kangyurTitlePanel.setStyleName("titleLarge");
+				kangyurTitleBar.setCellHorizontalAlignment(kangyurTitleInner, HasHorizontalAlignment.ALIGN_LEFT);
+				kangyurTitleEn.setStyleName("bigTitleFont"); kangyurTitleEn.addStyleName("titleFontLarge");
+				kangyurTitleTi.setStyleName("bigTitleTFont"); kangyurTitleTi.addStyleName("titleFontLarge");
+
+				tengyurTitlePanel.setStyleName("titleLarge");
+				tengyurTitleBar.setCellHorizontalAlignment(tengyurTitleInner, HasHorizontalAlignment.ALIGN_LEFT);
+				tengyurTitleEn.setStyleName("bigTitleFont"); tengyurTitleEn.addStyleName("titleFontLarge");
+				tengyurTitleTi.setStyleName("bigTitleTFont"); tengyurTitleTi.addStyleName("titleFontLarge");
+
+				lobbyPage.setWidth("94%");
+				kangyurCatGrid.setWidth("48%");
+				tengyurCatGrid.setWidth("48%");
+			}
+			else if (newWidth >= Constants.MEDIUM_VIEWPORT_MIN_WIDTH)
+			{
+				gridCols = 2;
+				colWidth = "50%";
+
+				kLearnMoreButton.setText("   LEARN MORE");
+				tLearnMoreButton.setText("   LEARN MORE");
+
+				kangyurTitlePanel.setStyleName("titleMedium");
+				kangyurTitleBar.setCellHorizontalAlignment(kangyurTitleInner, HasHorizontalAlignment.ALIGN_CENTER);
+				kangyurTitleEn.setStyleName("bigTitleFont"); kangyurTitleEn.addStyleName("titleFontMedium");
+				kangyurTitleTi.setStyleName("bigTitleTFont"); kangyurTitleTi.addStyleName("titleFontMedium");
+
+				tengyurTitlePanel.setStyleName("titleMedium");
+				tengyurTitleBar.setCellHorizontalAlignment(tengyurTitleInner, HasHorizontalAlignment.ALIGN_CENTER);
+				tengyurTitleEn.setStyleName("bigTitleFont"); tengyurTitleEn.addStyleName("titleFontMedium");
+				tengyurTitleTi.setStyleName("bigTitleTFont"); tengyurTitleTi.addStyleName("titleFontMedium");
+				
+				kCatBottomPanel.remove(kCatDescLabel);
+				kCatSidePanel.add(kCatDescLabel);
+				//kCatBottomPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
+			    kangyurCatGrid.getColumnFormatter().setWidth(0, "50%");
+			    kangyurCatGrid.getColumnFormatter().setWidth(1, "50%");
+				tCatBottomPanel.remove(tCatDescLabel);
+				tCatSidePanel.add(tCatDescLabel);
+				//tCatBottomPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
+			    tengyurCatGrid.getColumnFormatter().setWidth(0, "50%");
+			    tengyurCatGrid.getColumnFormatter().setWidth(1, "50%");
+
+				lobbyPage.setWidth("94%");
+				kangyurCatGrid.setWidth("94%");
+				tengyurCatGrid.setWidth("94%");
+			}
+			else // newWith < med min
+			{
+				gridCols = 1;
+				colWidth = "100%";
+
+				kLearnMoreButton.setText("   LEARN MORE");
+				tLearnMoreButton.setText("   LEARN MORE");
+
+				kangyurTitlePanel.setStyleName("titleSmall");
+				kangyurTitleBar.setCellHorizontalAlignment(kangyurTitleInner, HasHorizontalAlignment.ALIGN_CENTER);
+				kangyurTitleEn.setStyleName("bigTitleFont"); kangyurTitleEn.addStyleName("titleFontSmall");
+				kangyurTitleTi.setStyleName("bigTitleTFont"); kangyurTitleTi.addStyleName("titleFontSmall");
+
+				tengyurTitlePanel.setStyleName("titleSmall");
+				tengyurTitleBar.setCellHorizontalAlignment(tengyurTitleInner, HasHorizontalAlignment.ALIGN_CENTER);
+				tengyurTitleEn.setStyleName("bigTitleFont"); tengyurTitleEn.addStyleName("titleFontSmall");
+				tengyurTitleTi.setStyleName("bigTitleTFont"); tengyurTitleTi.addStyleName("titleFontSmall");
+
+				kCatSidePanel.remove(kCatDescLabel);
+				kCatBottomPanel.add(kCatDescLabel);
+				//kCatBottomPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+			    kangyurCatGrid.getColumnFormatter().setWidth(0, "100%");
+			    kangyurCatGrid.getColumnFormatter().setWidth(1, "0%");
+				tCatSidePanel.remove(tCatDescLabel);
+				tCatBottomPanel.add(tCatDescLabel);
+				//tCatBottomPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+			    tengyurCatGrid.getColumnFormatter().setWidth(0, "100%");
+			    tengyurCatGrid.getColumnFormatter().setWidth(1, "0%");
+				
+				lobbyPage.setWidth("100%");
+				kangyurCatGrid.setWidth("92%");
+				tengyurCatGrid.setWidth("92%");
+			}
+
+			resetGrids();
+		}
+
+		lastPortWidth = newWidth;
+	}
+
+	public void populatePage(String kDesc, ArrayList<DataItem> kItems, String tDesc, ArrayList<DataItem> tItems)
+	{
+		kangyurItems = kItems;
+		tengyurItems = tItems;
+		
+		if (kangyurItems.size() == 0)
+		{
+			//kangyurTitleBar.setVisible(false);
+			//kLearnMoreButton.setVisible(false);
+			kangyurTitlePanel.removeFromParent();
+			kangyurContentPanel.removeFromParent();
+		}
+
+		if (tengyurItems.size() == 0)
+		{
+			//tengyurTitleBar.setVisible(false);
+			//tLearnMoreButton.setVisible(false);
+			tengyurTitlePanel.removeFromParent();
+			tengyurContentPanel.removeFromParent();
+		}
+
+		resetGrids();
+
+		// Place top-level description
+		kangyurDescLabel.setText(kDesc);
+
+		// Handle last kanjur item ("Kangyur Catalogue")
+		if (isLobbyLevel)
+		{
+			int lastIndex = kangyurItems.size() - 1;
+			kCatTitleEnLabel.setText(kangyurItems.get(lastIndex).getNameEn());
+			kCatTitleWyLabel.setText(kangyurItems.get(lastIndex).getNameWy());
+			kCatDescLabel.setText(kangyurItems.get(lastIndex).getDesc());
+		}
+
+		// Place top-level description
+		tengyurDescLabel.setText(tDesc);
+		
+		// Handle last tenjur item ("Tengyur Catalogue")
+		if (isLobbyLevel)
+		{
+			int lastIndex = tengyurItems.size() - 1;
+			tCatTitleEnLabel.setText(tengyurItems.get(lastIndex).getNameEn());
+			tCatTitleWyLabel.setText(tengyurItems.get(lastIndex).getNameWy());
+			tCatDescLabel.setText(tengyurItems.get(lastIndex).getDesc());
+		}
+	}
+	
+	private void resetGrids()
+	{
+		kGridRows = kangyurItems.size() / gridCols;
+		int count = kGridRows * gridCols;
+		if (isLobbyLevel)
+			count++;
+		if (count < kangyurItems.size())
+			kGridRows++;
+		
+		count = tGridRows * gridCols;
+		if (isLobbyLevel)
+			count++;
+		tGridRows = tengyurItems.size() / gridCols;
+		if (count < tengyurItems.size())
+			tGridRows++;
+
+		if (kGridRows > 0)
+		{
+			kangyurGrid.clear();
+			kangyurGrid.resize(kGridRows, gridCols);
+			placeKangyurItems();
+		}
+		
+		if (tGridRows > 0)
+		{
+			tengyurGrid.clear();
+			tengyurGrid.resize(tGridRows, gridCols);
+			placeTengyurItems();
+		}
+	}
+
+	private void placeKangyurItems()
+	{
+		// Make sure rows are top-aligned
+		for (int i = 0; i < kGridRows; i++)
+			kangyurGrid.getRowFormatter().setVerticalAlign(i, HasVerticalAlignment.ALIGN_TOP);
+
+		// Make sure we have even-width columns
+		for (int i = 0; i < gridCols; i++)
+		    kangyurGrid.getColumnFormatter().setWidth(i, colWidth);
+
+		// Put lobby sections in appropriate grid cells
+		int count = kangyurItems.size();
+		if (isLobbyLevel)
+			count -= 1;
+		for (int i = 0; i < count; i++)
+		{
+			final LobbySection lobbySection = new LobbySection();
+			kangyurGrid.setWidget((i/gridCols), (i%gridCols), lobbySection);
+			DataItem item = kangyurItems.get(i);
+			item.setCategory("kangyur");
+			lobbySection.setData(item);
+		}
+
+		// If 2 remain in last row, center them (only for wide viewport)
+		if (gridCols == 4)
+		{
+			if (((kGridRows * gridCols) - count) == 2)
+			{
+				int row = kGridRows-1;
+				LobbySection ls;
+				
+				kangyurGrid.clearCell(row, 3);
+				ls = (LobbySection)kangyurGrid.getWidget(row, 1);
+				kangyurGrid.setWidget(row, 2, ls);
+				ls = (LobbySection)kangyurGrid.getWidget(row, 0);
+				kangyurGrid.setWidget(row, 1, ls);
+				kangyurGrid.clearCell(row, 0);
+			}
+		}
+	}
+	
+	private void placeTengyurItems()
+	{
+		// Make sure rows are top-aligned
+		for (int i = 0; i < tGridRows; i++)
+			tengyurGrid.getRowFormatter().setVerticalAlign(i, HasVerticalAlignment.ALIGN_TOP);
+
+		// Make sure we have even-width columns
+		for (int i = 0; i < gridCols; i++)
+		    tengyurGrid.getColumnFormatter().setWidth(i, colWidth);
+
+		// Put lobby sections in appropriate grid cells
+		int count = tengyurItems.size();
+		if (isLobbyLevel)
+			count -= 1;
+		for (int i = 0; i < count; i++)
+		{
+			LobbySection lobbySection = new LobbySection();
+			tengyurGrid.setWidget((i/gridCols), (i%gridCols), lobbySection);
+			DataItem item = tengyurItems.get(i);
+			item.setCategory("tengyur");
+			lobbySection.setData(item);
+		}
+
+		// If 2 remain in last row, center them (only for wide viewport)
+		if (gridCols == 4)
+		{
+			if (((tGridRows * gridCols) - count) == 2)
+			{
+				int row = tGridRows-1;
+				LobbySection ls;
+				
+				tengyurGrid.clearCell(row, 3);
+				ls = (LobbySection)tengyurGrid.getWidget(row, 1);
+				tengyurGrid.setWidget(row, 2, ls);
+				ls = (LobbySection)tengyurGrid.getWidget(row, 0);
+				tengyurGrid.setWidget(row, 1, ls);
+				tengyurGrid.clearCell(row, 0);
+			}
+		}
+	}
+}

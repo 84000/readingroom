@@ -1,0 +1,83 @@
+package org.tbrc.readingroom.client;
+
+import org.tbrc.readingroom.shared.Constants;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HasText;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
+
+public class Header extends Composite implements HasText {
+
+	private static HeaderUiBinder uiBinder = GWT.create(HeaderUiBinder.class);
+
+	interface HeaderUiBinder extends UiBinder<Widget, Header> {
+	}
+
+	@UiField HorizontalPanel sidePanel;
+	@UiField VerticalPanel bottomPanel;
+	@UiField Image logoImage;
+	@UiField Label subtitleLabel;
+	@UiField Label homeBreadCrumb;
+	@UiField Label rrBreadCrumb;
+	
+	private int lastPortWidth = 0;
+	
+	public Header() {
+		initWidget(uiBinder.createAndBindUi(this));
+	}
+
+	public void setText(String text) {
+		subtitleLabel.setText(text);
+	}
+
+	public String getText() {
+		return subtitleLabel.getText();
+	}
+
+	public void onViewportSizeChange(int newWidth)
+	{
+		// Only invoke changes if we cross a viewport-change width
+		if (Utils.viewPortChanged(newWidth, lastPortWidth))
+		{
+			if (newWidth >= Constants.LARGE_VIEWPORT_MIN_WIDTH)
+			{
+				bottomPanel.remove(subtitleLabel);
+				sidePanel.add(subtitleLabel);
+				subtitleLabel.setVisible(true);
+				logoImage.setWidth("100%"); logoImage.setHeight("100%");
+			}
+			else if (newWidth >= Constants.MEDIUM_VIEWPORT_MIN_WIDTH)
+			{
+				sidePanel.remove(subtitleLabel);
+				bottomPanel.add(subtitleLabel);
+				subtitleLabel.setVisible(true);
+				logoImage.setWidth("100%"); logoImage.setHeight("100%");
+				sidePanel.setSpacing(12);
+			}
+			else // newWith < med min
+			{
+				subtitleLabel.setVisible(false);
+				logoImage.setWidth("60%"); logoImage.setHeight("60%");
+				sidePanel.setSpacing(0);
+			}
+		}
+		
+		lastPortWidth = newWidth;
+	}
+
+	@UiHandler("homeBreadCrumb")
+	void onHomeClick(ClickEvent e)
+	{
+		Window.alert("This would exit the RR app and go back to 84000 home page");
+	}
+}

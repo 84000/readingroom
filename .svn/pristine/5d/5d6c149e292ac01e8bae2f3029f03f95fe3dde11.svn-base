@@ -1,0 +1,895 @@
+package org.tbrc.readingroom.server;
+
+import java.util.ArrayList;
+
+import org.tbrc.readingroom.shared.GlossItem;
+import org.tbrc.readingroom.shared.MilestoneItem;
+import org.tbrc.readingroom.shared.NoteItem;
+import org.tbrc.readingroom.shared.TextData;
+
+public class Tei
+{
+	private final String SUMMARY_BEGIN = "<div type=\"summary\">";
+	private final String ACK_BEGIN = "<div type=\"acknowledgment\">";
+	private final String INTRO_BEGIN = "<div type=\"introduction\">";
+	private final String MILESTONE = "<milestone unit=\"chunk\"/>";
+
+	public String header = "";
+	public String front = "";
+	public String body = "";
+	public String back = "";
+	
+	// Header
+	public String titleStmtStr = "";
+	public String pubStmtStr = "";
+	public String sourceDescStr = "";
+	
+	// Front
+	public int bodyParaCount = 0;
+	public int bodyMilestoneCount = 0;
+	public int bodyGlossCount = 0;
+	public String summaryStr = "";
+	public String ackStr = "";
+	public String introStr = "";
+	private TextData summaryData = new TextData();
+	private TextData ackData = new TextData();
+	private TextData introData = new TextData();
+	public ArrayList<String> translationPartNames = new ArrayList<String>();
+	public ArrayList<TextData> translationParts = new ArrayList<TextData>();
+
+	//Body
+	//private TextData chapterData = new TextData();
+
+	
+	public void parse(String textTei)
+	{
+		// First, reset relevant data
+		translationPartNames.clear();
+		translationParts.clear();
+		bodyParaCount = 0;
+		bodyMilestoneCount = 0;
+		bodyGlossCount = 0;
+		
+		// Header
+		header = XmlUtils.getBookendedString(textTei, "<teiHeader>", "</teiHeader>", true);
+		// Pre-process header
+		header = processGeneralElements(header);
+		
+		// Sections within "header" (title)
+		if (header != null)
+		{
+			titleStmtStr = XmlUtils.getBookendedString(textTei, "<titleStmt>", "</titleStmt>", true);
+			pubStmtStr = XmlUtils.getBookendedString(textTei, "<publicationStmt>", "</publicationStmt>", true);
+			sourceDescStr = XmlUtils.getBookendedString(textTei, "<sourceDesc>", "</sourceDesc>", true);
+			
+			// Wrap HTML in CDATA
+			header = wrapHtmlElementContent(header, "publisher");
+			header = wrapHtmlElementContent(header, "licence");
+		}
+		
+		// Front
+		front = XmlUtils.getBookendedString(textTei, "<front>", "</front>", true);
+		// Pre-process front
+		front = processGeneralElements(front);
+		front = processTitles(front);
+	
+		// Sections within "front" (Summary, Acknowledgement, Intro)
+		if (front != null)
+		{
+			int begin, end;
+			
+			begin = front.indexOf(SUMMARY_BEGIN);
+			end = front.indexOf(ACK_BEGIN);
+			summaryStr = front.substring(begin, end);
+			
+			begin = end;
+			end = front.indexOf(INTRO_BEGIN);
+			ackStr = front.substring(begin, end);
+			
+			begin = end;
+			end = front.indexOf("</front>");
+			introStr = front.substring(begin, end);
+		}
+		
+		// Body
+		body = XmlUtils.getBookendedString(textTei, "<body>", "</body>", true);
+		body = processGeneralElements(body);		// Pre-process body
+		body = processTitles(body);
+		processTranslationParts(body);				// Chapters or "parts" within the text body
+
+		// Back
+		back = XmlUtils.getBookendedString(textTei, "<back>", "</back>", true);
+
+		// Items in back
+		if (back != null)
+		{
+		}
+		
+		// Now that we've broken up the XML into parts, process it for display
+		process();
+	}
+
+	public boolean process()
+	{
+		boolean processed = true;
+		int noteCount = 0;
+		
+		//-----------------------
+		// Header
+		//-----------------------
+		// Title Statement
+		// Publication Statement
+		// Source Description
+		// NOTE: THESE ARE HANDLED IN CLIENT - SIMPLE XML PARSING
+		
+		//-----------------------
+		// Front
+		//-----------------------
+		// Summary
+		if (summaryStr.length() > 0)
+		{
+			// Capture title
+			int s = summaryStr.indexOf("<title") + 1;
+			int titleBegin = summaryStr.indexOf(">", s) + ">".length();
+			int titleEnd = summaryStr.indexOf("</title>", titleBegin);
+			int e = titleEnd + "</title>".length();
+			if (titleBegin >= 0 && titleEnd > titleBegin)
+			{
+				summaryData.setTitle(summaryStr.substring(titleBegin, titleEnd));
+				// Rather than isolating title as a widget, just use <cite>
+				//String newContent = summaryStr.substring(0, s-1) + "<span id='title'></span>" + summaryStr.substring(e);
+				String newContent = summaryStr.substring(0, s-1) + "<cite>" + summaryData.getTitle() + "</cite>" + summaryStr.substring(e);
+				summaryData.setContent(newContent);
+				summaryStr = summaryData.getContent();
+			}
+				
+			// Strip head from XML
+			String headStr = XmlUtils.getBookendedString(summaryStr, "<head type=\"summary\">", "</head>", false);
+			summaryStr = summaryStr.replace("<head type=\"summary\">" + headStr + "</head>", "");
+			summaryData.setContent(summaryStr);
+		
+			// Main content
+			// Capture and process glossary terms and milestones
+			findAndProcessGlossTerms(summaryData);
+			findAndProcessMilestones(summaryData, "S");
+			//System.out.println("\n\nPROCESSED SUMMARY: {" + summaryData.getContent() + "}");
+		}
+		
+		// Acknowledgments
+		if (ackStr.length() > 0)
+		{
+			// Capture and strip head from XML
+			String headStr = XmlUtils.getBookendedString(ackStr, "<head type=\"acknowledgment\">", "</head>", false);
+			ackData.setTitle(headStr);
+			ackStr = ackStr.replace("<head type=\"acknowledgment\">" + headStr + "</head>", "");
+			ackData.setContent(ackStr);
+		
+			// Main content
+			// Capture and process glossary terms and milestones
+			findAndProcessGlossTerms(ackData);
+			findAndProcessMilestones(ackData, "A");
+		}
+		
+		// Introduction
+		if (introStr.length() > 0)
+		{
+			// Capture and strip head from XML
+			String headStr = XmlUtils.getBookendedString(introStr, "<head type=\"introduction\">", "</head>", false);
+			introData.setTitle(headStr);
+			introStr = introStr.replace("<head type=\"introduction\">" + headStr + "</head>", "");
+			introData.setContent(introStr);
+		
+			// Main content
+			// Capture and process glossary terms and milestones
+			findAndProcessGlossTerms(introData);
+			findAndProcessMilestones(introData, "I");
+			int count = findAndProcessNotes(introData, noteCount);
+			noteCount += count;
+		}
+
+		//System.out.println("\n\nPROCESSED SUMMARY CONTENT: {" + summaryData.getContent() + "}");
+		//System.out.println("\n\nPROCESSED ACK CONTENT: {" + ackData.getContent() + "}");
+		//System.out.println("\n\nPROCESSED INTRO CONTENT: {" + introData.getContent() + "}");
+		
+		//-----------------------
+		// Body
+		//-----------------------
+		for (int i = 0; i < translationParts.size(); i++)
+		{
+			// Capture and strip head from XML
+			//String headStr = getBookendedString(introStr, "<head type=\"introduction\">", "</head>", false);
+			//introData.setTitle(headStr);
+			//introStr = introStr.replace("<head type=\"introduction\">" + headStr + "</head>", "");
+			//introData.setContent(introStr);
+		
+			// Main content
+			findAndProcessHomages(translationParts.get(i));
+			findAndProcessGlossTerms(translationParts.get(i));
+			findAndProcessMilestones(translationParts.get(i), ("" + (i+1)));
+			int count = findAndProcessNotes(translationParts.get(i), noteCount);
+			noteCount += count;
+			String newContent = findAndProcessRefs(translationParts.get(i));
+			translationParts.get(i).setContent(newContent);
+
+			if (i == 0)
+				System.out.println("\n\nPROCESSED PART " + (i + 1) + " CONTENT: {" + translationParts.get(i).getContent().substring(0, 10000) + "}");
+		}
+
+		//-----------------------
+		// Back
+		//-----------------------
+		
+		return processed;
+	}
+	
+	private String processGeneralElements(String str)
+	{
+		String newStr = str;
+
+		// Titles are italicized
+		// Breaks title page! Separated out below
+		//newStr = newStr.replace("<title", "<em");
+		//newStr = newStr.replace("</title>", "</em>");
+
+		// Emphasized elements are also italicized
+		newStr = newStr.replace("<emph", "<em");
+		newStr = newStr.replace("</emph>", "</em>");
+
+		// Foreign language terms are also italicized
+		newStr = newStr.replace("<foreign", "<em");
+		newStr = newStr.replace("</foreign>", "</em>");
+
+		// "Distinct" phrases are also italicized
+		// NOTE: Specific "homage" processing happens AFTER this replacement
+		newStr = newStr.replace("<distinct", "<em");
+		newStr = newStr.replace("</distinct>", "</em>");
+
+		// Trailer statements are also italicized
+		newStr = newStr.replace("<trailer", "<div id='trailer'><em");
+		newStr = newStr.replace("</trailer>", "</em></div>");
+		
+		// For quotes, convert to <div> with specific style
+		//newStr = newStr.replace("<q>", "<hr style='height:4px; visibility:hidden;' />");
+		//newStr = newStr.replace("</q>", "<hr style='height:4px; visibility:hidden;' />");
+		newStr = newStr.replace("<q>", "<div id='quoteSection'>");
+		newStr = newStr.replace("</q>", "</div>");
+		
+		// Speaker elements are hidden
+		newStr = newStr.replace("<speaker>", "<p style='display: none;'>");
+		newStr = newStr.replace("</speaker>", "</p>");
+
+		// Line groups are converted to description lists
+		//newStr = newStr.replace("<lg>", "<dl style='margin-top: -1.5em;'>");
+		newStr = newStr.replace("<lg>", "<dl>");
+		newStr = newStr.replace("</lg>", "</dl>");
+		newStr = newStr.replace("<l>", "<dt>");
+		newStr = newStr.replace("</l>", "</dt>");
+		
+		// Lists are converted to HTML unordered lists
+		newStr = newStr.replace("<list>", "<ul id='textList'>");
+		newStr = newStr.replace("</list>", "</ul>");
+		newStr = newStr.replace("<item>", "<li id='textList'>");
+		newStr = newStr.replace("</item>", "</li>");
+		
+		// Embedded graphic images
+		newStr = newStr.replace("<graphic url", "<img src");
+		
+		// Line breaks
+		newStr = newStr.replace("<lb/>", "<br>");
+		newStr = newStr.replace("<lb", "<br");
+		newStr = newStr.replace("</lb>", "</br>");
+		
+		// Speech - put break before and after
+		newStr = newStr.replace("<sp>", "<div id='speech'>");
+		newStr = newStr.replace("</sp>", "</div>");
+	
+		return newStr;
+	}
+	
+	private String processTitles(String str)
+	{
+		// This had to be separated because titles are handled differently in different sections
+		String newStr = str;
+
+		// Titles are italicized
+		newStr = newStr.replace("<title", "<em");
+		newStr = newStr.replace("</title>", "</em>");
+
+		return newStr;
+	}
+	
+	private String wrapHtmlElementContent(String xmlStr, String elementName)
+	{
+		int elementBegin, elementEnd, prevElementEnd = 0;
+		int contentBegin, contentEnd;
+		String content;
+		String newXmlStr = "";
+		int elementCount = 0;
+		String startTag = "<" + elementName + ">";
+		String endTag = "</" + elementName + ">";
+
+		while (true)
+		{
+			elementBegin = xmlStr.indexOf(startTag, prevElementEnd);
+			contentBegin = elementBegin + startTag.length();
+			
+			if (elementBegin >= 0)
+			{
+				contentEnd = xmlStr.indexOf(endTag, contentBegin);
+				elementEnd = contentEnd + endTag.length();
+				
+				content = xmlStr.substring(contentBegin, contentEnd);
+				
+				// New content string replaces gloss item with HTML
+				newXmlStr += xmlStr.substring(prevElementEnd, contentBegin);
+				newXmlStr += "<![CDATA[" + content + "]]>" + endTag;
+				
+				elementCount++;
+				prevElementEnd = elementEnd;
+			}
+			else
+				break;
+		}
+	
+		if (elementCount == 0)
+			newXmlStr = xmlStr;
+		else
+			newXmlStr += xmlStr.substring(prevElementEnd);
+		
+		return newXmlStr;
+	}
+	
+	private int findAndProcessHomages(TextData data)
+	{
+		// EXAMPLE:
+		/*
+				<distinct type="homage">
+					<ref cRef="F.1.b"/> Homage to all buddhas and bodhisattvas!
+				</distinct>
+		 */
+		int homageCount = 0;
+		String homageStr = null;
+		int homageBegin, homageEnd, prevHomageEnd = 0;
+		String xmlStr = data.getContent();
+		String newXmlStr = "";
+
+		while (true)
+		{
+			homageBegin = xmlStr.indexOf("<em type=\"homage\"", prevHomageEnd);
+			homageEnd = xmlStr.indexOf("</em>", homageBegin) + "</em>".length();
+
+			if (homageBegin >= 0 && homageEnd > homageBegin)
+			{
+				homageStr = xmlStr.substring(homageBegin, homageEnd);
+
+				// New content string wraps homage in a styled div
+				newXmlStr += xmlStr.substring(prevHomageEnd, homageBegin);
+				newXmlStr += "<div id='homage'>" + homageStr + "</div>";
+
+				homageCount++;
+				prevHomageEnd = homageEnd;
+			}
+			else
+				break;
+		}
+
+		if (homageCount > 0)
+		{
+			newXmlStr += xmlStr.substring(prevHomageEnd);
+			data.setContent(newXmlStr);
+		}
+
+		return homageCount;
+	}
+	
+	private int findAndProcessGlossTerms(TextData data)
+	{
+		// EXAMPLE:
+		/*
+		<gloss>
+			<term xml:id="UT22084-051-003-pl1">Śrāvastī</term>
+			<term xml:lang="Bo-Ltn">mnyan yod</term>
+			<term xml:lang="Sa-Ltn">Śrāvastī</term>
+			<term type="definition">The capital city of Kosala where Buddha lived...</term>
+        </gloss>
+        */
+
+		int glossCount = 0;
+		String glossStr = null;
+		int glossBegin, glossEnd, prevGlossEnd = 0;
+		int termBegin, termEnd;
+		String xmlStr = data.getContent();
+		String newXmlStr = "";
+		
+		data.glossItems.clear();
+		
+		while (true)
+		{
+			glossBegin = xmlStr.indexOf("<gloss>", prevGlossEnd);
+			glossEnd = xmlStr.indexOf("</gloss>", glossBegin) + "</gloss>".length();
+			//System.out.println("" + glossCount + " BEGIN: " + glossBegin + ", END: " + glossEnd);
+			
+			if (glossBegin >= 0 && glossEnd > glossBegin)
+			{
+				GlossItem glossItem = new GlossItem();
+				glossStr = xmlStr.substring(glossBegin, glossEnd);
+				//System.out.println("TEI PROCESS, GLOSS STR: {" + glossStr + "}");
+
+				// ID
+				termBegin = glossStr.indexOf("<term xml:id=\"");
+				if (termBegin >= 0)
+				{
+					termBegin += "<term xml:id=\"".length();
+					termEnd = glossStr.indexOf("\"", termBegin);
+					if (termEnd >= 0)
+					{
+						glossItem.id = glossStr.substring(termBegin, termEnd);
+					
+						// Name
+						termBegin = glossStr.indexOf(">", termEnd);
+						if (termBegin >= 0)
+						{
+							termBegin += ">".length();
+							termEnd = glossStr.indexOf("</term>", termBegin);
+							if (termEnd >= 0)
+								glossItem.name = glossStr.substring(termBegin, termEnd);
+						}
+					}
+				}
+					
+				// Name (Bo)
+				termBegin = glossStr.indexOf("<term xml:lang=\"Bo-Ltn\">");
+				if (termBegin >= 0)
+				{
+					termBegin += "<term xml:lang=\"Bo-Ltn\">".length();
+					termEnd = glossStr.indexOf("</term>", termBegin);
+					if (termEnd >= 0)
+						glossItem.nameBo = glossStr.substring(termBegin, termEnd);
+				}
+				
+				// Name (Sa)
+				termBegin = glossStr.indexOf("<term xml:lang=\"Sa-Ltn\">");
+				if (termBegin >= 0)
+				{
+					termBegin += "<term xml:lang=\"Sa-Ltn\">".length();
+					termEnd = glossStr.indexOf("</term>", termBegin);
+					if (termEnd >= 0)
+						glossItem.nameSa = glossStr.substring(termBegin, termEnd);
+				}
+
+				// definition
+				termBegin = glossStr.indexOf("<term type=\"definition\">");
+				if (termBegin >= 0)
+				{
+					termBegin += "<term type=\"definition\">".length();
+					termEnd = glossStr.indexOf("</term>", termBegin);
+					if (termEnd >= 0)
+						glossItem.def = glossStr.substring(termBegin, termEnd);
+				}
+				else
+				{
+					//glossItem.def = "No definition available";
+					glossItem.def = "";
+				}
+
+				// Update appropriate data object
+				data.glossItems.add(glossItem);
+
+				// New content string replaces gloss item with HTML
+				newXmlStr += xmlStr.substring(prevGlossEnd, glossBegin);
+				newXmlStr += "<span id='" + glossItem.id + "'></span>";
+					
+				glossCount++;
+				prevGlossEnd = glossEnd;
+			}
+			else
+				break;
+		}
+		
+		if (glossCount > 0)
+		{
+			newXmlStr += xmlStr.substring(prevGlossEnd);
+			data.setContent(newXmlStr);
+		}
+	
+		return glossCount;
+	}
+	
+	private int findAndProcessMilestones(TextData data, String prefix)
+	{
+		// EXAMPLE:
+		/*
+		<milestone unit="chunk"/>
+		*/
+
+		int milestoneCount = 0;
+		int milestoneBegin, milestoneEnd, prevMilestoneEnd = 0;
+		int nextElementEnd;
+		String xmlStr = data.getContent();
+		String newXmlStr = "";
+
+		data.milestoneItems.clear();
+		
+		while (true)
+		{
+			milestoneBegin = xmlStr.indexOf(MILESTONE, prevMilestoneEnd);
+			milestoneEnd = milestoneBegin + MILESTONE.length();
+			//System.out.println("" + milestoneCount + " BEGIN: " + milestoneBegin + ", END: " + milestoneEnd);
+			
+			if (milestoneBegin >= 0)
+			{
+				MilestoneItem milestoneItem = new MilestoneItem();
+				milestoneItem.id = prefix + "." + (milestoneCount+1);
+				
+				data.milestoneItems.add(milestoneItem);
+
+				// New content string replaces gloss item with HTML
+				newXmlStr += xmlStr.substring(prevMilestoneEnd, milestoneBegin);
+				newXmlStr += "<span id='" + milestoneItem.id + "'></span>\n";
+				
+				// Find next element and add margin/indent style to it
+				nextElementEnd = xmlStr.indexOf(">", milestoneEnd);
+				if (nextElementEnd >= 0)
+				{
+					newXmlStr += xmlStr.substring(milestoneEnd, nextElementEnd);
+					if (milestoneCount == 0)
+						newXmlStr += " style='margin-top: -1.5em; text-indent: 0em'>";
+					else
+						newXmlStr += " style='margin-top: -1.5em;'>";
+				}
+				
+				// If first milestone, insert a div to thwart the "span+p" CSS (paragraph indent)
+				//if (milestoneCount == 0)
+				//	newXmlStr += "<div id=\"bla\"></div>";
+
+				milestoneCount++;
+				
+				if (nextElementEnd >= 0)
+					prevMilestoneEnd = nextElementEnd + ">".length();
+				else
+					prevMilestoneEnd = milestoneEnd;
+			}
+			else
+				break;
+		}
+	
+		if (milestoneCount > 0)
+		{
+			newXmlStr += xmlStr.substring(prevMilestoneEnd);
+			data.setContent(newXmlStr);
+		}
+	
+		return milestoneCount;
+	}
+	
+	private int findAndProcessNotes(TextData data, int startNum)
+	{
+		// EXAMPLE:
+		/*
+		<note place="end">The sūtra’s Sanskrit title <title xml:lang="Sa-Ltn">Amitāyurdhyānasūtra</title> is now believed to have
+                been fabricated at a later date. Most scholars even consider the <title xml:lang="Chi-Ltn">Guan wu liang shou jing</title> to be a Chinese or
+                Central Asian compilation. See Kōtatsu Fujita, “Textual Origins of the Kuan
+                Wu-liang-shou ching,” in Robert E. Buswell (1990), pp. 149–173. See
+                especially p. 155 and n. 48 on the question of the title. On p. 155 Fujita
+                says: “It cannot be determined categorically what the Sanskrit title of the
+                Kuan Wu-liang-shou ching might have been.”
+        </note>
+        */
+		int noteCount = 0;
+		String noteStr = null;
+		int noteBegin, noteEnd, prevNoteEnd = 0;
+		int textBegin, textEnd;
+		String xmlStr = data.getContent();
+		String newXmlStr = "";
+		
+		data.noteItems.clear();
+		
+		while (true)
+		{
+			noteBegin = xmlStr.indexOf("<note", prevNoteEnd);
+			noteEnd = xmlStr.indexOf("</note>", noteBegin) + "</note>".length();
+			
+			if (noteBegin >= 0 && noteEnd > noteBegin)
+			{
+				NoteItem noteItem = new NoteItem();
+				noteStr = xmlStr.substring(noteBegin, noteEnd);
+				//System.out.println("TEI PROCESS, NOTE STR: {" + noteStr + "}");
+
+				// ID
+				noteItem.id = "" + (startNum + (noteCount+1));
+
+				// Text
+				textBegin = noteStr.indexOf(">");
+				if (textBegin >= 0)
+				{
+					textBegin += ">".length();
+					textEnd = noteStr.length() - "</note>".length();
+					noteItem.text = noteStr.substring(textBegin, textEnd);
+				}
+
+				// Update appropriate data object
+				data.noteItems.add(noteItem);
+
+				// New content string replaces gloss item with HTML
+				newXmlStr += xmlStr.substring(prevNoteEnd, noteBegin);
+				newXmlStr += "<span id='" + noteItem.id + "'></span>";
+					
+				noteCount++;
+				prevNoteEnd = noteEnd;
+			}
+			else
+				break;
+		}
+		
+		if (noteCount > 0)
+		{
+			newXmlStr += xmlStr.substring(prevNoteEnd);
+			data.setContent(newXmlStr);
+		}
+	
+		return noteCount;
+	}
+	
+	private String findAndProcessRefs(TextData data)
+	{
+		// EXAMPLE:
+		/*
+			<ref cRef="F.10.b"/>
+        */
+		int refCount = 0;
+		String refStr = null, refNumStr = "";
+		int refBegin, refEnd, prevRefEnd = 0;
+		int textBegin, textEnd;
+		String xmlStr = data.getContent();
+		String newXmlStr = "";
+		
+		while (true)
+		{
+			refBegin = xmlStr.indexOf("<ref cRef=", prevRefEnd);
+			refEnd = xmlStr.indexOf(">", refBegin) + ">".length();
+			
+			if (refBegin >= 0 && refEnd > refBegin)
+			{
+				refStr = xmlStr.substring(refBegin, refEnd);
+
+				// Text
+				textBegin = refStr.indexOf("\"");
+				if (textBegin >= 0)
+				{
+					textBegin += "\"".length();
+					textEnd = refStr.indexOf("\"", textBegin);
+					refNumStr = refStr.substring(textBegin, textEnd);
+				}
+
+				// New content string replaces gloss item with HTML
+				newXmlStr += xmlStr.substring(prevRefEnd, refBegin);
+				newXmlStr += "[" + refNumStr + "] ";
+					
+				refCount++;
+				prevRefEnd = refEnd;
+			}
+			else
+				break;
+		}
+		
+		if (refCount > 0)
+			newXmlStr += xmlStr.substring(prevRefEnd);
+	
+		return newXmlStr;
+	}
+	
+	private int findAndProcessBiblItems(TextData data)
+	{
+		// EXAMPLE:
+		/*
+			<bibl>
+            	<title>’phags pa spyan ras gzigs dbang phyug gis zhus pa chos bdun pa zhes bya
+                        ba theg pa chen po’i mdo</title>.
+                <ref><abbr>rKTs</abbr>-K150</ref>,
+                <ref><abbr>J</abbr>94</ref>,
+                <title>Lithang (li thang) Kangyur</title>
+                (<abbr>J</abbr>) (<abbr>PK</abbr>), <biblScope>vol. 52 (mdo sde, pa), folios
+                278a-279a</biblScope>.
+                <ref subtype="url">http://tbrc.org/link?RID=W4CZ7445</ref>
+			</bibl>
+        */
+
+		int glossCount = 0;
+		/*
+		String glossStr = null;
+		int glossBegin, glossEnd, prevGlossEnd = 0;
+		int termBegin, termEnd;
+		String xmlStr = data.getContent();
+		String newXmlStr = "";
+		
+		data.glossItems.clear();
+		
+		while (true)
+		{
+			glossBegin = xmlStr.indexOf("<gloss>", prevGlossEnd);
+			glossEnd = xmlStr.indexOf("</gloss>", glossBegin) + "</gloss>".length();
+			System.out.println("" + glossCount + " BEGIN: " + glossBegin + ", END: " + glossEnd);
+			
+			if (glossBegin >= 0 && glossEnd > glossBegin)
+			{
+				GlossItem glossItem = new GlossItem();
+				glossStr = xmlStr.substring(glossBegin, glossEnd);
+				System.out.println("TEI PROCESS, GLOSS STR: {" + glossStr + "}");
+
+				// ID
+				termBegin = glossStr.indexOf("<term xml:id=\"");
+				if (termBegin >= 0)
+				{
+					termBegin += "<term xml:id=\"".length();
+					termEnd = glossStr.indexOf("\"", termBegin);
+					if (termEnd >= 0)
+					{
+						glossItem.id = glossStr.substring(termBegin, termEnd);
+					
+						// Name
+						termBegin = glossStr.indexOf(">", termEnd);
+						if (termBegin >= 0)
+						{
+							termBegin += ">".length();
+							termEnd = glossStr.indexOf("</term>", termBegin);
+							if (termEnd >= 0)
+								glossItem.name = glossStr.substring(termBegin, termEnd);
+						}
+					}
+				}
+					
+				// Name (Bo)
+				termBegin = glossStr.indexOf("<term xml:lang=\"Bo-Ltn\">");
+				if (termBegin >= 0)
+				{
+					termBegin += "<term xml:lang=\"Bo-Ltn\">".length();
+					termEnd = glossStr.indexOf("</term>", termBegin);
+					if (termEnd >= 0)
+						glossItem.nameBo = glossStr.substring(termBegin, termEnd);
+				}
+				
+				// Name (Sa)
+				termBegin = glossStr.indexOf("<term xml:lang=\"Sa-Ltn\">");
+				if (termBegin >= 0)
+				{
+					termBegin += "<term xml:lang=\"Sa-Ltn\">".length();
+					termEnd = glossStr.indexOf("</term>", termBegin);
+					if (termEnd >= 0)
+						glossItem.nameSa = glossStr.substring(termBegin, termEnd);
+				}
+
+				// definition
+				termBegin = glossStr.indexOf("<term type=\"definition\">");
+				if (termBegin >= 0)
+				{
+					termBegin += "<term type=\"definition\">".length();
+					termEnd = glossStr.indexOf("</term>", termBegin);
+					if (termEnd >= 0)
+						glossItem.def = glossStr.substring(termBegin, termEnd);
+				}
+				else
+					glossItem.def = "No definition available";
+
+				// Update appropriate data object
+				data.glossItems.add(glossItem);
+
+				// New content string replaces gloss item with HTML
+				newXmlStr += xmlStr.substring(prevGlossEnd, glossBegin);
+				newXmlStr += "<span id='" + glossItem.id + "'></span>";
+					
+				glossCount++;
+				prevGlossEnd = glossEnd;
+			}
+			else
+				break;
+		}
+		
+		if (glossCount > 0)
+		{
+			newXmlStr += xmlStr.substring(prevGlossEnd);
+			data.setContent(newXmlStr);
+		}
+	
+		 */
+		return glossCount;
+		
+	}
+	
+	private void processTranslationParts(String str)
+	{
+		// EXAMPLE:
+		/*
+		*/
+		int partCount = 0;
+		int partBegin, prevPartEnd = 0;
+	
+		while ((partBegin = str.indexOf("<div type=\"chapter\"", prevPartEnd)) >= 0)
+		{
+			TextData partData = new TextData();
+			String partStr = XmlUtils.getXmlNode(str, "div", partBegin);
+			
+			// Set part name/title
+			int partNameNodeBegin, partNameNodeEnd;
+			int partNameBegin, partNameEnd;
+			partNameNodeBegin = str.indexOf("<head type=\"chapter\">", partBegin);
+			if (partNameNodeBegin >= 0)
+			{
+				partNameBegin = partNameNodeBegin + "<head type=\"chapter\">".length();
+				partNameEnd = str.indexOf("</head>", partNameBegin);
+				partNameNodeEnd = partNameEnd + "</head>".length();
+				String titleNodeStr = "", titleStr = "";
+				if (partNameEnd >= 0)
+				{
+					titleNodeStr = str.substring(partNameNodeBegin, partNameNodeEnd);
+					titleStr = str.substring(partNameBegin, partNameEnd);
+					partData.setTitle(titleStr);
+				}
+
+				// Strip title from XML
+				partStr = partStr.replace(titleNodeStr, "");
+
+				// Set part subtitle
+				int subtitleNodeBegin, subtitleNodeEnd;
+				int subtitleBegin, subtitleEnd;
+				subtitleNodeBegin = str.indexOf("<head type=\"chapterTitle\">", partNameBegin);
+				if (subtitleNodeBegin >= 0)
+				{
+					subtitleBegin = subtitleNodeBegin + "<head type=\"chapterTitle\">".length();
+					subtitleEnd = str.indexOf("</head>", subtitleBegin);
+					subtitleNodeEnd = subtitleEnd + "</head>".length();
+					String subtitleNodeStr = "", subtitleStr = "";
+					if (subtitleEnd >= 0)
+					{
+						subtitleNodeStr = str.substring(subtitleNodeBegin, subtitleNodeEnd);
+						subtitleStr = str.substring(subtitleBegin, subtitleEnd);
+						partData.setSubtitle(subtitleStr);
+					}
+
+					// Strip title from XML
+					partStr = partStr.replace(subtitleNodeStr, "");
+				}
+			}
+			
+			// Set part content
+			partData.setContent(partStr);
+
+			// Add part to list
+			translationParts.add(partData);
+			partCount++;
+
+			prevPartEnd = partBegin + partStr.length();
+		}
+		
+		System.out.println("---> Successfully processed [" + partCount + "] parts <---");
+	}
+	
+	public TextData getTextSummaryData() { return summaryData; }
+	public TextData getTextAckData() { return ackData; }
+	public TextData getTextIntroData() { return introData; }
+	
+	public ArrayList<String> getTranslationPartNames()
+	{
+		ArrayList<String> partNames = new ArrayList<String>();
+		
+		for (int i = 0; i < translationParts.size(); i++)
+			partNames.add(translationParts.get(i).getTitle());
+		
+		return partNames;
+	}
+	
+	public TextData getTransPartByName(String partName)
+	{
+		TextData partData = null;
+		
+		for (int i = 0; i < translationParts.size(); i++)
+		{
+			if (translationParts.get(i).getTitle().equalsIgnoreCase(partName))
+			{
+				partData = translationParts.get(i);
+				break;
+			}
+		}
+		
+		return partData;
+	}
+}

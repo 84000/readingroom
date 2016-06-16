@@ -1,0 +1,184 @@
+package org.tbrc.readingroom.client;
+
+import java.util.ArrayList;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.DeckPanel;
+import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
+
+public class PopupNavPanel extends Composite {
+
+	private static TextInfoPanelUiBinder uiBinder = GWT
+			.create(TextInfoPanelUiBinder.class);
+
+	interface TextInfoPanelUiBinder extends UiBinder<Widget, PopupNavPanel> {
+	}
+
+	public PopupNavPanel()
+	{
+		initWidget(uiBinder.createAndBindUi(this));
+	}
+
+//	@UiField VerticalPanel contentsPanel;
+//	@UiField VerticalPanel glossPanel;
+//	@UiField VerticalPanel notesPanel;
+	@UiField VerticalPanel infoPanel;
+	@UiField HorizontalPanel tabBar;
+	@UiField Button contentsTab;
+	@UiField Button glossTab;
+	@UiField Button notesTab;
+	@UiField ScrollPanel contentsScrollPanel;
+	@UiField ScrollPanel glossScrollPanel;
+	@UiField ScrollPanel notesScrollPanel;
+	@UiField VerticalPanel contentsPanel;
+	@UiField VerticalPanel glossPanel;
+	@UiField VerticalPanel notesPanel;
+
+	Reader reader;
+	
+//	public void initialize(DeckPanel textDeckPanel)
+//	{
+//		deck = textDeckPanel;
+		
+	public void initialize(Reader r, int transStartPage)
+	{
+		reader = r;
+		final int startPage = transStartPage;
+		ArrayList<String> names = reader.getPartNames();
+
+		// Contents
+		for (int i = 0; i < names.size(); i++)
+		{
+			Label partLabel = new Label(names.get(i));
+			
+			if (i == transStartPage)
+			{
+				Label transLabel = new Label("The Translation");
+				transLabel.setStyleName("navPanelTitle");
+				contentsPanel.add(transLabel);
+			}
+			
+			if (i < transStartPage)
+				partLabel.setStyleName("frontmatter");
+			else
+				partLabel.setStyleName("chapters");
+			contentsPanel.add(partLabel);
+			
+			partLabel.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event)
+				{
+					int j;
+					for (j = 0; j < contentsPanel.getWidgetCount(); j++)
+					{
+						if (event.getSource() == contentsPanel.getWidget(j))
+							break;
+					}
+					
+					// Chapuza!!
+					if (j > startPage)
+						j--;
+					reader.showPage(j);
+				}
+			});
+		}
+		
+		// Glossary
+		for (int i = 0; i < r.masterItemLists.glossItems.size(); i++)
+		{
+			GlossTermPanel glossTerm = new GlossTermPanel();
+			HTMLPanel horizLine = new HTMLPanel("<hr size=1 width=100% color=#e2af85>");
+			glossPanel.add(horizLine);
+			glossTerm.initialize(r.masterItemLists.glossItems.get(i));
+			glossPanel.add(glossTerm);
+		}
+		
+		// Notes
+		for (int i = 0; i < r.masterItemLists.noteItems.size(); i++)
+		{
+			NotePanel note = new NotePanel();
+			HTMLPanel horizLine = new HTMLPanel("<hr size=1 width=100% color=#e2af85>");
+			notesPanel.add(horizLine);
+			note.initialize(r.masterItemLists.noteItems.get(i));
+			notesPanel.add(note);
+		}
+	}
+	
+	/*
+	public void refresh(Reader r)
+	{
+		// Glossary
+		glossPanel.clear();
+		for (int i = 0; i < r.masterGlossItems.size(); i++)
+		{
+			GlossTermPanel glossTerm = new GlossTermPanel();
+			HTMLPanel horizLine = new HTMLPanel("<hr size=1 width=100% color=#e2af85>");
+			glossPanel.add(horizLine);
+			glossTerm.initialize(r.masterGlossItems.get(i));
+			glossPanel.add(glossTerm);
+		}
+		
+		// Notes
+		notesPanel.clear();
+		for (int i = 0; i < r.masterNoteItems.size(); i++)
+		{
+			NotePanel note = new NotePanel();
+			HTMLPanel horizLine = new HTMLPanel("<hr size=1 width=100% color=#e2af85>");
+			notesPanel.add(horizLine);
+			note.initialize(r.masterNoteItems.get(i));
+			notesPanel.add(note);
+		}
+	}
+	*/
+	
+	public void onViewportSizeChange(int newWidth)
+	{
+		int panelWidth = (int)(newWidth * 0.30);
+		infoPanel.setWidth("" + panelWidth + "px");
+		
+		int tabWidth = panelWidth / 3;
+		contentsTab.setWidth("" + tabWidth + "px");
+		contentsScrollPanel.setHeight("" + (Window.getClientHeight() * .6) + "px");
+		glossTab.setWidth("" + tabWidth + "px");
+		glossScrollPanel.setHeight("" + (Window.getClientHeight() * .6) + "px");
+		notesTab.setWidth("" + tabWidth + "px");
+		notesScrollPanel.setHeight("" + (Window.getClientHeight() * .6) + "px");
+	}
+
+	@UiHandler("contentsTab")
+	void onContentsTabClick(ClickEvent e)
+	{
+		contentsScrollPanel.setVisible(true);		contentsTab.addStyleName("infoPanelTabSelected");
+		glossScrollPanel.setVisible(false);		glossTab.removeStyleName("infoPanelTabSelected");
+		notesScrollPanel.setVisible(false);		notesTab.removeStyleName("infoPanelTabSelected");
+	}
+
+	@UiHandler("glossTab")
+	void onGlossTabClick(ClickEvent e)
+	{
+		contentsScrollPanel.setVisible(false);	contentsTab.removeStyleName("infoPanelTabSelected");
+		glossScrollPanel.setVisible(true);		glossTab.addStyleName("infoPanelTabSelected");
+		notesScrollPanel.setVisible(false);		notesTab.removeStyleName("infoPanelTabSelected");
+	}
+
+	@UiHandler("notesTab")
+	void onNotesTabClick(ClickEvent e)
+	{
+		contentsScrollPanel.setVisible(false);	contentsTab.removeStyleName("infoPanelTabSelected");
+		glossScrollPanel.setVisible(false);		glossTab.removeStyleName("infoPanelTabSelected");
+		notesScrollPanel.setVisible(true);		notesTab.addStyleName("infoPanelTabSelected");
+	}
+}

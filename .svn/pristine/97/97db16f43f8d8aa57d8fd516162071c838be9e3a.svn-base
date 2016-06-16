@@ -1,0 +1,33 @@
+package org.tbrc.readingroom.client;
+
+public class LobbyItem
+{
+	private String id			= null;
+	private String nameEn 		= null;
+	private String nameTi 		= null;
+	private String nameWy	 	= null;
+	private String nameSa		= null;
+	private String desc 		= null;
+	private String statsTotal	= null;
+	private String statsTrans	= null;
+	private String statsInProg	= null;
+	private String statsNotBeg	= null;
+
+	public String getId() {return id;}					public void setId(String id) {this.id = id;}
+	public String getNameEn() {return nameEn;}			public void setNameEn(String nameEn) {this.nameEn = nameEn;}
+	public String getNameTi() {return nameTi;}			public void setNameTi(String nameTi) {this.nameTi = nameTi;}
+	public String getNameWy() {return nameWy;}			public void setNameWy(String nameWy) {this.nameWy = nameWy;}
+	public String getNameSa() {return nameSa;}			public void setNameSa(String nameSa) {this.nameSa = nameSa;}
+	public String getDesc() {return desc;}				public void setDesc(String desc) {this.desc = desc;}
+	public String getStatsTotal() {return statsTotal;}	public void setStatsTotal(String statsTotal) {this.statsTotal = statsTotal;}
+	public String getStatsTrans() {return statsTrans;}	public void setStatsTrans(String statsTrans) {this.statsTrans = statsTrans;}
+	public String getStatsInProg() {return statsInProg;}public void setStatsInProg(String statsInProg) {this.statsInProg = statsInProg;}
+	public String getStatsNotBeg() {return statsNotBeg;}public void setStatsNotBeg(String statsNotBeg) {this.statsNotBeg = statsNotBeg;}
+
+	/*
+	LobbyItem()
+	{
+		
+	}
+	*/
+}

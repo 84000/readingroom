@@ -1,0 +1,53 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+
+	<ui:style>
+	.important {
+		font-weight: bold;
+	}
+	.nameSpacer {
+		margin: 0px 4px 0px 4px;
+	}
+	</ui:style>
+
+	<g:HTMLPanel styleName="section" addStyleNames="table">
+		<!-- Top part includes section name, description -->
+		<g:HorizontalPanel horizontalAlignment="ALIGN_CENTER">
+			<g:VerticalPanel width="85%" horizontalAlignment="ALIGN_CENTER">
+				<!--  <g:Label ui:field="titleEnLabel" addStyleNames="h2 h2_en">Discipline</g:Label> -->
+				<g:Label ui:field="titleEnLabel" styleName="itemTitleFont">Loading...</g:Label>
+				<g:HorizontalPanel width="100%" horizontalAlignment="ALIGN_CENTER">
+					<g:Label ui:field="titleTiLabel" horizontalAlignment="ALIGN_RIGHT" addStyleNames="h2 h2_sa">Loading...</g:Label>
+					<g:Label addStyleNames="h2 h2_sa">&nbsp;&nbsp;</g:Label>
+					<g:Label ui:field="titleWyLabel" horizontalAlignment="ALIGN_LEFT" addStyleNames="h2 h2_bo">Loading...</g:Label>
+				</g:HorizontalPanel>
+				<g:Label ui:field="titleSaLabel" addStyleNames="h2 h2_sa">Vinaya</g:Label>
+				<g:Label ui:field="descLabel" styleName="desc">This is some place-holder text while the system is
+					retrieving data from the database.
+				</g:Label>
+			</g:VerticalPanel>
+		</g:HorizontalPanel>
+		<!-- Bottom part is the table showing translation progress -->
+		<g:HorizontalPanel ui:field="sectionTable" spacing="10" horizontalAlignment="ALIGN_CENTER" styleName="tableTexts" addStyleNames="table">
+			<g:VerticalPanel width="90%" horizontalAlignment="ALIGN_CENTER">
+				<g:HorizontalPanel width="100%" verticalAlignment="ALIGN_MIDDLE">
+					<g:Label styleName="tableTexts" addStyleNames="tableType tableUnderscore">TEXTS</g:Label>
+					<g:Label ui:field="textsLabel" styleName="tableTexts" addStyleNames="tableCount tableUnderscore" horizontalAlignment="ALIGN_RIGHT">000</g:Label>
+				</g:HorizontalPanel>
+				<g:HorizontalPanel width="100%" verticalAlignment="ALIGN_MIDDLE">
+					<g:Label styleName="tableTexts" addStyleNames="tableType tableUnderscore">Translated</g:Label>
+					<g:Label ui:field="translatedLabel" styleName="tableTexts" addStyleNames="tableCount tableUnderscore" horizontalAlignment="ALIGN_RIGHT">00</g:Label>
+				</g:HorizontalPanel>
+				<g:HorizontalPanel width="100%" verticalAlignment="ALIGN_MIDDLE">
+					<g:Label styleName="tableTexts" addStyleNames="tableType tableUnderscore">In Progress</g:Label>
+					<g:Label ui:field="inProgressLabel" styleName="tableTexts" addStyleNames="tableCount tableUnderscore" horizontalAlignment="ALIGN_RIGHT">00</g:Label>
+				</g:HorizontalPanel>
+				<g:HorizontalPanel width="100%" verticalAlignment="ALIGN_MIDDLE">
+					<g:Label styleName="tableTexts" addStyleNames="tableType">Not Begun</g:Label>
+					<g:Label ui:field="notBegunLabel" styleName="tableTexts" addStyleNames="tableCount" horizontalAlignment="ALIGN_RIGHT">00</g:Label>
+				</g:HorizontalPanel>
+			</g:VerticalPanel>
+		</g:HorizontalPanel>
+	</g:HTMLPanel>
+</ui:UiBinder> 

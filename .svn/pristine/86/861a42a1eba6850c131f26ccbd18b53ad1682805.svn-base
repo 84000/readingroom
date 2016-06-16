@@ -1,0 +1,11 @@
+package org.tbrc.readingroom.client;
+
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.VerticalPanel;
+
+public class SectionPanel extends VerticalPanel
+{
+	Label tLabel = new Label("The Kangyur");
+	Label ttLabel = new Label("བསྟན་འགྱུར");
+	Label thLabel = new Label("bstan 'gyur");
+}

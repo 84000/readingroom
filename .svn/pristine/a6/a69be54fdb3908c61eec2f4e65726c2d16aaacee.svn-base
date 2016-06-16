@@ -1,0 +1,170 @@
+package org.tbrc.readingroom.client;
+
+import org.tbrc.readingroom.shared.Constants;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.History;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
+
+public class SectionListing extends Composite {
+
+	private static SectionListingUiBinder uiBinder = GWT
+			.create(SectionListingUiBinder.class);
+
+	interface SectionListingUiBinder extends UiBinder<Widget, SectionListing> {
+	}
+
+	@UiField Label tohLabel;
+	@UiField Label titleEnLabel;
+	@UiField Label titleTiLabel;
+	@UiField Label titleWyLabel;
+	@UiField Label titleSaLabel;
+	@UiField Grid listingGrid;
+	@UiField Button actionButton;
+	@UiField Button origButton;
+	@UiField HorizontalPanel mainBottomPanel;
+	@UiField VerticalPanel rightSidePanel;
+	@UiField Label summaryLabel;
+	@UiField Label summaryText;
+	
+	private LobbyItem thisItem = new LobbyItem();
+	private Boolean summaryShowing = false;
+	
+	// If "subsections" button is pressed, create nested Section
+	@UiHandler("actionButton")
+	void onClick(ClickEvent e) {
+		Window.alert("Go to subsection");
+		/*
+		Section subsection = new Section();
+		subsection.initialize(thisItem);
+		Readingroom.main.subsections.push(subsection);
+		Readingroom.main.deckPanel.add(subsection);
+		Readingroom.main.showPage(Constants.SECTION_INDEX + Readingroom.main.subsections.size());
+		History.newItem("subsection" + thisItem.getId());
+		*/
+	}
+
+	public SectionListing()
+	{
+		initWidget(uiBinder.createAndBindUi(this));
+
+		// Make sure row is top-aligned
+		listingGrid.getRowFormatter().setVerticalAlign(0, HasVerticalAlignment.ALIGN_TOP);
+	}
+	
+	public SectionListing(int index, SectionItem item)
+	{
+		initWidget(uiBinder.createAndBindUi(this));
+
+		// Make sure row is top-aligned and has correct background color
+		listingGrid.getRowFormatter().setVerticalAlign(0, HasVerticalAlignment.ALIGN_TOP);
+		if ((index % 2) == 1)
+			listingGrid.addStyleName("listing_odd");
+		
+		// Populate listing with item data
+		tohLabel.setText("" + index);
+		titleEnLabel.setText(splitGiantWord(item.getNameEn()));
+		titleTiLabel.setText(splitGiantWord(item.getNameTi()));
+		titleWyLabel.setText(splitGiantWord(item.getNameWy()));
+		titleSaLabel.setText(splitGiantWord(item.getNameSa()));
+		summaryText.setText(item.getDesc());
+		summaryText.setVisible(false);
+		
+		// Fill out our item
+		thisItem.setId(item.getId());
+		thisItem.setNameEn(item.getNameEn());
+		thisItem.setNameTi(item.getNameTi());
+		thisItem.setNameWy(item.getNameWy());
+		thisItem.setNameSa(item.getNameSa());
+		thisItem.setDesc(item.getDesc());
+	}
+	
+	private String splitGiantWord(String text)
+	{
+		String newText = text;
+		
+		if (text.length() > 40)
+		{
+			if (!text.contains(" "))
+				newText = text.substring(0, 40) + " " + text.substring(41);
+		}
+		
+		return newText;
+	}
+	
+	public void onViewportSizeChange(int newWidth)
+	{
+		if (newWidth >= Constants.LARGE_VIEWPORT_MIN_WIDTH)
+		{
+			// Resize grid elements
+			listingGrid.resizeColumns(3);
+			listingGrid.setWidget(0, 2, rightSidePanel);
+			listingGrid.getColumnFormatter().setStyleName(1, "title");
+			listingGrid.getColumnFormatter().setStyleName(2, "translation");
+			
+			// Reposition translation buttons
+			if (mainBottomPanel.remove(actionButton))
+				rightSidePanel.add(actionButton);
+			if (mainBottomPanel.remove(origButton))
+				rightSidePanel.add(origButton);
+		}
+		else if (newWidth >= Constants.MEDIUM_VIEWPORT_MIN_WIDTH)
+		{
+			// Resize grid elements
+			listingGrid.resizeColumns(2);
+
+			// Reposition translation buttons
+			if (rightSidePanel.remove(actionButton))
+				mainBottomPanel.add(actionButton);
+			if (rightSidePanel.remove(origButton))
+				mainBottomPanel.add(origButton);
+		}
+		else // newWidth < med min
+		{
+		}
+	}
+	
+	@UiHandler("summaryLabel")
+	void onSummaryClick(ClickEvent e) {
+		if (summaryShowing)
+			hideSummaryText();
+		else
+			showSummaryText();
+	}
+	
+	public void showSummaryText()
+	{
+		if (!summaryShowing)
+		{
+			summaryLabel.removeStyleName("ss-navigateright");
+			summaryLabel.addStyleName("ss-navigatedown");
+			summaryText.setVisible(true);
+
+			summaryShowing = true;
+		}
+	}
+
+	public void hideSummaryText()
+	{
+		if (summaryShowing)
+		{
+			summaryLabel.removeStyleName("ss-navigatedown");
+			summaryLabel.addStyleName("ss-navigateright");
+			summaryText.setVisible(false);
+
+			summaryShowing = false;
+		}
+	}
+}

@@ -1,0 +1,23 @@
+*.class
+
+# Package Files #
+*.jar
+*.war
+
+# gwt caches and compiled units #
+war/readingroom/
+gwt-unitCache/
+
+# more caches and things from deploy #
+war/WEB-INF/deploy/
+war/WEB-INF/classes/
+war/WEB-INF/web.xml
+
+#compilation logs
+.gwt/
+
+#caching for already compiled files
+gwt-unitCache/
+
+#gwt junit compilation files
+www-test/

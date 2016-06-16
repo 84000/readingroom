@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
+              http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+         version="2.5"
+         xmlns="http://java.sun.com/xml/ns/javaee">
+
+  <!-- Servlets -->
+  <servlet>
+    <servlet-name>rrServlet</servlet-name>
+    <servlet-class>org.tbrc.readingroom.server.ReadingRoomServiceImpl</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>rrServlet</servlet-name>
+    <url-pattern>/readingroom/rr</url-pattern>
+  </servlet-mapping>
+  
+  <!-- Default page to serve -->
+  <welcome-file-list>
+    <welcome-file>Readingroom.html</welcome-file>
+  </welcome-file-list>
+
+<<<<<<< .mine
+
+  <!-- Filters -->
+  <!-- URL rewrite filter configuration -->
+  <!-- <filter> -->
+ 	<!--
+    <filter-name>UrlRewriteFilter</filter-name>
+    <filter-class>org.tuckey.web.filters.urlrewrite.UrlRewriteFilter</filter-class>
+    <init-param>
+      <param-name>logLevel</param-name>
+      <param-value>WARN</param-value>
+    </init-param>
+    -->
+    
+    <!-- set the amount of seconds the conf file will be checked for reload
+			can be a valid integer (0 denotes check every time, empty/not set denotes no reload check) -->
+	<!--
+    <init-param>
+      <param-name>confReloadCheckInterval</param-name>
+      <param-value>60</param-value>
+    </init-param>
+    -->
+    
+    <!-- you can disable status page if desired can be: true, false (default true) -->
+	<!--
+    <init-param>
+      <param-name>statusEnabled</param-name>
+      <param-value>true</param-value>
+    </init-param>
+    -->
+    
+    <!-- you can change status path so that it does not conflict with your installed apps (note, defaults
+			to /rewrite-status) note, must start with / -->
+	<!--
+    <init-param>
+      <param-name>statusPath</param-name>
+      <param-value>/status</param-value>
+    </init-param>
+    -->
+    
+    <!-- you may want to allow more hosts to look at the status page
+			statusEnabledOnHosts is a comma delimited list of hosts, * can
+			be used as a wildcard (defaults to "localhost, local, 127.0.0.1") -->
+	<!--
+    <init-param>
+      <param-name>statusEnabledOnHosts</param-name>
+      <param-value>*</param-value>
+    </init-param>	
+    -->
+  <!-- </filter> -->
+  
+  <!-- Filter Mappings -->
+  <!-- Url Rewriting filter mapping -->
+  <!--
+  <filter-mapping>
+    <filter-name>UrlRewriteFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+    <dispatcher>REQUEST</dispatcher>
+    <dispatcher>FORWARD</dispatcher>
+  </filter-mapping>
+  -->
+  
+=======
+>>>>>>> .r4717
+</web-app>

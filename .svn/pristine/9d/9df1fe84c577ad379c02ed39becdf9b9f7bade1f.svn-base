@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" output="test-classes" path="test"/>
+	<classpathentry kind="con" path="com.google.gwt.eclipse.core.GWT_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="/org.tbrc.shared/lib/exist.jar" sourcepath="/eXist-2.0.x"/>
+	<classpathentry kind="lib" path="/org.tbrc.shared/lib/ws-commons-util-1.0.2.jar"/>
+	<classpathentry kind="lib" path="/org.tbrc.shared/lib/xml-apis-1.4.01.jar"/>
+	<classpathentry kind="lib" path="/org.tbrc.shared/lib/xmldb.jar" sourcepath="/usr/local/xmldb/xmldb"/>
+	<classpathentry kind="lib" path="/org.tbrc.shared/lib/xmlrpc-client-3.1.3.jar"/>
+	<classpathentry kind="lib" path="/org.tbrc.shared/lib/xmlrpc-common-3.1.3.jar"/>
+	<classpathentry kind="lib" path="/org.tbrc.gwt.common/lib/activation-1.1.1.jar"/>
+	<classpathentry kind="lib" path="/org.tbrc.gwt.common/lib/commons-email-1.2.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="https://commons.apache.org/proper/commons-email/javadocs/api-1.2/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/org.tbrc.gwt.common/lib/gwt-dnd-2.6.5.jar"/>
+	<classpathentry kind="lib" path="/org.tbrc.gwt.common/lib/gwt-visualization.jar"/>
+	<classpathentry kind="lib" path="/org.tbrc.gwt.common/lib/mail.jar"/>
+	<classpathentry kind="lib" path="/org.tbrc.gwt.common/lib/rsslib4j-0.2.jar"/>
+	<classpathentry kind="lib" path="/org.tbrc.shared/lib/log4j-1.2.17.jar"/>
+	<classpathentry kind="lib" path="/Users/chris/gwt-2.7.0/gwt-dev.jar"/>
+	<classpathentry kind="lib" path="lib/gwt-log-3.3.2.jar"/>
+	<classpathentry kind="output" path="war/WEB-INF/classes"/>
+</classpath>

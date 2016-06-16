@@ -1,0 +1,23 @@
+package org.tbrc.readingroom.client;
+
+import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.user.client.ui.RootPanel;
+
+/**
+ * Entry point classes define <code>onModuleLoad()</code>.
+ */
+public class Readingroom implements EntryPoint
+{
+	// Main reading-room page
+	public static Main main = new Main();
+	
+	/**
+	 * This is the entry point method.
+	 */
+	public void onModuleLoad()
+	{
+		// Build out main page
+		RootPanel.get("mainPanel").add(main);
+		RootPanel.get().setStyleName("background");
+	}
+}

@@ -1,0 +1,9 @@
+package org.tbrc.readingroom.shared;
+
+public class Constants
+{
+	//     final String URI 		= "xmldb:exist://tbrc.org:51173/exist/xmlrpc";
+	public static final String CAD_DOMAIN				= "tbrc.org";
+	public static final String CAD_SERVER_PORT			= "51173";
+	public static final String CAD_SERVER_BASE_URL		= "http://" + CAD_DOMAIN + ":" + CAD_SERVER_PORT + "/";
+}

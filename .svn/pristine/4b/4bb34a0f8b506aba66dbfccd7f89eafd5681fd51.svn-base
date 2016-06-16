@@ -1,0 +1,22 @@
+/* INCLUDE THIS LINE FOR SYNCHRONOUS USE OF LINOTYPE FONTS!! */
+@import url("http://fast.fonts.net/lt/1.css?apiType=css&c=2f2b7444-fe9b-4532-bdae-95c912f0e401&fontids=675535,675532,675502,675517");
+@font-face{
+font-family:"Trade Gothic W02 Roman";
+src:url("Fonts/675535/9988b815-1feb-406c-a883-daa713dde285.eot?#iefix");
+src:url("Fonts/675535/9988b815-1feb-406c-a883-daa713dde285.eot?#iefix") format("eot"),url("Fonts/675535/89cdefe7-0e02-4f9b-9b0a-c92845cab3d6.woff") format("woff"),url("Fonts/675535/6e07ee60-77f5-4906-9488-872597538762.ttf") format("truetype"),url("Fonts/675535/b4a8da2c-ff35-40ec-8433-c4e4738c488b.svg#b4a8da2c-ff35-40ec-8433-c4e4738c488b") format("svg");
+}
+@font-face{
+font-family:"Trade Gothic W02 Obl";
+src:url("Fonts/675532/97f2eeee-a110-4716-924a-4bdec072042c.eot?#iefix");
+src:url("Fonts/675532/97f2eeee-a110-4716-924a-4bdec072042c.eot?#iefix") format("eot"),url("Fonts/675532/4b1e6022-8432-43e3-8127-0fec63d9ca8c.woff") format("woff"),url("Fonts/675532/9aa3e556-5dc6-49f1-a763-c14d7971f3d9.ttf") format("truetype"),url("Fonts/675532/e4d12f8d-b186-4351-9be2-bf40c035aa15.svg#e4d12f8d-b186-4351-9be2-bf40c035aa15") format("svg");
+}
+@font-face{
+font-family:"Trade Gothic W02 Bold";
+src:url("Fonts/675502/78397af4-a9d9-4b09-bbd0-9e73b50505ae.eot?#iefix");
+src:url("Fonts/675502/78397af4-a9d9-4b09-bbd0-9e73b50505ae.eot?#iefix") format("eot"),url("Fonts/675502/e6479257-b3cc-46ce-8211-c61bf17beade.woff") format("woff"),url("Fonts/675502/e1818938-fb5b-4dd7-b591-7c9203690937.ttf") format("truetype"),url("Fonts/675502/30f633f8-d29f-464b-9fe9-5d8974aee0ac.svg#30f633f8-d29f-464b-9fe9-5d8974aee0ac") format("svg");
+}
+@font-face{
+font-family:"TradeGothicW02-BoldObl";
+src:url("Fonts/675517/44aab9b8-297b-4f56-9d16-9bfa869d155e.eot?#iefix");
+src:url("Fonts/675517/44aab9b8-297b-4f56-9d16-9bfa869d155e.eot?#iefix") format("eot"),url("Fonts/675517/cd9647e7-006b-49f2-9f17-fa1ea385880d.woff") format("woff"),url("Fonts/675517/d2e6dacb-4409-47de-bfc3-0b5240cf1426.ttf") format("truetype"),url("Fonts/675517/e71d8403-550c-4239-b8ab-febcec203d90.svg#e71d8403-550c-4239-b8ab-febcec203d90") format("svg");
+}

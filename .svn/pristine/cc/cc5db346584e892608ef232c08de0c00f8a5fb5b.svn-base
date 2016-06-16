@@ -1,0 +1,35 @@
+package org.tbrc.readingroom.client;
+
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.VerticalPanel;
+
+public class LobbyPanel extends VerticalPanel
+{
+	public LobbyPanel()
+	{
+		// Style page
+		setStyleName("mainPage");
+		setHorizontalAlignment(ALIGN_CENTER);
+		setSpacing(20);
+		
+		// Title bar
+		HorizontalPanel kangyurTitlePanel = new HorizontalPanel();
+		kangyurTitlePanel.setWidth("96%");
+		kangyurTitlePanel.setSpacing(20);
+		kangyurTitlePanel.addStyleName("redBackground");
+		Label kLabel = new Label("The Kangyur");
+		kLabel.setStyleName("mainFont");
+		kLabel.addStyleName("bigTitle");
+		kangyurTitlePanel.add(kLabel);
+
+		// Subtitle
+		Label subtitle = new Label("The collected scriptures, translations into Tibetan of the " +
+								   "Indian texts considered to record the words of the Buddha.");
+		subtitle.addStyleName("subtitleFont");
+		subtitle.setWidth("50%");
+		
+		add(kangyurTitlePanel);
+		add(subtitle);
+	}
+}

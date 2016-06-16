@@ -1,0 +1,6 @@
+package org.tbrc.readingroom.client;
+
+public class Globals
+{
+	public static String version = "0.006";
+}

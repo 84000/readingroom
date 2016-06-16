@@ -1,0 +1,248 @@
+package org.tbrc.readingroom.client;
+
+import java.util.ArrayList;
+import java.util.Stack;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Cursor;
+import com.google.gwt.event.logical.shared.ResizeEvent;
+import com.google.gwt.event.logical.shared.ResizeHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.History;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.DeckPanel;
+import com.google.gwt.user.client.ui.Widget;
+
+import org.tbrc.readingroom.shared.Constants;
+
+public class Main extends Composite implements ValueChangeHandler<String>
+{
+	private static MainUiBinder uiBinder = GWT.create(MainUiBinder.class);
+	
+	interface MainUiBinder extends UiBinder<Widget, Main> {
+	}
+
+	@UiField Header header;
+	@UiField DeckPanel deckPanel;
+	//@UiField Lobby lob;
+	//@UiField Section section;
+	
+	private class Page
+	{
+		public Composite panel;
+		public String historyId = "";
+		public String style = "";
+		public String breadCrumbText = "";
+	}
+	
+	private ArrayList<Page> pages = new ArrayList<Page>();
+	private Lobby lobby;
+	private Section section;
+	
+	private DataItem currentDataItem = null;
+	private Widget currentInvokingWidget = null;
+
+	public Main()
+	{
+		initWidget(uiBinder.createAndBindUi(this));
+		
+//		deckPanel.showWidget(Constants.LOBBY_INDEX);
+//		History.newItem("lobby");
+//		onViewportSizeChange();
+
+		// Add history listener
+	    History.addValueChangeHandler(this);
+	    
+	    // Load initial (lobby) page
+		lobby = new Lobby(true);
+		deckPanel.add(lobby);
+
+		Page p = new Page();
+	    p.panel = lobby;
+	    p.historyId = "lobby";
+	    p.style = "lobby";
+	    p.breadCrumbText = "Lobby";
+	    pages.add(p);
+	    
+	    // Start on the Lobby page
+	    if (History.getToken().equals(""))
+	    	History.newItem("lobby");
+	    
+		Queries.lobbyQuery(lobbyCallback);
+	    
+	    History.fireCurrentHistoryState();
+		onViewportSizeChange();
+
+		// Add window resize handler (responsive design)
+		Window.addResizeHandler(new ResizeHandler() {
+			public void onResize(ResizeEvent event)
+			{
+				onViewportSizeChange();
+			}
+		});
+	}
+	
+	private void onViewportSizeChange()
+	{
+		int newWidth = Window.getClientWidth();
+
+		header.onViewportSizeChange(newWidth);
+		if (pages.get(deckPanel.getVisibleWidget()).style == "lobby")
+		{
+			Lobby l = (Lobby)pages.get(deckPanel.getVisibleWidget()).panel;
+			l.onViewportSizeChange(newWidth);
+		}
+		else
+		{
+			Section s = (Section)pages.get(deckPanel.getVisibleWidget()).panel;
+			s.onViewportSizeChange(newWidth);
+		}
+	}
+	
+	public void showPage(int pageIndex)
+	{
+		deckPanel.showWidget(pageIndex);
+		onViewportSizeChange();
+	}
+
+	public void onValueChange(ValueChangeEvent<String> event)
+	{
+//		if (event.getValue().equals("lobby") || event.getValue().equals(""))
+//			deckPanel.showWidget(Constants.LOBBY_INDEX);
+//		else if (event.getValue().equals("section"))
+//			deckPanel.showWidget(Constants.SECTION_INDEX);
+		for (int i = 0; i < pages.size(); i++)
+		{
+			if (event.getValue().equals(pages.get(i).historyId))
+			{
+				deckPanel.showWidget(i);
+				header.addBreadCrumb(pages.get(i).breadCrumbText, pages.get(i).historyId);
+				onViewportSizeChange();
+				break;
+			}
+		}
+	}
+	
+	public void newPage(DataItem item, Widget invokingWidget)
+	{
+		Queries.sectionQuery(item.getId(), sectionCallback);
+		currentDataItem = item;
+		currentInvokingWidget = invokingWidget;
+		
+		// Show some activity during query (change cursor/mouse-pointer)
+		currentInvokingWidget.getElement().getStyle().setCursor(Cursor.WAIT); 
+	}
+	
+	private void addNewPage(String style)
+	{
+		Page page = new Page();
+		String id = "section-" + currentDataItem.getId();
+		page.historyId = id;
+		page.breadCrumbText = currentDataItem.getNameEn();
+
+		if (style == "lobby")
+		{
+			// Create & initialize new panel
+			//lobby = null;
+			lobby = new Lobby(false);
+			deckPanel.add(lobby);
+			
+			// Add corresponding "page" data
+			page.panel = lobby;
+			page.style = "lobby";
+		}
+		else // if (style == "section")
+		{
+			// Create & initialize new panel
+			//section = null;
+			section = new Section();
+			section.initialize(currentDataItem);
+			deckPanel.add(section);
+			
+			// Add corresponding "page" data
+			page.panel = section;
+			page.style = "section";
+		}
+
+		// Return cursor (mouse pointer) to normal now that query is done
+		currentInvokingWidget.getElement().getStyle().setCursor(Cursor.POINTER);
+		
+		pages.add(page);
+		showPage(pages.size()-1);
+		History.newItem(id);
+		//header.addBreadCrumb(currentDataItem.getNameEn(), id);
+	}
+	
+	//
+	// Call-back function from server query
+	//
+	protected AsyncCallback<String> lobbyCallback = new AsyncCallback<String>()
+	{
+		public void onFailure(Throwable caught)
+		{
+			// Show the RPC error message to the user
+			Window.alert("'lobby' Remote Procedure Call - Failure");
+		}
+
+		public void onSuccess(String result)
+		{
+			ArrayList<DataItem> kItems = new ArrayList<DataItem>();
+			ArrayList<DataItem> tItems = new ArrayList<DataItem>();
+			kItems = Queries.parseLobbyQueryResult(result, "kanjur");
+			tItems = Queries.parseLobbyQueryResult(result, "tenjur");
+			String kDesc = Queries.getKangyurDesc();
+			String tDesc = Queries.getTengyurDesc();
+			
+			lobby.populatePage(kDesc, kItems, tDesc, tItems);
+			onViewportSizeChange();
+		}
+	};
+
+	//
+	// Call-back function from server query
+	//
+	protected AsyncCallback<String> sectionCallback = new AsyncCallback<String>()
+	{
+		public void onFailure(Throwable caught)
+		{
+			// Show the RPC error message to the user
+			Window.alert("'section' Remote Procedure Call - Failure");
+		}
+
+		public void onSuccess(String result)
+		{
+			ArrayList<DataItem> items = new ArrayList<DataItem>();
+			ArrayList<DataItem> noItems = new ArrayList<DataItem>();
+			items = Queries.parseSectionQueryResult(result);
+			
+			String style = "section";
+			if (items.size() > 0)
+			{
+				// Chapuza: Naming is backwards - need to change "style" values
+				if (items.get(0).getType() == "section")
+					style = "lobby";
+			}
+			
+			if (style == "section")
+			{
+				addNewPage(style);
+				section.populatePage(items, currentDataItem.getCategory());
+			}
+			else // if (style == "lobby")
+			{
+				addNewPage(style);
+				if (currentDataItem.getCategory() == "kangyur")
+					lobby.populatePage("", items, "", noItems);
+				else
+					lobby.populatePage("", noItems, "", items);
+			}
+			
+			onViewportSizeChange();
+		}
+	};
+}

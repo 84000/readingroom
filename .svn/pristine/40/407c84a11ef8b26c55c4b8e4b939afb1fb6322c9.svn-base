@@ -1,0 +1,20 @@
+package org.tbrc.readingroom.client;
+
+import java.util.ArrayList;
+
+import org.tbrc.readingroom.shared.TextData;
+
+import com.google.gwt.user.client.rpc.*;
+
+/**
+ * The async counterpart of <code>GreetingService</code>.
+ */
+public interface ReadingRoomServiceAsync
+{
+	//void greetServer(String input, AsyncCallback<String> callback) throws IllegalArgumentException;
+	void doQuery(String queryName, String[] args, AsyncCallback<String> callback) throws IllegalArgumentException;
+	void getTextSection(String sectionName, AsyncCallback<String> callback) throws IllegalArgumentException;
+	void getTextData(String part, AsyncCallback<TextData> callback) throws IllegalArgumentException;
+	void getTranslationPartNames(AsyncCallback<ArrayList<String>> callback) throws IllegalArgumentException;
+	void getTranslationPartByName(String partName, AsyncCallback<TextData> callback) throws IllegalArgumentException;
+}

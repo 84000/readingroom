@@ -1,0 +1,67 @@
+package org.tbrc.readingroom.client;
+
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.user.client.Event;
+import com.google.gwt.user.client.ui.DockPanel;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
+
+public class PopupInfoPanel extends PopupPanel
+{
+	//private final int PANEL_WIDTH = 260;
+	//private final int PANEL_HEIGHT = 260;
+	
+	HTML html = new HTML();
+	//private Button cancelButton = new Button("Done");
+
+	PopupInfoPanel()
+	{
+		this.setAnimationEnabled(true);
+		this.setGlassEnabled(true);
+		this.setModal(true);
+		this.setAutoHideEnabled(true);
+		
+		this.addStyleName("popupPanel");
+		//cancelButton.setStyleName("infoButton");
+		
+		DockPanel mainPanel = new DockPanel();
+		mainPanel.setSpacing(12);
+		VerticalPanel contentPanel = new VerticalPanel();
+		//contentPanel.setPixelSize(PANEL_WIDTH, PANEL_HEIGHT);
+		//contentPanel.setWidth("" + PANEL_WIDTH + "px");
+		
+		contentPanel.add(html);
+		//mainPanel.add(contentPanel, DockPanel.NORTH);
+		mainPanel.add(contentPanel, DockPanel.CENTER);
+		//mainPanel.add(cancelButton, DockPanel.SOUTH);
+		this.add(mainPanel);
+		
+		// Add a handler to close button
+		/*
+		cancelButton.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event)
+			{
+				hide();
+			}
+		});
+		*/
+	}
+	
+	public void setHtml(String html)
+	{
+		this.html.setHTML(html);
+	}
+
+	// This enables pressing "enter" key to submit
+	protected void onPreviewNativeEvent(Event.NativePreviewEvent event)
+	{
+	    if (event.getTypeInt() == Event.ONKEYDOWN)
+	    {
+	        if (event.getNativeEvent().getKeyCode() == KeyCodes.KEY_ENTER)
+	        	hide();
+//	            cancelButton.click();
+	    }
+	    super.onPreviewNativeEvent(event);
+	}
+}

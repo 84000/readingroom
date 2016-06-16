@@ -1,0 +1,119 @@
+//////////////////////////////////////////////////////////////////////////////
+//
+// LobbyItemPanel
+//
+// This panel represents
+//
+//////////////////////////////////////////////////////////////////////////////
+package org.tbrc.readingroom.client;
+
+import com.google.gwt.user.client.ui.AbsolutePanel;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.VerticalPanel;
+
+//public class LobbyItemPanel extends AbsolutePanel
+public class LobbyItemPanel extends AbsolutePanel
+{
+	private final int SPACING = 20;
+	private final int IMAGE_WIDTH = 228;	// NOTE: These must be set, rather than calculated, to avoid display issues
+	private final int IMAGE_HEIGHT = 415;	// NOTE: These must be set, rather than calculated, to avoid display issues
+
+	private String initString = "loading...";
+	private String initDesc = "This is hard-coded text because there isn't any description in the database.";
+	
+	// These are all public, as they are modified by the LobbyPanel class
+	public Button titleEnButton = new Button(initString);
+	public Button titleTiButton = new Button("བཀའ་འགྱུར");
+	public Button titleWyButton = new Button(initString);
+	public Button titleSaButton = new Button(initString);
+	public Button descButton = new Button(initDesc);
+	public Label textsValueLabel = new Label("000");
+	public Label translatedValueLabel = new Label("00");
+	public Label inProgressValueLabel = new Label("00");
+	public Label notBegunValueLabel = new Label("00");
+	
+	private final Image tileImage = new Image();
+	
+	public LobbyItemPanel()
+	{
+		// This style is required for flow-panel to flow horizontally (correctly)
+		this.setStyleName("flowPanel_inline");
+		
+		// "tile" image is our background
+		tileImage.setUrl("./section_item.png");
+		this.setPixelSize(IMAGE_WIDTH + SPACING, IMAGE_HEIGHT + SPACING);
+
+		// English title and separator line
+		titleEnButton.setStyleName("itemTitleFont");
+		HTMLPanel horizLine1 = new HTMLPanel("<hr size=1 width=80% align=CENTER color=#cf7a34>");
+
+		// Tibetan and Wylie titles and separator line
+		HorizontalPanel tibetanNamePanel = new HorizontalPanel();
+		titleTiButton.setStyleName("itemSubTitleFont");
+		titleWyButton.setStyleName("itemSubTitleFont");
+		tibetanNamePanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+		tibetanNamePanel.add(titleTiButton);
+		tibetanNamePanel.add(titleWyButton);
+		HTMLPanel horizLine2 = new HTMLPanel("<hr size=1 width=80% align=CENTER color=#cf7a34>");
+
+		// Sanskrit title and separator line
+		titleSaButton.setStyleName("itemSubTitleFont");
+		HTMLPanel horizLine3 = new HTMLPanel("<hr size=1 width=80% align=CENTER color=#cf7a34>");
+
+		// Section description
+		descButton.setStyleName("itemDescFont");
+
+		// Stats labels
+		Label textsLabel = new Label("TEXTS");				textsLabel.setStyleName("itemStatsFont");
+		Label translatedLabel = new Label("Translated");	translatedLabel.setStyleName("itemStatsFont");
+		Label inProgressLabel = new Label("In Progress");	inProgressLabel.setStyleName("itemStatsFont");
+		Label notBegunLabel = new Label("Not Begun");		notBegunLabel.setStyleName("itemStatsFont");
+
+		// Stats values
+		textsValueLabel.setStyleName("itemStatsFont");		textsValueLabel.addStyleName("alignRight");
+		translatedValueLabel.setStyleName("itemStatsFont");	translatedValueLabel.addStyleName("alignRight");
+		inProgressValueLabel.setStyleName("itemStatsFont");	inProgressValueLabel.addStyleName("alignRight");
+		notBegunValueLabel.setStyleName("itemStatsFont");	notBegunValueLabel.addStyleName("alignRight");
+		textsValueLabel.setWidth("50px");
+		translatedValueLabel.setWidth("50px");
+		inProgressValueLabel.setWidth("50px");
+		notBegunValueLabel.setWidth("50px");
+
+		// Assemble panel
+		VerticalPanel titlePanel = new VerticalPanel();
+		titlePanel.setWidth("" + (IMAGE_WIDTH-14) + "px");
+		titlePanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		titlePanel.add(titleEnButton);
+		titlePanel.add(horizLine1);
+		titlePanel.add(tibetanNamePanel);
+		titlePanel.add(horizLine2);
+		titlePanel.add(titleSaButton);
+		titlePanel.add(horizLine3);
+		titlePanel.add(descButton);
+
+		this.add(tileImage, (SPACING/2), (SPACING/2));
+		this.add(titlePanel, (SPACING/2) + 6, 38);
+		
+		int statsTop = 320;
+		this.add(textsLabel, 		32, statsTop);
+		this.add(translatedLabel, 	32, statsTop + 24);
+		this.add(inProgressLabel, 	32, statsTop + 48);
+		this.add(notBegunLabel, 	32, statsTop + 72);
+
+		this.add(textsValueLabel, 		164, statsTop);
+		this.add(translatedValueLabel, 	164, statsTop + 24);
+		this.add(inProgressValueLabel, 	164, statsTop + 48);
+		this.add(notBegunValueLabel, 	164, statsTop + 72);
+	}
+	
+	public void Populate()
+	{
+		
+	}
+}

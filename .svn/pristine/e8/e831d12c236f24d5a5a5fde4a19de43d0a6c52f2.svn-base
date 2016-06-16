@@ -1,0 +1,54 @@
+package org.tbrc.readingroom.client;
+
+import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.event.logical.shared.ResizeEvent;
+import com.google.gwt.event.logical.shared.ResizeHandler;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.RootPanel;
+
+/**
+ * Entry point classes define <code>onModuleLoad()</code>.
+ */
+public class Readingroom implements EntryPoint
+{
+	// Main reading-room pages
+	private Lobby lobby = new Lobby();
+	
+	/**
+	 * This is the entry point method.
+	 */
+	public void onModuleLoad()
+	{
+		//
+		// Build out main page
+		//
+		initPageLayout();
+		
+		// Add window resize handler (responsive design)
+		Window.addResizeHandler(new ResizeHandler() {
+			public void onResize(ResizeEvent event)
+			{
+				onViewportSizeChange();
+			}
+		});
+	}
+	
+	private void initPageLayout()
+	{
+		// Set background pattern
+		RootPanel.get().addStyleName("background");
+		
+		// Add "static" page elements
+		Header header = new Header();
+		RootPanel.get("mainPanel").add(header);
+
+		// Set up lobby page
+		onViewportSizeChange();
+		RootPanel.get("mainPanel").add(lobby);
+	}
+	
+	private void onViewportSizeChange()
+	{
+		lobby.onViewportSizeChange(Window.getClientWidth());
+	}
+}

@@ -1,0 +1,397 @@
+package org.tbrc.readingroom.client;
+
+import java.util.ArrayList;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.History;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.xml.client.DOMException;
+import com.google.gwt.xml.client.Document;
+import com.google.gwt.xml.client.Element;
+import com.google.gwt.xml.client.Node;
+import com.google.gwt.xml.client.NodeList;
+import com.google.gwt.xml.client.Text;
+import com.google.gwt.xml.client.XMLParser;
+
+import org.tbrc.readingroom.shared.Constants;
+
+public class Section extends Composite {
+
+	private static SectionUiBinder uiBinder = GWT.create(SectionUiBinder.class);
+	private ReadingRoomServiceAsync rpcService = GWT.create(ReadingRoomService.class);
+
+	interface SectionUiBinder extends UiBinder<Widget, Section> {
+	}
+
+	@UiField Button button;
+	@UiField HTMLPanel sectionPage;
+	@UiField HTMLPanel titlePanel;
+	@UiField Label titleEnLabel;
+	@UiField Label titleTiLabel;
+	@UiField Label titleWyLabel;
+	@UiField Label titleSaLabel;
+	@UiField Label descLabel;
+	@UiField Grid titleTiWyGrid;
+	
+	@UiField VerticalPanel titleBar;
+	@UiField HorizontalPanel titleInner;
+	@UiField Label titleEn;
+	@UiField Label titleTi;
+	@UiField VerticalPanel sectionListPanel;
+	@UiField Label transTitleLabel;
+	
+	@UiField Label expandAllLabel;
+	@UiField HorizontalPanel filterPanel;
+	@UiField HorizontalPanel filterButtonPanel;
+	@UiField Label filterTextLabel;
+	@UiField Button filterAllButton;
+	@UiField Button filterTransButton;
+	
+	@UiField VerticalPanel expandPanel;
+	@UiField VerticalPanel widePanel;
+	@UiField VerticalPanel narrowPanel;
+
+	private ArrayList<SectionItem> sectionItems = new ArrayList<SectionItem>();
+	LobbyItem itemData = null;
+	private int lastPortWidth = 0;
+	private Boolean allExpanded = false;
+	private Boolean filterAll = true;
+
+	public Section()
+	{
+		initWidget(uiBinder.createAndBindUi(this));
+		
+//		SectionListing listing = new SectionListing(3);
+//		sectionListPanel.add(listing);
+
+		onViewportSizeChange(Window.getClientWidth());
+	}
+
+	// TEMPORARY TEMPORARY TEMPORARY
+	@UiHandler("button")
+	void onClick(ClickEvent e)
+	{
+		// On button click, go back to Lobby view
+		Readingroom.main.showPage(Constants.LOBBY_INDEX);
+		History.newItem("lobby");
+	}
+	// TEMPORARY TEMPORARY TEMPORARY
+	
+	@UiHandler("expandAllLabel")
+	void onExpandAllClick(ClickEvent e)
+	{
+		int sectionCount = sectionListPanel.getWidgetCount();
+
+		if (allExpanded)
+		{
+			expandAllLabel.removeStyleName("ss-navigatedown");
+			expandAllLabel.addStyleName("ss-navigateright");
+			for (int i = 0; i < sectionCount; i++)
+			{
+				SectionListing listing = (SectionListing)sectionListPanel.getWidget(i);
+				listing.hideSummaryText();
+			}
+		}
+		else
+		{
+			expandAllLabel.removeStyleName("ss-navigateright");
+			expandAllLabel.addStyleName("ss-navigatedown");
+			for (int i = 0; i < sectionCount; i++)
+			{
+				SectionListing listing = (SectionListing)sectionListPanel.getWidget(i);
+				listing.showSummaryText();
+			}
+		}
+		allExpanded = !allExpanded;
+	}
+
+	@UiHandler("filterAllButton")
+	void onFilterAllClick(ClickEvent e)
+	{
+		if (!filterAll)
+		{
+			filterAllButton.addStyleName("filterButtonSelected");
+			filterTransButton.removeStyleName("filterButtonSelected");
+			filterAll = true;
+		}
+	}
+
+	@UiHandler("filterTransButton")
+	void onFilterTransClick(ClickEvent e)
+	{
+		if (filterAll)
+		{
+			filterAllButton.removeStyleName("filterButtonSelected");
+			filterTransButton.addStyleName("filterButtonSelected");
+			filterAll = false;
+		}
+	}
+
+	public void initialize(LobbyItem data)
+	{
+		itemData = data;
+		
+		titleEnLabel.setText(data.getNameEn());
+		titleTiLabel.setText(data.getNameTi());
+		titleWyLabel.setText(data.getNameWy());
+		titleSaLabel.setText(data.getNameSa());
+		descLabel.setText(data.getDesc());
+	
+		// Crazy required chapuza!
+		titleTiWyGrid.getColumnFormatter().setWidth(0, "50%");
+		titleTiWyGrid.getColumnFormatter().setWidth(1, "50%");
+
+		// TEMPORARY
+		button.setText("  " + data.getId());
+		button.setVisible(false);
+		// TEMPORARY
+
+		// Clear out previous listings and issue query for data
+		sectionListPanel.clear();
+		sectionItems.clear();
+		doQuery();
+	}
+
+	public void onViewportSizeChange(int newWidth)
+	{
+		// Only invoke changes if we cross a viewport-change width
+		if (Utils.viewPortChanged(newWidth, lastPortWidth))
+		{
+			if (newWidth >= Constants.LARGE_VIEWPORT_MIN_WIDTH)
+			{
+				titlePanel.setStyleName("titleSmall");
+				titleEn.setStyleName("bigTitleFont"); titleEn.addStyleName("titleFontSmall");
+				titleTi.setStyleName("bigTitleTFont"); titleTi.addStyleName("titleFontSmall");
+
+				sectionPage.setWidth("94%");
+				transTitleLabel.setVisible(true);
+
+				// TEST TEST
+				narrowPanel.remove(filterTextLabel);
+				filterPanel.add(filterTextLabel);
+				narrowPanel.remove(filterButtonPanel);
+				filterPanel.add(filterButtonPanel);
+				narrowPanel.remove(expandAllLabel);
+				expandPanel.add(expandAllLabel);
+				// TEST TEST
+			}
+			else if (newWidth >= Constants.MEDIUM_VIEWPORT_MIN_WIDTH)
+			{
+				titlePanel.setStyleName("titleSmall");
+				titleEn.setStyleName("bigTitleFont"); titleEn.addStyleName("titleFontSmall");
+				titleTi.setStyleName("bigTitleTFont"); titleTi.addStyleName("titleFontSmall");
+
+				sectionPage.setWidth("94%");
+				transTitleLabel.setVisible(false);
+				
+				// TEST TEST
+				filterPanel.remove(filterTextLabel);
+				narrowPanel.add(filterTextLabel);
+				filterPanel.remove(filterButtonPanel);
+				narrowPanel.add(filterButtonPanel);
+				expandPanel.remove(expandAllLabel);
+				narrowPanel.add(expandAllLabel);
+				// TEST TEST
+			}
+			else // newWith < med min
+			{
+				titlePanel.setStyleName("titleSmall");
+				titleEn.setStyleName("bigTitleFont"); titleEn.addStyleName("titleFontSmall");
+				titleTi.setStyleName("bigTitleTFont"); titleTi.addStyleName("titleFontSmall");
+
+				sectionPage.setWidth("100%");
+			}
+
+			for (int i = 0; i < sectionListPanel.getWidgetCount(); i++)
+			{
+				SectionListing sl = (SectionListing)sectionListPanel.getWidget(i);
+				sl.onViewportSizeChange(newWidth);
+			}
+		}
+		
+		lastPortWidth = newWidth;
+	}
+	
+	//
+	// Database-related functions
+	//
+	private void doQuery()
+	{
+		// Issue query via RPC service
+		String[] args = {itemData.getId()};
+		rpcService.doQuery("84000", "section", args, lobbyCallback);
+	}
+	
+	//
+	// Call-back function from server query
+	//
+	protected AsyncCallback<String> lobbyCallback = new AsyncCallback<String>()
+	{
+		public void onFailure(Throwable caught)
+		{
+			// Show the RPC error message to the user
+			Window.alert("'section' Remote Procedure Call - Failure");
+		}
+
+		public void onSuccess(String result)
+		{
+			// Parse out items from result
+			sectionItems = parseQueryResult(result);
+			
+			for (int i = 0; i < sectionItems.size(); i++)
+			{
+				SectionListing listing = new SectionListing(i, sectionItems.get(i));
+				sectionListPanel.add(listing);
+				listing.onViewportSizeChange(Window.getClientWidth());
+			}
+		}
+	};
+
+	private ArrayList<SectionItem> parseQueryResult(String xml)
+	{
+		ArrayList<SectionItem> sectionItems = new ArrayList<SectionItem>();
+
+		try
+		{
+		    // parse the XML document into a DOM
+		    Document messageDom = XMLParser.parse(xml);
+
+		    // Get section data
+		    NodeList sectionNodeList = messageDom.getElementsByTagName("node");
+		    for (int i = 0; i < sectionNodeList.getLength(); i++)
+		    {
+		    	Node sectionNode = sectionNodeList.item(i);
+			    Element es = (Element)sectionNode;
+			    String id = es.getAttribute("id");
+				    
+			    Node nameNode = null;
+			    Text nameTextNode = null;
+				    
+			    String nameEn = "";
+			    nameNode = es.getElementsByTagName("name").item(0);
+			    if (nameNode != null)
+			    {
+			    	nameTextNode = (Text)nameNode.getFirstChild();
+			    	if (nameTextNode != null)
+			    		nameEn = nameTextNode.getData();
+			    }
+
+			    String nameWy = "";
+			    nameNode = es.getElementsByTagName("name").item(1);
+			    if (nameNode != null)
+			    {
+			    	nameTextNode = (Text)nameNode.getFirstChild();
+			    	if (nameTextNode != null)
+			    		nameWy = nameTextNode.getData();
+			    }
+
+			    String nameTi = "";
+			    nameNode = es.getElementsByTagName("name").item(2);
+			    if (nameNode != null)
+			    {
+			    	nameTextNode = (Text)nameNode.getFirstChild();
+			    	if (nameTextNode != null)
+			    		nameTi = nameTextNode.getData();
+			    }
+
+			    String nameSa = "";
+			    nameNode = es.getElementsByTagName("name").item(3);
+			    if (nameNode != null)
+			    {
+			    	nameTextNode = (Text)nameNode.getFirstChild();
+			    	if (nameTextNode != null)
+			    		nameSa = nameTextNode.getData();
+			    }
+
+			    String desc = "";
+			    Node descNode = es.getElementsByTagName("description").item(0);
+			    if (descNode != null)
+			    {
+			    	Text descTextNode = (Text)descNode.getFirstChild();
+			    	if (descTextNode != null)
+			    		desc = descTextNode.getData();
+			    }
+				
+			    /*
+			    // Get stats node items
+			    Node statsNode = es.getElementsByTagName("stats").item(0);
+			    Element ess = (Element)statsNode;
+				    
+			    String total = "";
+			    Node totalNode = ess.getElementsByTagName("total").item(0);
+			    if (totalNode != null)
+			    {
+			    	Text totalTextNode = (Text)totalNode.getFirstChild();
+			    	if (totalTextNode != null)
+			    		total = totalTextNode.getData();
+			    }
+				    
+			    String translated = "";
+			    Node translatedNode = ess.getElementsByTagName("translated").item(0);
+			    if (translatedNode != null)
+			    {
+			    	Text translatedTextNode = (Text)translatedNode.getFirstChild();
+			    	if (translatedTextNode != null)
+			    		translated = translatedTextNode.getData();
+			    }
+			    
+			    String inProgress = "";
+			    Node inProgressNode = ess.getElementsByTagName("inProgress").item(0);
+			    if (inProgressNode != null)
+			    {
+			    	Text inProgressTextNode = (Text)inProgressNode.getFirstChild();
+			    	if (inProgressTextNode != null)
+			    		inProgress = inProgressTextNode.getData();
+			    }
+				    
+			    String notBegun = "";
+			    Node notBegunNode = ess.getElementsByTagName("notBegun").item(0);
+			    if (notBegunNode != null)
+			    {
+			    	Text notBegunTextNode = (Text)notBegunNode.getFirstChild();
+			    	if (notBegunTextNode != null)
+			    		notBegun = notBegunTextNode.getData();
+			    }
+			    */
+
+			    // Create and populate item
+				SectionItem sectionItem = new SectionItem();
+
+				sectionItem.setId(id);
+				sectionItem.setNameEn(nameEn);
+				sectionItem.setNameTi(nameTi);
+				sectionItem.setNameWy(nameWy);
+				sectionItem.setNameSa(nameSa);
+		    	sectionItem.setDesc(desc);
+
+		    	/*
+		    	sectionItem.setStatsTotal(total);
+			    sectionItem.setStatsTrans(translated);
+			    sectionItem.setStatsInProg(inProgress);
+			    sectionItem.setStatsNotBeg(notBegun);
+			    */
+		    
+		    	sectionItems.add(sectionItem);
+		    }
+		}
+		catch (DOMException e)
+		{
+			Window.alert("Could not parse XML document.");
+		}
+		
+		return sectionItems;
+	}
+}

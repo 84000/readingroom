@@ -1,0 +1,12 @@
+package org.tbrc.readingroom.shared;
+
+import com.google.gwt.user.client.rpc.IsSerializable;
+
+public class BiblItem implements IsSerializable
+{
+	public String author = "";
+	public String authorRole = "";
+	public String ref = "";
+	public String title = "";
+	public String scope = "";
+}

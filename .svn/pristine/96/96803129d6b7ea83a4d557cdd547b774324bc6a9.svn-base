@@ -1,0 +1,457 @@
+package org.tbrc.readingroom.client;
+
+import java.util.ArrayList;
+
+import org.tbrc.readingroom.shared.MasterItemLists;
+import org.tbrc.readingroom.shared.TextData;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.History;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.DeckPanel;
+import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.Widget;
+
+public class Reader extends Composite {
+
+	private static ReaderUiBinder uiBinder = GWT.create(ReaderUiBinder.class);
+
+	interface ReaderUiBinder extends UiBinder<Widget, Reader> {
+	}
+
+	public Reader()
+	{
+		initWidget(uiBinder.createAndBindUi(this));
+	}
+
+	@UiField HTMLPanel wrapperPanel;
+	@UiField TextHeader header;
+	@UiField DeckPanel textDeckPanel;
+	
+	@UiField Button infoButton;
+	@UiField PopupNavPanel navPanel;
+
+	private TextItem textItem = new TextItem();
+	private int currentWidget = 0;
+	private Reader me = this;
+	private final int TRANS_START_PAGE = 4;	// Title=0, Summary=1, Ack=2, Intro=3, Trans chap 1=4...
+	public MasterItemLists masterItemLists = new MasterItemLists();
+	//public ArrayList<GlossItem> masterGlossItems = new ArrayList<GlossItem>();
+	//public ArrayList<NoteItem> masterNoteItems = new ArrayList<NoteItem>();
+	
+	public void Initialize(String textId, String pageName, BreadCrumb bc)
+	{
+		// Reject duplicate
+		//Window.alert("INITIALIZE: textId = {" + textId + "}, pageName = {" + pageName + "}");
+		if (textId.equalsIgnoreCase(textItem.getId()))
+		{
+			int i = getPageIndex(pageName);
+			if (i != currentWidget)
+			{
+				currentWidget = i;
+				textDeckPanel.showWidget(currentWidget);
+				History.newItem(textItem.getId() + "/" + pageName);
+			}
+		}
+		else
+		{
+			// Capture ID
+			textItem.setId(textId);
+		
+			// Reset headers while query is running
+			header.titleEn.setText("Loading...");
+		
+			//History.newItem(textId + "/" + pageName);
+			header.setBreadCrumb(bc);
+			//textDeckPanel.showWidget(currentWidget);
+		
+			textDeckPanel.clear();
+			currentWidget = 0;
+			TextPage titlePage = new TextPage("Loading...", "", "", "Summary");
+			titlePage.setReader(me);
+			textDeckPanel.add(titlePage);
+			textDeckPanel.showWidget(currentWidget);
+			History.newItem(textItem.getId() + "/" + pageName);
+
+			// Issue initial query via RPC service
+			String[] args = {textId};
+			Readingroom.rpcService.doQuery("tei", args, textCallback);
+		}
+	}
+	
+	@UiHandler("infoButton")
+	void onInfoButtonClick(ClickEvent e)
+	{
+		navPanel.setVisible(!navPanel.isVisible());
+		
+		TextPage currentPage = (TextPage)textDeckPanel.getWidget(currentWidget);
+		currentPage.accommodateNavPanel(navPanel.isVisible());
+	}
+	
+	public int getPageCount() { return textDeckPanel.getWidgetCount(); }
+	
+	
+	public void prev()
+	{
+		if (currentWidget > 0)
+		{
+			currentWidget--;
+			checkAndLoadTextParts(currentWidget);
+			textDeckPanel.showWidget(currentWidget);
+			TextPage textPage = (TextPage)textDeckPanel.getWidget(currentWidget);
+			History.newItem(textItem.getId() + "/" + textPage.getTitle().toLowerCase());
+			Window.scrollTo (0, 0);	// Force page to scroll to top
+			textPage.accommodateNavPanel(navPanel.isVisible());
+		}
+	}
+
+	public void next()
+	{
+		if (currentWidget < (textDeckPanel.getWidgetCount() - 1))
+		{
+			currentWidget++;
+			checkAndLoadTextParts(currentWidget);
+			textDeckPanel.showWidget(currentWidget);
+			TextPage textPage = (TextPage)textDeckPanel.getWidget(currentWidget);
+			History.newItem(textItem.getId() + "/" + textPage.getTitle().toLowerCase());
+			Window.scrollTo (0, 0);	// Force page to scroll to top
+			textPage.accommodateNavPanel(navPanel.isVisible());
+		}
+	}
+
+	public void onViewportSizeChange(int newWidth)
+	{
+		wrapperPanel.setWidth("100%");
+		navPanel.setWidth("100%");
+		navPanel.onViewportSizeChange(newWidth);
+	}
+
+	/*
+	public void onValueChange(ValueChangeEvent<String> event)
+	{
+		String token = event.getValue();
+		Window.alert("TEXT DECK: New value: " + token);
+	}
+	*/
+	
+	//
+	// Utility functions
+	//
+	private int getPageIndex(String pageName)
+	{
+		int index = 0;
+		for (int i = 0; i < textDeckPanel.getWidgetCount(); i++)
+		{
+			TextPage page = (TextPage)textDeckPanel.getWidget(i);
+			if (pageName.equalsIgnoreCase(page.getTitle()))
+			{
+				index = i;
+				break;
+			}
+		}
+		
+		return index;
+	}
+	
+	private void checkAndLoadTextParts(int pageIndex)
+	{
+		if (pageIndex >= TRANS_START_PAGE)
+		{
+			for (int i = pageIndex-2; i < pageIndex + 2; i++)
+			{
+				if (i < TRANS_START_PAGE)
+					continue;
+				
+				if (i >= textDeckPanel.getWidgetCount())
+					break;
+				
+				TextPage page = (TextPage)textDeckPanel.getWidget(i);
+				if (!page.isDataSet())
+					Readingroom.rpcService.getTranslationPartByName(page.getTitle(), new TransPartCallBack());
+			}
+		}
+	}
+	
+	private void initializeNavPopup()
+	{
+		// Initialize popup navigation panel
+		navPanel.initialize(this, TRANS_START_PAGE);
+	}
+	
+	/*
+	private void refreshNavPopup()
+	{
+		navPanel.refresh(this);
+	}
+	*/
+	
+	public ArrayList<String> getPartNames()
+	{
+		ArrayList<String> names = new ArrayList<String>();
+		
+		for (int i = 0; i < textDeckPanel.getWidgetCount(); i++)
+		{
+			TextPage page = (TextPage)textDeckPanel.getWidget(i);
+			names.add(page.getTitle());
+		}
+		
+		return names;
+	}
+	
+	public void showPage(int pageIndex)
+	{
+		currentWidget = pageIndex;
+
+		checkAndLoadTextParts(currentWidget);
+		textDeckPanel.showWidget(currentWidget);
+		TextPage textPage = (TextPage)textDeckPanel.getWidget(currentWidget);
+		History.newItem(textItem.getId() + "/" + textPage.getTitle().toLowerCase());
+		Window.scrollTo (0, 0);	// Force page to scroll to top
+		
+		//navPanel.setVisible(false);
+		textPage.accommodateNavPanel(navPanel.isVisible());
+	}
+
+	/*
+	// Add set of glossary terms to master list and maintain alphabetic order
+	private void updateMasterGlossary(ArrayList<GlossItem> newItems)
+	{
+		for (int i = 0; i < newItems.size(); i++)
+		{
+			if (masterGlossItems.size() == 0)
+				masterGlossItems.add(newItems.get(i));
+			else
+			{
+				int insertPoint;
+				for (insertPoint = 0; insertPoint < masterGlossItems.size(); insertPoint++)
+				{
+					if (masterGlossItems.get(insertPoint).name.toLowerCase().compareTo(newItems.get(i).name.toLowerCase()) > 0)
+						break;
+				}
+				masterGlossItems.add(insertPoint, newItems.get(i));
+			}
+		}
+	}
+
+	// Add set of notes to master list and maintain note numbering order
+	private void updateMasterNotes(ArrayList<NoteItem> newItems)
+	{
+		for (int i = 0; i < newItems.size(); i++)
+		{
+			if (masterNoteItems.size() == 0)
+				masterNoteItems.add(newItems.get(i));
+			else
+			{
+				int insertPoint;
+				for (insertPoint = 0; insertPoint < masterNoteItems.size(); insertPoint++)
+				{
+					if (Integer.parseInt(masterNoteItems.get(insertPoint).id) > Integer.parseInt(newItems.get(i).id))
+						break;
+				}
+				masterNoteItems.add(insertPoint, newItems.get(i));
+			}
+		}
+	}
+	*/
+	
+	//
+	// Call-back functions from server queries
+	//
+	protected AsyncCallback<String> textCallback = new AsyncCallback<String>()
+	{
+		public void onFailure(Throwable caught) { Window.alert("'text' RPC failure"); }
+
+		public void onSuccess(String result)
+		{
+			// The initial query returns the title info (TEI header), so parse it and get summary
+			if (Parser.parseTextQueryHeader(result, textItem))
+			{
+				header.addBreadCrumb(textItem.mainTitleEn, textItem.getId());
+				header.titleEn.setText(textItem.mainTitleEn);
+				
+				TextPage titlePage = (TextPage)textDeckPanel.getWidget(0);
+				titlePage.setDisplayTitles(textItem.mainTitleEn, "");
+				titlePage.setTitle("Title");
+				titlePage.setReader(me);
+				titlePage.setTitleData(textItem);
+				
+				Readingroom.rpcService.getTranslationPartByName("summary", new SummaryCallBack());
+			}
+		}
+	};
+
+	private class SummaryCallBack implements AsyncCallback<TextData>
+	{
+		public void onFailure(Throwable caught) { Window.alert("'text summary' RPC failure"); }
+
+		public void onSuccess(TextData summaryData)
+		{
+			if (summaryData != null)
+			{
+				TextPage summaryPage = new TextPage("Summary", "", "Title", "Acknowledgments");
+				summaryPage.setReader(me);
+				summaryPage.setData(summaryData);
+				textDeckPanel.add(summaryPage);
+				
+				Readingroom.rpcService.getTranslationPartByName("ack", new AckCallBack());
+			}
+		}
+	}
+
+	private class AckCallBack implements AsyncCallback<TextData>
+	{
+		public void onFailure(Throwable caught) { Window.alert("'text acknowledgment' RPC failure"); }
+
+		public void onSuccess(TextData ackData)
+		{
+			if (ackData != null)
+			{
+				TextPage ackPage = new TextPage("Acknowledgments", "", "Summary", "Introduction");
+				ackPage.setReader(me);
+				ackPage.setData(ackData);
+				textDeckPanel.add(ackPage);
+				
+				Readingroom.rpcService.getTranslationPartByName("intro", new IntroCallBack());
+			}
+		}
+	}
+
+	private class IntroCallBack implements AsyncCallback<TextData>
+	{
+		public void onFailure(Throwable caught) { Window.alert("'text introduction' RPC failure"); }
+
+		public void onSuccess(TextData introData)
+		{
+			if (introData != null)
+			{
+				TextPage introPage = new TextPage("Introduction", "", "Acknowledgments", "Chapter Z");
+				introPage.setReader(me);
+				introPage.setData(introData);
+				textDeckPanel.add(introPage);
+
+				Readingroom.rpcService.getMasterItemLists(new ListsCallBack());
+			}
+		}
+	}
+	
+	private class ListsCallBack implements AsyncCallback<MasterItemLists>
+	{
+		public void onFailure(Throwable caught) { Window.alert("'Master item lists' RPC failure"); }
+
+		public void onSuccess(MasterItemLists masterLists)
+		{
+			if (masterLists != null)
+			{
+				// Master lists are required for the navigation pop-up
+				masterItemLists = masterLists;
+
+				Readingroom.rpcService.getTranslationPartNames(new TransPartNamesCallBack());
+			}
+		}
+	}
+	
+	private class TransPartNamesCallBack implements AsyncCallback<ArrayList<String>>
+	{
+		public void onFailure(Throwable caught) { Window.alert("'text part names' RPC failure"); }
+
+		public void onSuccess(ArrayList<String> partNames)
+		{
+			String prevPageName, nextPageName;
+			
+			if (partNames != null)
+			{
+				// FIRST, CLEAR OUT EXISTING CHAPTERS!!
+				if (textDeckPanel.getWidgetCount() > TRANS_START_PAGE)
+				{
+					int widgetCount = textDeckPanel.getWidgetCount();
+					for (int i = TRANS_START_PAGE; i < widgetCount; i++)
+						textDeckPanel.remove(textDeckPanel.getWidgetCount() - 1);
+				}
+				
+				for (int i = 0; i < partNames.size(); i++)
+				{
+					TextPage prevPage = (TextPage)textDeckPanel.getWidget(textDeckPanel.getWidgetCount() - 1);
+					prevPage.setNextText(partNames.get(i));
+					prevPageName = prevPage.getTitle();
+					nextPageName = "";
+						
+					TextPage partPage = new TextPage(partNames.get(i), "", prevPageName, nextPageName);
+					partPage.setReader(me);
+					textDeckPanel.add(partPage);
+					
+					// Set master translation title for first "part"
+					if (i == 0)
+						partPage.setMasterTransTitles("The Translation", textItem.mainTitleEn, textItem.longTitleEn);
+					
+					// Pre-load first 3 parts content
+					if (i <= 1)
+						Readingroom.rpcService.getTranslationPartByName(partNames.get(i), new TransPartCallBack());
+				}
+
+				// Now that we've created all the chapter pages, get the bibliography
+				Readingroom.rpcService.getTranslationPartByName("bibl", new BiblCallBack());
+			}
+			else
+				Window.alert("Warning: No translation parts found");
+		}
+	}
+
+	private class BiblCallBack implements AsyncCallback<TextData>
+	{
+		public void onFailure(Throwable caught) { Window.alert("'bibliography' RPC failure"); }
+
+		public void onSuccess(TextData biblData)
+		{
+			if (biblData != null)
+			{
+				String prevPageName, nextPageName;
+				TextPage prevPage = (TextPage)textDeckPanel.getWidget(textDeckPanel.getWidgetCount() - 1);
+				prevPage.setNextText(biblData.getTitle());
+				prevPageName = prevPage.getTitle();
+				nextPageName = "";
+
+				TextPage biblPage = new TextPage(biblData.getTitle(), "", prevPageName, nextPageName);
+				biblPage.setReader(me);
+				biblPage.setData(biblData);
+				textDeckPanel.add(biblPage);
+			}
+
+			// Now that we have all the required data, initialize our navigation pop-up
+			initializeNavPopup();
+		}
+	}
+	
+	
+	private class TransPartCallBack implements AsyncCallback<TextData>
+	{
+		public void onFailure(Throwable caught) { Window.alert("'translation part' RPC failure"); }
+
+		public void onSuccess(TextData part)
+		{
+			if (part != null)
+			{
+				for (int i = 0; i < textDeckPanel.getWidgetCount(); i++)
+				{
+					TextPage partPage = (TextPage)textDeckPanel.getWidget(i);
+					String title = part.getTitle();
+					if (partPage.getTitle().equalsIgnoreCase(title))
+					{
+						//Window.alert("Setting data for part #" + i + ", Title: " + part.getTitle() + ", Subtitle: " + part.getSubtitle());
+						partPage.setReader(me);
+						partPage.setDisplayTitles(title, part.getSubtitle());
+						partPage.setTitle(title);
+						partPage.setData(part);
+						break;
+					}
+				}
+			}
+		}
+	}
+}

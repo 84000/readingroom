@@ -1,0 +1,98 @@
+package org.tbrc.readingroom.server;
+
+public class XmlUtils
+{
+	//
+	// Utility functions
+	//
+	
+	//
+	// Gets complete XML node, starting at "begin" within "str"
+	//
+	public static String getXmlNode(String str, String nodeType, int begin)
+	{
+		String fullNode = "";
+		
+		String startTag = "<" + nodeType;
+		String endTag = "</" + nodeType + ">";
+
+		int startTagPos = begin, prevStartTagPos = begin+1;
+		int endTagPos, prevEndTagPos = begin;
+		
+		int endTagsNeeded = 1;	// We know we need at least the 1 endTag for our known tag
+
+		while (endTagsNeeded > 0)
+		{
+			endTagPos = str.indexOf(endTag, prevEndTagPos);
+			if (endTagPos < 0)
+				break;
+			
+			endTagsNeeded--;
+				
+			// Check for additional start tags between original and newly-found end tag
+			while (true)
+			{
+				startTagPos = str.indexOf(startTag, prevStartTagPos);
+				if (startTagPos < 0 || startTagPos >= endTagPos)
+					break;
+				endTagsNeeded++;
+				prevStartTagPos = startTagPos+1;
+			}
+			
+			prevEndTagPos = endTagPos+1;
+		}
+		
+		fullNode = str.substring(begin, prevEndTagPos + endTag.length());
+		
+		return fullNode;
+	}
+	
+	//
+	// Gets string (from within "str") that starts with "beginStr" and ends with "endStr"
+	// Will include or not include the bounding strings based on "includeBookends"
+	//
+	public static String getBookendedString(String str, String beginStr, String endStr, boolean includeBookends)
+	{
+		String subStr = null;
+		int begin = 0, end = 0;
+
+		if (includeBookends)
+		{
+			begin = str.indexOf(beginStr);
+			if (begin >= 0)
+				end = str.indexOf(endStr, begin) + endStr.length();
+		}
+		else
+		{
+			begin = str.indexOf(beginStr) + beginStr.length();
+			if (begin >= 0)
+				end = str.indexOf(endStr, begin);
+		}
+		
+		if (begin >= 0 && end > begin)
+			subStr = str.substring(begin, end);
+		
+		return subStr;
+	}
+	
+	/**
+	 * Count the number of instances of substring within a string.
+	 *
+	 * @param string     String to look for substring in.
+	 * @param substring  Sub-string to look for.
+	 * @return           Count of substrings in string.
+	 */
+	public static int count(final String string, final String substring)
+	{
+		int count = 0;
+		int idx = 0;
+
+		while ((idx = string.indexOf(substring, idx)) != -1)
+		{
+			idx++;
+			count++;
+		}
+
+		return count;
+	}
+}

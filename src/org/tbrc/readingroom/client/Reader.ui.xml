@@ -1,0 +1,26 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" 
+	xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:my="urn:import:org.tbrc.readingroom.client">
+
+	<g:HTMLPanel ui:field="wrapperPanel" width="100%">
+		<!-- Header w/logo & title -->
+		<my:TextHeader ui:field="header"/>
+
+		<!-- FLoating info/nav panel -->
+		<g:Button ui:field="infoButton" styleName="textInfoButton">&#xED50;</g:Button>
+		<my:PopupNavPanel ui:field="navPanel" visible="false"/>
+
+		<!-- Content panel -->
+		<g:DeckPanel ui:field="textDeckPanel">
+			<!-- Text pages (TextPage instances) will go here -->
+		</g:DeckPanel>
+		
+		<g:VerticalPanel spacing="24"/>	<!-- Chapuza! cheesy way to add space at top -->
+		<g:HTML ui:field="footerPanel" styleName="footerReader">
+			<div style="margin-left: 1em; margin-right: 1em;">
+				Copyright © 2016 84000: Translating the Words of the Buddha – All Rights Reserved.
+			</div>
+		</g:HTML>
+	</g:HTMLPanel>
+</ui:UiBinder>

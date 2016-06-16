@@ -1,0 +1,334 @@
+package org.tbrc.readingroom.client;
+
+import java.util.ArrayList;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.xml.client.DOMException;
+import com.google.gwt.xml.client.Document;
+import com.google.gwt.xml.client.Element;
+import com.google.gwt.xml.client.Node;
+import com.google.gwt.xml.client.NodeList;
+import com.google.gwt.xml.client.Text;
+import com.google.gwt.xml.client.XMLParser;
+
+public class LobbyPanel extends VerticalPanel
+{
+	/**
+	 * Create a remote service proxy to talk to the server-side RPC service.
+	 */
+	private ReadingRoomServiceAsync rpcService = GWT.create(ReadingRoomService.class);
+	
+	private final int NUM_KANJUR_PANELS = 4;
+	private ArrayList<LobbyItemPanel> kanjurPanels = new ArrayList<LobbyItemPanel>();
+	private LobbyCatalogPanel catPanel = new LobbyCatalogPanel();
+
+	private FlowPanel itemsPanel = new FlowPanel();
+
+	public LobbyPanel()
+	{
+		// Start query ASAP
+		rpcService.doQuery("84000", "lobby", null, lobbyCallback);
+		
+		// Style page
+		setStyleName("mainPage");
+		setHorizontalAlignment(ALIGN_CENTER);
+		setSpacing(20);
+		
+		// Title bar
+		HorizontalPanel kangyurTitlePanel = new HorizontalPanel();	// Main panel (red)
+		HorizontalPanel kangyurTextPanel = new HorizontalPanel();	// Inner panel for text (required for alignment)
+		kangyurTitlePanel.setWidth("96%");
+		kangyurTitlePanel.setHorizontalAlignment(ALIGN_LEFT);
+		kangyurTextPanel.setHorizontalAlignment(ALIGN_LEFT);
+		kangyurTitlePanel.addStyleName("redBackground");
+		Label kLabel = new Label("The Kangyur");	kLabel.setStyleName("bigTitleFont");
+		Label ktLabel = new Label("བཀའ་འགྱུར");		ktLabel.setStyleName("bigTitleTFont");
+		//Label khLabel = new Label("bka' 'gyur");
+		kangyurTextPanel.add(kLabel);
+		kangyurTextPanel.add(ktLabel);
+		kangyurTitlePanel.add(kangyurTextPanel);
+
+		// Subtitle
+		Label subtitle = new Label("The collected scriptures, translations into Tibetan of the " +
+								   "Indian texts considered to record the words of the Buddha.");
+		subtitle.setStyleName("subtitleFont");
+		subtitle.setWidth("50%");
+		
+		// "Learn More" button
+		Button learnButton = new Button("  LEARN MORE ABOUT THE KANGYUR");
+		learnButton.setStyleName("learnMoreButton");
+		learnButton.addStyleName("ss-info");
+
+		// Section tiles
+		itemsPanel.setStyleName("flowPanel_inline");
+		itemsPanel.setWidth("96%");
+
+		// Build up items panel
+		for (int i = 0; i < NUM_KANJUR_PANELS; i++)
+		{
+			LobbyItemPanel itemPanel = new LobbyItemPanel();
+			kanjurPanels.add(itemPanel);
+			itemsPanel.add(itemPanel);
+		}
+		itemsPanel.add(catPanel);
+		
+		// Finally, build up our LobbyPanel
+		add(kangyurTitlePanel);
+		add(subtitle);
+		add(learnButton);
+		add(itemsPanel);
+	}
+	
+	private ArrayList<LobbyItem> ParseQueryResult(String xml, String category)
+	{
+		ArrayList<LobbyItem> lobbyItems = new ArrayList<LobbyItem>();
+
+		try
+		{
+		    // parse the XML document into a DOM
+		    Document messageDom = XMLParser.parse(xml);
+
+		    // Extract the category ("kanyur" or "tenyur") node - we know there is only one
+		    Node catNode = messageDom.getElementsByTagName(category).item(0);
+		    if (catNode != null)
+		    {
+			    Element ec = (Element)catNode;
+		    	
+			    // Get sections within the kanyur
+			    NodeList sectionNodeList = ec.getElementsByTagName("section");
+			    for (int i = 0; i < sectionNodeList.getLength(); i++)
+			    {
+			    	Node sectionNode = sectionNodeList.item(i);
+				    Element es = (Element)sectionNode;
+				    String id = es.getAttribute("id");
+				    
+				    Node nameNode = null;
+				    Text nameTextNode = null;
+				    
+				    String nameEn = "";
+				    nameNode = es.getElementsByTagName("name").item(0);
+				    if (nameNode != null)
+				    {
+				    	nameTextNode = (Text)nameNode.getFirstChild();
+				    	if (nameTextNode != null)
+				    		nameEn = nameTextNode.getData();
+				    }
+
+				    String nameTi = "";
+				    nameNode = es.getElementsByTagName("name").item(2);
+				    if (nameNode != null)
+				    {
+				    	nameTextNode = (Text)nameNode.getFirstChild();
+				    	if (nameTextNode != null)
+				    		nameTi = nameTextNode.getData();
+				    }
+
+				    String nameWy = "";
+				    nameNode = es.getElementsByTagName("name").item(1);
+				    if (nameNode != null)
+				    {
+				    	nameTextNode = (Text)nameNode.getFirstChild();
+				    	if (nameTextNode != null)
+				    		nameWy = nameTextNode.getData();
+				    }
+
+				    String nameSa = "";
+				    nameNode = es.getElementsByTagName("name").item(3);
+				    if (nameNode != null)
+				    {
+				    	nameTextNode = (Text)nameNode.getFirstChild();
+				    	if (nameTextNode != null)
+				    		nameSa = nameTextNode.getData();
+				    }
+
+				    String desc = "";
+				    Node descNode = es.getElementsByTagName("description").item(0);
+				    if (descNode != null)
+				    {
+				    	Text descTextNode = (Text)descNode.getFirstChild();
+				    	if (descTextNode != null)
+				    		desc = descTextNode.getData();
+				    }
+				    
+				    // Get stats node items
+				    Node statsNode = es.getElementsByTagName("stats").item(0);
+				    Element ess = (Element)statsNode;
+				    
+				    String total = "";
+				    Node totalNode = ess.getElementsByTagName("total").item(0);
+				    if (totalNode != null)
+				    {
+				    	Text totalTextNode = (Text)totalNode.getFirstChild();
+				    	if (totalTextNode != null)
+				    		total = totalTextNode.getData();
+				    }
+				    
+				    String translated = "";
+				    Node translatedNode = ess.getElementsByTagName("translated").item(0);
+				    if (translatedNode != null)
+				    {
+				    	Text translatedTextNode = (Text)translatedNode.getFirstChild();
+				    	if (translatedTextNode != null)
+				    		translated = translatedTextNode.getData();
+				    }
+				    
+				    String inProgress = "";
+				    Node inProgressNode = ess.getElementsByTagName("inProgress").item(0);
+				    if (inProgressNode != null)
+				    {
+				    	Text inProgressTextNode = (Text)inProgressNode.getFirstChild();
+				    	if (inProgressTextNode != null)
+				    		inProgress = inProgressTextNode.getData();
+				    }
+				    
+				    String notBegun = "";
+				    Node notBegunNode = ess.getElementsByTagName("notBegun").item(0);
+				    if (notBegunNode != null)
+				    {
+				    	Text notBegunTextNode = (Text)notBegunNode.getFirstChild();
+				    	if (notBegunTextNode != null)
+				    		notBegun = notBegunTextNode.getData();
+				    }
+
+				    // Create and populate item
+					LobbyItem lobbyItem = new LobbyItem();
+
+					lobbyItem.setId(id);
+					lobbyItem.setNameEn(nameEn);
+					lobbyItem.setNameTi(nameTi);
+					lobbyItem.setNameWy(nameWy);
+					lobbyItem.setNameSa(nameSa);
+			    	lobbyItem.setDesc(desc);
+			    	lobbyItem.setStatsTotal(total);
+			    	lobbyItem.setStatsTrans(translated);
+			    	lobbyItem.setStatsInProg(inProgress);
+			    	lobbyItem.setStatsNotBeg(notBegun);
+			    	
+			    	lobbyItems.add(lobbyItem);
+			    }
+		    }
+		    else
+		    	Window.alert("Category node for " + category + " is null!");
+		}
+		catch (DOMException e)
+		{
+			Window.alert("Could not parse XML document.");
+		}
+		
+		return lobbyItems;
+	}
+	
+//	private static String getAttrFromElement(Element e, String elemTag, String lang)
+//	{
+//	    // Extract body text (name) of "name" node
+//	    String attr = "";
+//	    String lng = "";
+//	    Node node = null;
+//	    int i = 0;
+//	    
+//	    while (true)
+//	    {
+//	    	node = e.getElementsByTagName(elemTag).item(i++);
+//	    	if (node == null)
+//	    		break;
+//	    	else
+//	    	{
+//	    		Text textNode = (Text)node.getFirstChild();
+//	    		if (textNode != null)
+//	    		{
+//	    			lng = ((Element)node).getAttribute("lang");
+//	    			if (lng != null)
+//	    			{
+//	    				if (lng.equals(lang))
+//	    				{
+//	    					attr = textNode.getData();
+//	    					break;
+//	    				}
+//	    			}
+//	    		}
+//	    	}
+//	    }
+//	    
+//	    return attr;
+//	}
+
+	//
+	// Section click handler
+	//
+	private void onSectionClick(int i)
+	{
+		Window.alert("You clicked on panel #" + i);
+	}
+
+	//
+	// Call-back function from server query
+	//
+	protected AsyncCallback<String> lobbyCallback = new AsyncCallback<String>()
+	{
+		public void onFailure(Throwable caught)
+		{
+			// Show the RPC error message to the user
+			Window.alert("'lobby' Remote Procedure Call - Failure");
+		}
+
+		public void onSuccess(String result)
+		{
+			// Parse out kanjur items from result (NOTE: last item is the Kangyur Catalogue)
+			ArrayList<LobbyItem> kanyurItems = ParseQueryResult(result, "kanjur");
+			for (int i = 0; i < (kanyurItems.size()-1); i++)
+			{
+				//LobbyItemPanel itemPanel = new LobbyItemPanel();
+				LobbyItemPanel itemPanel = kanjurPanels.get(i);
+				itemPanel.titleEnButton.setText(kanyurItems.get(i).getNameEn());
+				itemPanel.titleTiButton.setText(kanyurItems.get(i).getNameTi());
+				itemPanel.titleWyButton.setText(kanyurItems.get(i).getNameWy());
+				if (i == 3)
+					itemPanel.titleSaButton.setText("");
+				else
+					itemPanel.titleSaButton.setText(kanyurItems.get(i).getNameSa());
+				
+				String desc = kanyurItems.get(i).getDesc();
+				if (desc.length() > 0 && desc.length() < 300)	// Chapuza!!
+					itemPanel.descButton.setText(desc);
+				
+				itemPanel.titleEnButton.setTabIndex(i);
+				itemPanel.titleTiButton.setTabIndex(i);
+				itemPanel.titleWyButton.setTabIndex(i);
+				itemPanel.titleSaButton.setTabIndex(i);
+				itemPanel.descButton.setTabIndex(i);
+				
+				itemPanel.textsValueLabel.setText(kanyurItems.get(i).getStatsTotal());
+				itemPanel.translatedValueLabel.setText(kanyurItems.get(i).getStatsTrans());
+				itemPanel.inProgressValueLabel.setText(kanyurItems.get(i).getStatsInProg());
+				itemPanel.notBegunValueLabel.setText(kanyurItems.get(i).getStatsNotBeg());
+
+				// Click handler shows gallery with full-size image
+				itemPanel.titleEnButton.addClickHandler(new ClickHandler() {	public void onClick(ClickEvent event) { onSectionClick(((Button)event.getSource()).getTabIndex()); }});
+				itemPanel.titleTiButton.addClickHandler(new ClickHandler() {	public void onClick(ClickEvent event) { onSectionClick(((Button)event.getSource()).getTabIndex()); }});
+				itemPanel.titleWyButton.addClickHandler(new ClickHandler() {	public void onClick(ClickEvent event) { onSectionClick(((Button)event.getSource()).getTabIndex()); }});
+				itemPanel.titleSaButton.addClickHandler(new ClickHandler() {	public void onClick(ClickEvent event) { onSectionClick(((Button)event.getSource()).getTabIndex()); }});
+				itemPanel.descButton.addClickHandler(new ClickHandler()    {	public void onClick(ClickEvent event) { onSectionClick(((Button)event.getSource()).getTabIndex()); }});
+
+				//itemsPanel.add(itemPanel);
+				//kanjurPanels.add(itemPanel);
+			}
+			
+			// Handle last kanjur item ("Kangyur Catalogue")
+			int lastIndex = kanyurItems.size() - 1;
+			//LobbyCatalogPanel cat = new LobbyCatalogPanel();
+			catPanel.titleEnButton.setText(kanyurItems.get(lastIndex).getNameEn());
+			catPanel.titleWyButton.setText(kanyurItems.get(lastIndex).getNameWy());
+			
+			//itemsPanel.add(catPanel);
+		}
+	};
+}

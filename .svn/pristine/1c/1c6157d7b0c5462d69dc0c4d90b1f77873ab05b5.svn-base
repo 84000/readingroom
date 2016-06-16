@@ -1,0 +1,173 @@
+package org.tbrc.readingroom.server;
+
+import java.util.ArrayList;
+
+import org.tbrc.readingroom.client.ReadingRoomService;
+import org.tbrc.readingroom.shared.Global;
+import org.tbrc.readingroom.shared.QueryVerifier;
+import org.tbrc.readingroom.shared.TextData;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xmldb.api.base.Collection;
+import org.xmldb.api.base.ResourceSet;
+import org.xmldb.api.modules.XMLResource;
+import org.xmldb.api.modules.XPathQueryService;
+
+import com.google.gwt.user.server.rpc.RemoteServiceServlet;
+
+/**
+ * The server-side implementation of the RPC service.
+ */
+@SuppressWarnings("serial")
+public class ReadingRoomServiceImpl extends RemoteServiceServlet implements ReadingRoomService
+{
+	// Class globals
+    //final String URI 		= "xmldb:exist://" + Constants.CAD_DOMAIN + ":" + Constants.CAD_SERVER_PORT + "/exist/xmlrpc";
+    //final String MOD_FOLDER = "/db/cubanart/modules";
+	//final String URI 		= "xmldb:exist://tbrc.org:51173/exist/xmlrpc";
+	
+    private Tei tei = new Tei();
+
+	/**
+	 * Escape an html string. Escaping data received from the client helps to
+	 * prevent cross-site script vulnerabilities.
+	 * 
+	 * @param html the html string to escape
+	 * @return the escaped string
+	 */
+//	private String escapeHtml(String html) {
+//		if (html == null) {
+//			return null;
+//		}
+//		return html.replaceAll("&", "&amp;").replaceAll("<", "&lt;")
+//				.replaceAll(">", "&gt;");
+//	}
+	
+	// Main query method for accessing eXist database
+	public String doQuery(String queryName, String[] args)
+	{
+		String returnStr = null;
+		
+		// Verify that the query is valid. 
+		if (!QueryVerifier.isValidName(queryName))
+		{
+			// If the query name is not valid, throw an IllegalArgumentException back to the client.
+			throw new IllegalArgumentException("Invalid query type received");
+		}
+
+		// Query eXist database
+		System.out.println("Querying eXist database...");
+        
+        try
+        {
+        	//Collection col = Data.getCollection(MOD_FOLDER, null, null);
+        	Collection col = Data.getCollection(Global.MOD_FOLDER, "curtis", "#tbrc#");
+            
+            XPathQueryService service = (XPathQueryService)col.getService("XPathQueryService", "1.0");  
+            service.setProperty("indent", "yes");
+
+            // generate query
+    		//String xQuery = Data.generateQuery("queries", "allArtObjects", null, "q", 10);
+    		// moduleName = "84000", queryName = "lobby", args = null
+    		String xQuery = Data.generateQuery(Global.MODULE_NAME, queryName, args, Global.NAMESPACE, Global.TIMEOUT_SECS);
+
+    		// execute query
+            ResourceSet resSet = service.query(xQuery);
+            if (resSet == null)
+            	System.out.println("Query returned no results");
+            else
+            {
+            	System.out.println("Query returned results");
+				if (resSet.getSize() > 0)
+				{
+					XMLResource res = (XMLResource) resSet.getResource(0l);
+					Object cont = res.getContent();
+					returnStr = cont.toString();
+
+					// 
+					Document doc = (Document) res.getContentAsDOM();
+					Element parent = (Element) doc.getFirstChild();
+					NodeList nodes = parent.getChildNodes();
+
+					// count the number of result Element nodes
+					int elemNodes = nodes.getLength();
+					for (int i = 0; i < nodes.getLength(); i++)
+					{
+						if (nodes.item(i).getNodeType() != Node.ELEMENT_NODE)
+							elemNodes--;
+						else
+						{
+							//String content = nodes.item(i).getTextContent();
+							//System.out.println("Node items[" + i + "] " + nodes.item(i).getNodeName() + " content: " + content);
+						}
+					}
+
+					System.out.println("Query found " + elemNodes + " elements in results");
+            	}
+            }
+		}
+        catch (Exception e)
+        {
+			System.out.println("Exception in query: " + e.getMessage());
+        }
+
+		//System.out.println("QUERY: " + queryName + ", RESULTS: \n" + returnStr);
+        
+        // Special handling required for potentially huge TEI text query
+        if (queryName.equalsIgnoreCase("tei"))
+        {
+        	tei.parse(returnStr);
+			//System.out.println("TEI HEADER CONTENT: \n" + tei.header);
+			//System.out.println("TEI HEADER CONTENT.");
+        	return tei.header;
+        }
+        else
+        {
+			//System.out.println("XML CONTENT: \n" + returnStr);
+        	return returnStr;
+        }
+	}
+	
+	public String getTextSection(String sectionName)
+	{
+		if (sectionName.equalsIgnoreCase("header"))
+			return tei.header;
+		else if (sectionName.equalsIgnoreCase("front"))
+		{
+			//System.out.println("TEI FRONT CONTENT: \n" + tei.front);
+			//System.out.println("TEI FRONT CONTENT.");
+			return tei.front;
+		}
+		else if (sectionName.equalsIgnoreCase("body"))
+			return tei.body;
+		else if (sectionName.equalsIgnoreCase("back"))
+			return tei.back;
+		else
+			return "";
+	}
+
+	public TextData getTextData(String part)
+	{
+		if (part.equalsIgnoreCase("summary"))
+			return tei.getTextSummaryData();
+		else if (part.equalsIgnoreCase("ack"))
+			return tei.getTextAckData();
+		else if (part.equalsIgnoreCase("intro"))
+			return tei.getTextIntroData();
+
+		// Return summary by default
+		return tei.getTextSummaryData();
+	}
+	
+	public ArrayList<String> getTranslationPartNames()
+	{
+		return tei.getTranslationPartNames();
+	}
+	
+	public TextData getTranslationPartByName(String partName)
+	{
+		return tei.getTransPartByName(partName);
+	}
+}

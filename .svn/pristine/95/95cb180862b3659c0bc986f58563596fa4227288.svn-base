@@ -1,0 +1,56 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style>
+	.important {
+		font-weight: bold;
+	}
+	</ui:style>
+
+	<g:HTMLPanel ui:field="lobbyPage" styleName="mainPage">
+    	<!-- Kangyur title bar -->
+		<g:HTMLPanel ui:field="kangyurTitlePanel" styleName="titleMedium">
+	    	<!-- <g:VerticalPanel width="100%" horizontalAlignment="ALIGN_LEFT" styleName="redBackground">
+	    		<g:HorizontalPanel horizontalAlignment="ALIGN_LEFT"> -->
+	    	<g:VerticalPanel ui:field="kangyurTitleBar" width="100%" styleName="redBackground">
+	    		<g:HorizontalPanel ui:field="kangyurTitleInner">
+			    	<g:Label ui:field="kangyurTitleEn" styleName="bigTitleFont">The Kangyur</g:Label>
+			    	<g:Label ui:field="kangyurTitleTi" styleName="bigTitleTFont">བཀའ་འགྱུར</g:Label>
+    			</g:HorizontalPanel>
+    		</g:VerticalPanel>
+		</g:HTMLPanel>
+		<g:VerticalPanel width="100%" spacing="10" horizontalAlignment="ALIGN_CENTER">
+	    	<g:VerticalPanel width="100%" horizontalAlignment="ALIGN_CENTER" spacing="18">
+	    		<!-- Subtitle and "learn more" button -->
+				<g:Label ui:field="kangyurDescLabel" width="50%" horizontalAlignment="ALIGN_CENTER" styleName="subtitleFont">
+					The collected scriptures, translations into Tibetan of the 
+					Indian texts considered to record the words of the Buddha.
+				</g:Label>
+				<g:Button ui:field="learnMoreButton" styleName="learnMoreButton" addStyleNames="ss-info">
+					&nbsp;LEARN MORE ABOUT THE KANGYUR
+				</g:Button>
+	    	</g:VerticalPanel>
+	    	<!-- Grid containing section items -->
+			<g:Grid ui:field="kangyurGrid" cellSpacing="20" />
+			<!-- Catalog panel -->
+			<g:Grid styleName="catalog">
+				<g:row>
+					<g:customCell styleName="halfWidth">
+						<g:VerticalPanel width="100%">
+							<g:Label ui:field="catTitleEnLabel" width="100%" styleName="itemTitleFont" addStyleNames="catalogTitle">Kangyur Catalogue</g:Label>
+							<g:HTML><hr size="1" width="100%" align="LEFT" color="#cf7a34" /></g:HTML>
+							<g:Label ui:field="catTitleWyLabel" width="100%" styleName="itemSubTitleFont" addStyleNames="transparentBackground alignLeft">bka 'gyur dkar chag</g:Label>
+						</g:VerticalPanel>
+					</g:customCell>
+					<g:customCell>
+						<g:VerticalPanel>
+							<g:Label ui:field="catDescLabel" styleName="itemDescFont" addStyleNames="catalogDesc">
+								This is the somewhat wordy and repetitive description of the Kangyur Catalogue
+							</g:Label>
+						</g:VerticalPanel>
+					</g:customCell>
+				</g:row>
+			</g:Grid>
+		</g:VerticalPanel>
+	</g:HTMLPanel>	<!-- main panel -->
+</ui:UiBinder> 

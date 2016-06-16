@@ -1,0 +1,4 @@
+eclipse.preferences.version=1
+jarsExcludedFromWebInfLib=/Applications/eclipse/plugins/com.google.appengine.eclipse.sdkbundle_1.9.14/appengine-java-sdk-1.9.14/lib/appengine-tools-api.jar
+warSrcDir=war
+warSrcDirIsOutput=true

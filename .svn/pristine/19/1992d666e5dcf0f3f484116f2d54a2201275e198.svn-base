@@ -1,0 +1,8 @@
+package org.tbrc.readingroom.client;
+
+import com.google.gwt.user.client.ui.HorizontalPanel;
+
+public class SubjectPanel extends HorizontalPanel
+{
+
+}

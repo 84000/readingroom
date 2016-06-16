@@ -1,0 +1,29 @@
+package org.tbrc.readingroom.client;
+
+import org.tbrc.readingroom.shared.Constants;
+
+public class Utils {
+	public static Boolean viewPortChanged(int newWidth, int oldWidth)
+	{
+		Boolean portChanged = false;
+		
+		if (newWidth >= Constants.LARGE_VIEWPORT_MIN_WIDTH)
+		{
+			if (oldWidth < Constants.LARGE_VIEWPORT_MIN_WIDTH)
+				portChanged = true;
+		}
+		else if (newWidth >= Constants.MEDIUM_VIEWPORT_MIN_WIDTH && newWidth < Constants.LARGE_VIEWPORT_MIN_WIDTH)
+		{
+			if (oldWidth < Constants.MEDIUM_VIEWPORT_MIN_WIDTH || oldWidth >= Constants.LARGE_VIEWPORT_MIN_WIDTH)
+				portChanged = true;
+		}
+		else // newWidth < med min
+		{
+			if (oldWidth >= Constants.MEDIUM_VIEWPORT_MIN_WIDTH)
+				portChanged = true;
+		}
+		
+		return portChanged;
+	}
+}
+

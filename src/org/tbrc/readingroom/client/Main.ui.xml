@@ -1,0 +1,18 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:my="urn:import:org.tbrc.readingroom.client">
+
+	<g:HTMLPanel ui:field="mainPanel" width="100%">
+	<!-- <g:VerticalPanel ui:field="mainPanel"> -->
+		<my:Reader ui:field="reader" visible="false"/>
+		<my:Header ui:field="header"/>
+		<!-- DeckPanel for animated transitions between pages -->
+		<g:DeckPanel ui:field="deckPanel" animationEnabled="true">
+			<!-- Initial child panels - more Section panels can be added dynamically -->
+			<!-- <my:Lobby ui:field="lob"/> -->
+			<!-- <my:Section ui:field="section"/> -->
+		</g:DeckPanel>
+	<!-- </g:VerticalPanel> -->
+	</g:HTMLPanel>
+</ui:UiBinder> 

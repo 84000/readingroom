@@ -1,0 +1,43 @@
+package org.tbrc.readingroom.client;
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
+
+public class Queries
+{
+	//
+	// Database-query functions
+	//
+	/*
+	public static void lobbyQuery(AsyncCallback<String> callbackFunc)
+	{
+		// Issue query via RPC service
+		Readingroom.rpcService.doQuery("lobby", null, callbackFunc);
+	}
+	
+	public static void sectionQuery(String id, AsyncCallback<String> callbackFunc)
+	{
+		// Issue query via RPC service
+		String[] args = {id};
+		Readingroom.rpcService.doQuery("section", args, callbackFunc);
+	}
+	
+	public static void textQuery(String id, AsyncCallback<String> callbackFunc)
+	{
+		// Issue query via RPC service
+		String[] args = {id};
+		Readingroom.rpcService.doQuery("tei", args, callbackFunc);
+	}
+	
+	public static void textSectionQuery(String sectionName, AsyncCallback<String> callbackFunc)
+	{
+		// Issue query via RPC service
+		Readingroom.rpcService.getTextSection(sectionName, callbackFunc);
+	}
+	
+	public static void textSummaryQuery(AsyncCallback<TextSummaryData> callbackFunc)
+	{
+		// Issue query via RPC service
+		Readingroom.rpcService.getTextSummary(callbackFunc);
+	}
+	*/
+}

@@ -1,0 +1,380 @@
+package org.tbrc.readingroom.client;
+
+import java.util.ArrayList;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.xml.client.DOMException;
+import com.google.gwt.xml.client.Document;
+import com.google.gwt.xml.client.Element;
+import com.google.gwt.xml.client.Node;
+import com.google.gwt.xml.client.NodeList;
+import com.google.gwt.xml.client.Text;
+import com.google.gwt.xml.client.XMLParser;
+
+public class Queries
+{
+	private static ReadingRoomServiceAsync rpcService = GWT.create(ReadingRoomService.class);
+
+	// Query-level items not contained in DataItems
+	private static String kangyurDesc = "";
+	private static String tengyurDesc = "";
+
+	//
+	// Database-related functions
+	//
+	public static void lobbyQuery(AsyncCallback<String> callbackFunc)
+	{
+		// Issue query via RPC service
+		rpcService.doQuery("84000", "lobby", null, callbackFunc);
+	}
+	
+	public static void sectionQuery(String id, AsyncCallback<String> callbackFunc)
+	{
+		// Issue query via RPC service
+		String[] args = {id};
+		rpcService.doQuery("84000", "section", args, callbackFunc);
+	}
+	
+	public static ArrayList<DataItem> parseLobbyQueryResult(String xml, String category)
+	{
+		ArrayList<DataItem> lobbyItems = new ArrayList<DataItem>();
+
+		try
+		{
+		    // parse the XML document into a DOM
+		    Document messageDom = XMLParser.parse(xml);
+
+		    // Extract the category ("kanjur" or "tenjur") node - we know there is only one
+		    Node catNode = messageDom.getElementsByTagName(category).item(0);
+		    if (catNode != null)
+		    {
+			    Element ec = (Element)catNode;
+			    
+			    // Get kanjur/tenjur description
+			    // Chapuza!  Should find a cleaner way to set this
+			    Node kangyurDescNode = ec.getElementsByTagName("description").item(0);
+			    if (kangyurDescNode != null)
+			    {
+			    	Text kangyurDescTextNode = (Text)kangyurDescNode.getFirstChild();
+			    	if (kangyurDescTextNode != null)
+			    	{
+			    		if (category == "kanjur")
+			    			kangyurDesc = kangyurDescTextNode.getData();
+			    	}
+			    }
+			    Node tengyurDescNode = ec.getElementsByTagName("description").item(1);
+			    if (tengyurDescNode != null)
+			    {
+			    	Text tengyurDescTextNode = (Text)tengyurDescNode.getFirstChild();
+			    	if (tengyurDescTextNode != null)
+			    	{
+			    		if (category == "tenjur")
+			    			tengyurDesc = tengyurDescTextNode.getData();
+			    	}
+			    }
+			    		
+		    	lobbyItems = getLobbyItems(ec);
+		    }
+		    else
+		    {
+		    	// For non-main-lobby queries (no outer "kanjur" or "tenjur" node), get any items that may exist
+		    	lobbyItems = getLobbyItems((Element)messageDom);
+		    }
+		}
+		catch (DOMException e)
+		{
+			Window.alert("Could not parse XML document.");
+		}
+		
+		return lobbyItems;
+	}
+	
+	private static ArrayList<DataItem> getLobbyItems(Element ec)
+	{
+		ArrayList<DataItem> lobbyItems = new ArrayList<DataItem>();
+
+		// Get sections within the kangyur/tengyur
+	    NodeList sectionNodeList = ec.getElementsByTagName("section");
+	    if (sectionNodeList != null)
+	    {
+	    	for (int i = 0; i < sectionNodeList.getLength(); i++)
+	    	{
+	    		Node sectionNode = sectionNodeList.item(i);
+	    		Element es = (Element)sectionNode;
+	    		String id = es.getAttribute("id");
+
+	    		Node nameNode = null;
+	    		Text nameTextNode = null;
+
+	    		String nameEn = "";
+	    		nameNode = es.getElementsByTagName("name").item(0);
+	    		if (nameNode != null)
+	    		{
+	    			nameTextNode = (Text)nameNode.getFirstChild();
+	    			if (nameTextNode != null)
+	    				nameEn = nameTextNode.getData();
+	    		}
+
+	    		String nameTi = "";
+	    		nameNode = es.getElementsByTagName("name").item(2);
+	    		if (nameNode != null)
+	    		{
+	    			nameTextNode = (Text)nameNode.getFirstChild();
+	    			if (nameTextNode != null)
+	    				nameTi = nameTextNode.getData();
+	    		}
+
+	    		String nameWy = "";
+	    		nameNode = es.getElementsByTagName("name").item(1);
+	    		if (nameNode != null)
+	    		{
+	    			nameTextNode = (Text)nameNode.getFirstChild();
+	    			if (nameTextNode != null)
+	    				nameWy = nameTextNode.getData();
+	    		}
+
+	    		String nameSa = "";
+	    		nameNode = es.getElementsByTagName("name").item(3);
+	    		if (nameNode != null)
+	    		{
+	    			nameTextNode = (Text)nameNode.getFirstChild();
+	    			if (nameTextNode != null)
+	    				nameSa = nameTextNode.getData();
+	    		}
+
+	    		String desc = "";
+	    		Node descNode = es.getElementsByTagName("description").item(0);
+	    		if (descNode != null)
+	    		{
+	    			Text descTextNode = (Text)descNode.getFirstChild();
+	    			if (descTextNode != null)
+	    				desc = descTextNode.getData();
+	    		}
+
+	    		String toh = "";
+	    		Node tohNode = es.getElementsByTagName("toh").item(0);
+	    		if (tohNode != null)
+	    		{
+	    			Text tohTextNode = (Text)tohNode.getFirstChild();
+	    			if (tohTextNode != null)
+	    				toh = tohTextNode.getData();
+	    		}
+
+	    		// Get stats node items
+	    		Node statsNode = es.getElementsByTagName("stats").item(0);
+	    		Element ess = (Element)statsNode;
+
+	    		String total = "";
+	    		Node totalNode = ess.getElementsByTagName("total").item(0);
+	    		if (totalNode != null)
+	    		{
+	    			Text totalTextNode = (Text)totalNode.getFirstChild();
+	    			if (totalTextNode != null)
+	    				total = totalTextNode.getData();
+	    		}
+
+	    		String translated = "";
+	    		Node translatedNode = ess.getElementsByTagName("translated").item(0);
+	    		if (translatedNode != null)
+	    		{
+	    			Text translatedTextNode = (Text)translatedNode.getFirstChild();
+	    			if (translatedTextNode != null)
+	    				translated = translatedTextNode.getData();
+	    		}
+
+	    		String inProgress = "";
+	    		Node inProgressNode = ess.getElementsByTagName("inProgress").item(0);
+	    		if (inProgressNode != null)
+	    		{
+	    			Text inProgressTextNode = (Text)inProgressNode.getFirstChild();
+	    			if (inProgressTextNode != null)
+	    				inProgress = inProgressTextNode.getData();
+	    		}
+
+	    		String notBegun = "";
+	    		Node notBegunNode = ess.getElementsByTagName("notBegun").item(0);
+	    		if (notBegunNode != null)
+	    		{
+	    			Text notBegunTextNode = (Text)notBegunNode.getFirstChild();
+	    			if (notBegunTextNode != null)
+	    				notBegun = notBegunTextNode.getData();
+	    		}
+
+	    		// Create and populate item
+	    		DataItem lobbyItem = new DataItem();
+
+	    		lobbyItem.setId(id);
+	    		lobbyItem.setNameEn(nameEn);
+	    		lobbyItem.setNameTi(nameTi);
+	    		lobbyItem.setNameWy(nameWy);
+	    		lobbyItem.setNameSa(nameSa);
+	    		lobbyItem.setDesc(desc);
+	    		lobbyItem.setToh(toh);
+	    		lobbyItem.setStatsTotal(total);
+	    		lobbyItem.setStatsTrans(translated);
+	    		lobbyItem.setStatsInProg(inProgress);
+	    		lobbyItem.setStatsNotBeg(notBegun);
+
+	    		lobbyItems.add(lobbyItem);
+	    	}
+	    }
+	    
+	    return lobbyItems;
+	}
+	
+	public static String getKangyurDesc()
+	{
+		return kangyurDesc;
+	}
+	
+	public static String getTengyurDesc()
+	{
+		return tengyurDesc;
+	}
+
+	public static ArrayList<DataItem> parseSectionQueryResult(String xml)
+	{
+		ArrayList<DataItem> sectionItems = new ArrayList<DataItem>();
+
+		try
+		{
+		    // parse the XML document into a DOM
+		    Document messageDom = XMLParser.parse(xml);
+
+		    // Get section data
+		    NodeList sectionNodeList = messageDom.getElementsByTagName("node");
+		    for (int i = 0; i < sectionNodeList.getLength(); i++)
+		    {
+		    	Node sectionNode = sectionNodeList.item(i);
+			    Element es = (Element)sectionNode;
+			    String id = es.getAttribute("id");
+			    String type = es.getAttribute("type");
+			    String numChapters = es.getAttribute("numChapters");
+				    
+			    Node nameNode = null;
+			    Text nameTextNode = null;
+				    
+			    String nameEn = "";
+			    nameNode = es.getElementsByTagName("name").item(0);
+			    if (nameNode != null)
+			    {
+			    	nameTextNode = (Text)nameNode.getFirstChild();
+			    	if (nameTextNode != null)
+			    		nameEn = nameTextNode.getData();
+			    }
+
+			    String nameWy = "";
+			    nameNode = es.getElementsByTagName("name").item(1);
+			    if (nameNode != null)
+			    {
+			    	nameTextNode = (Text)nameNode.getFirstChild();
+			    	if (nameTextNode != null)
+			    		nameWy = nameTextNode.getData();
+			    }
+
+			    String nameTi = "";
+			    nameNode = es.getElementsByTagName("name").item(2);
+			    if (nameNode != null)
+			    {
+			    	nameTextNode = (Text)nameNode.getFirstChild();
+			    	if (nameTextNode != null)
+			    		nameTi = nameTextNode.getData();
+			    }
+
+			    String nameSa = "";
+			    nameNode = es.getElementsByTagName("name").item(3);
+			    if (nameNode != null)
+			    {
+			    	nameTextNode = (Text)nameNode.getFirstChild();
+			    	if (nameTextNode != null)
+			    		nameSa = nameTextNode.getData();
+			    }
+
+			    String desc = "";
+			    Node descNode = es.getElementsByTagName("description").item(0);
+			    if (descNode != null)
+			    {
+			    	Text descTextNode = (Text)descNode.getFirstChild();
+			    	if (descTextNode != null)
+			    		desc = descTextNode.getData();
+			    }
+
+			    String toh = "";
+	    		Node tohNode = es.getElementsByTagName("toh").item(0);
+	    		if (tohNode != null)
+	    		{
+	    			Text tohTextNode = (Text)tohNode.getFirstChild();
+	    			if (tohTextNode != null)
+	    				toh = tohTextNode.getData();
+	    		}
+				
+			    // Get stats node items
+			    Node statsNode = es.getElementsByTagName("stats").item(0);
+			    Element ess = (Element)statsNode;
+				    
+			    String total = "";
+			    Node totalNode = ess.getElementsByTagName("total").item(0);
+			    if (totalNode != null)
+			    {
+			    	Text totalTextNode = (Text)totalNode.getFirstChild();
+			    	if (totalTextNode != null)
+			    		total = totalTextNode.getData();
+			    }
+				    
+			    String translated = "";
+			    Node translatedNode = ess.getElementsByTagName("translated").item(0);
+			    if (translatedNode != null)
+			    {
+			    	Text translatedTextNode = (Text)translatedNode.getFirstChild();
+			    	if (translatedTextNode != null)
+			    		translated = translatedTextNode.getData();
+			    }
+			    
+			    String inProgress = "";
+			    Node inProgressNode = ess.getElementsByTagName("inProgress").item(0);
+			    if (inProgressNode != null)
+			    {
+			    	Text inProgressTextNode = (Text)inProgressNode.getFirstChild();
+			    	if (inProgressTextNode != null)
+			    		inProgress = inProgressTextNode.getData();
+			    }
+				    
+			    String notBegun = "";
+			    Node notBegunNode = ess.getElementsByTagName("notBegun").item(0);
+			    if (notBegunNode != null)
+			    {
+			    	Text notBegunTextNode = (Text)notBegunNode.getFirstChild();
+			    	if (notBegunTextNode != null)
+			    		notBegun = notBegunTextNode.getData();
+			    }
+
+			    // Create and populate item
+				DataItem sectionItem = new DataItem();
+
+				sectionItem.setId(id);
+				sectionItem.setType(type);
+				sectionItem.setNumChapters(numChapters);
+				sectionItem.setNameEn(nameEn);
+				sectionItem.setNameTi(nameTi);
+				sectionItem.setNameWy(nameWy);
+				sectionItem.setNameSa(nameSa);
+		    	sectionItem.setDesc(desc);
+		    	sectionItem.setToh(toh);
+		    	sectionItem.setStatsTotal(total);
+			    sectionItem.setStatsTrans(translated);
+			    sectionItem.setStatsInProg(inProgress);
+			    sectionItem.setStatsNotBeg(notBegun);
+		    
+		    	sectionItems.add(sectionItem);
+		    }
+		}
+		catch (DOMException e)
+		{
+			Window.alert("Could not parse XML document.");
+		}
+		
+		return sectionItems;
+	}
+}

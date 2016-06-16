@@ -1,0 +1,105 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style>
+	.important {
+		font-weight: bold;
+	}
+	</ui:style>
+	
+	<g:HTMLPanel ui:field="sectionPage" styleName="mainPage">
+    	<!-- Kangyur title bar -->
+		<g:HTMLPanel ui:field="titlePanel" styleName="titleMedium">
+	    	<g:VerticalPanel ui:field="titleBar" width="100%" styleName="redBackground">
+	    		<g:HorizontalPanel ui:field="titleInner">
+			    	<g:Label ui:field="titleEn" styleName="bigTitleFont">The Kangyur</g:Label>
+			    	<g:Label ui:field="titleTi" styleName="bigTitleTFont">བཀའ་འགྱུར</g:Label>
+    			</g:HorizontalPanel>
+    		</g:VerticalPanel>
+		</g:HTMLPanel>
+		
+   		<!-- Subtitle and sub-heading info -->
+    	<g:VerticalPanel width="100%" horizontalAlignment="ALIGN_CENTER" spacing="20">
+	    	<g:VerticalPanel width="100%" horizontalAlignment="ALIGN_CENTER" spacing="0">
+				<g:Label ui:field="titleEnLabel" width="50%" horizontalAlignment="ALIGN_CENTER" styleName="sectionTitleEn" addStyleNames="blackColor">
+					Perfection of Wisdom
+				</g:Label>
+				<g:HTML><hr size="1" width="60%" align="CENTER" color="#cf7a34" /></g:HTML>
+				 
+				<g:Grid ui:field="titleTiWyGrid" width="60%" cellSpacing="10">
+					<g:row>
+						<g:customCell>
+							<g:Label ui:field="titleTiLabel" styleName="sectionTitleTi">Loading...</g:Label>
+						</g:customCell>
+						<g:customCell>
+							<g:Label ui:field="titleWyLabel" styleName="sectionTitleWy">Loading...</g:Label>
+						</g:customCell>
+					</g:row>
+				</g:Grid>
+				
+				<g:HTML><hr size="1" width="60%" align="CENTER" color="#cf7a34" /></g:HTML>
+				<g:Label ui:field="titleSaLabel" styleName="sectionTitleSa">Loading...</g:Label>
+				<g:HTML><hr size="1" width="60%" align="CENTER" color="#cf7a34" /></g:HTML>
+				<g:Label ui:field="descLabel" styleName="sectionTitleDesc">This is some place-holder text while the system is
+					retrieving data from the database.
+				</g:Label>
+				<g:Button ui:field="button" styleName="infoButton" addStyleNames="ss-info">
+					&nbsp;GO BACK
+				</g:Button>
+
+				<!-- Top-level options (expand all summaries, filter, etc.) -->
+				<g:HorizontalPanel width="94%" verticalAlignment="ALIGN_MIDDLE">
+					<g:HTMLPanel>
+						<div align="left">
+							<g:VerticalPanel ui:field="expandPanel">
+								<g:Label ui:field="expandAllLabel" styleName="ss-navigateright" addStyleNames="sectionControls">&nbsp;&nbsp;EXPAND ALL SUMMARIES</g:Label>
+							</g:VerticalPanel>
+						</div>
+					</g:HTMLPanel>
+					<g:HTMLPanel>
+						<div align="right">
+							<g:VerticalPanel ui:field="widePanel">
+								<g:HorizontalPanel ui:field="filterPanel" styleName="alignRight" horizontalAlignment="ALIGN_RIGHT" verticalAlignment="ALIGN_MIDDLE">
+									<g:Label ui:field="filterTextLabel" styleName="sectionControls">FILTER TEXTS:&nbsp;</g:Label>
+									<g:HorizontalPanel ui:field="filterButtonPanel">
+										<g:Button ui:field="filterAllButton" styleName="filterButton" addStyleNames="filterButtonLeft filterButtonSelected">ALL TEXTS</g:Button>
+										<g:Button ui:field="filterTransButton" styleName="filterButton" addStyleNames="filterButtonRight">TRANSLATED</g:Button>
+									</g:HorizontalPanel>
+								</g:HorizontalPanel>
+							</g:VerticalPanel>
+						</div>
+					</g:HTMLPanel>
+				</g:HorizontalPanel>
+				<g:VerticalPanel ui:field="narrowPanel" horizontalAlignment="ALIGN_CENTER" spacing="5">
+				</g:VerticalPanel>
+
+	    	</g:VerticalPanel>
+	   	</g:VerticalPanel>
+		
+		<!-- List of sections -->
+		<div align="center">
+			<!-- List title -->
+			<g:VerticalPanel width="94%" spacing="10" horizontalAlignment="ALIGN_CENTER">
+				<g:Grid styleName="listingTitleBar" width="100%">
+					<g:row>
+						<g:customCell styleName="title_toh">
+							<g:Label horizontalAlignment="ALIGN_CENTER" styleName="listingTitleBar">TOH</g:Label>
+						</g:customCell>
+						<g:customCell styleName="title_title">
+							<g:Label horizontalAlignment="ALIGN_LEFT" styleName="listingTitleBar">Title</g:Label>
+						</g:customCell>
+						<g:customCell styleName="title_translation">
+							<g:VerticalPanel width="100%">
+								<g:Label ui:field="transTitleLabel" horizontalAlignment="ALIGN_LEFT" styleName="listingTitleBar">Translation</g:Label>
+							</g:VerticalPanel>
+						</g:customCell>
+					</g:row>
+				</g:Grid>
+			</g:VerticalPanel>
+			<!-- Section listings -->
+			<g:VerticalPanel ui:field="sectionListPanel" width="94%" spacing="10" horizontalAlignment="ALIGN_CENTER">
+				<!-- Actual listings go here -->
+			</g:VerticalPanel>
+		</div>
+	</g:HTMLPanel>			<!-- main panel -->
+</ui:UiBinder> 

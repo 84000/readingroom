@@ -1,0 +1,166 @@
+package org.tbrc.readingroom.client;
+
+import org.tbrc.readingroom.shared.Global;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HasText;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
+
+public class Header extends Composite implements HasText {
+
+	private static HeaderUiBinder uiBinder = GWT.create(HeaderUiBinder.class);
+
+	interface HeaderUiBinder extends UiBinder<Widget, Header> {
+	}
+
+	@UiField HorizontalPanel sidePanel;
+	@UiField VerticalPanel bottomPanel;
+	@UiField Image logoImage;
+	//@UiField Label subtitleLabel;
+	@UiField Image titleImage;
+	@UiField Image menuImage;
+	@UiField HorizontalPanel navBarContent;
+	@UiField HorizontalPanel navBarContentLine2;
+	@UiField VerticalPanel breadCrumbPanel;
+	//@UiField Label homeBreadCrumb;
+	//@UiField Label rrBreadCrumb;
+	@UiField Button homeButton;
+	@UiField Button newsButton;
+	@UiField Button rrButton;
+	@UiField Button resourcesButton;
+	@UiField Button aboutButton;
+	@UiField Button helpButton;
+	
+	private BreadCrumb breadCrumb = new BreadCrumb();
+	private int lastPortWidth = 0;
+	
+	public Header() {
+		initWidget(uiBinder.createAndBindUi(this));
+		breadCrumbPanel.add(breadCrumb);
+	}
+
+	//public void setText(String text) { subtitleLabel.setText(text); }
+	//public String getText() { return subtitleLabel.getText(); }
+	public void setText(String text) { }
+	public String getText() { return "bla"; }
+	
+	public void addBreadCrumb(String text, String url)
+	{
+		breadCrumb.addCrumb(text, url);
+	}
+
+	public void onViewportSizeChange(int newWidth)
+	{
+		// Only invoke changes if we cross a viewport-change width
+		if (Utils.viewPortChanged(newWidth, lastPortWidth))
+		{
+			if (newWidth >= Global.LARGE_VIEWPORT_MIN_WIDTH)
+			{
+				//bottomPanel.remove(subtitleLabel);
+				//sidePanel.add(subtitleLabel);
+				//subtitleLabel.setVisible(true);
+				bottomPanel.remove(titleImage);
+				sidePanel.add(titleImage);
+				titleImage.setVisible(true);
+				menuImage.setVisible(false);
+				homeButton.setVisible(true); newsButton.setVisible(true); rrButton.setVisible(true);
+				resourcesButton.setVisible(true); aboutButton.setVisible(true); helpButton.setVisible(true);
+				
+				//navBarContent.setVisible(true);
+				logoImage.setWidth("100%"); logoImage.setHeight("100%");
+				homeButton.setStyleName("navBarButton"); homeButton.addStyleName("redBottom"); homeButton.addStyleName("navBarFontLarge");
+				newsButton.setStyleName("navBarButton"); newsButton.addStyleName("orangeBottom"); newsButton.addStyleName("navBarFontLarge");
+				rrButton.setStyleName("navBarButton"); rrButton.addStyleName("tealBottom"); rrButton.addStyleName("navBarFontLarge");
+				resourcesButton.setStyleName("navBarButton"); resourcesButton.addStyleName("redBottom"); resourcesButton.addStyleName("navBarFontLarge");
+				aboutButton.setStyleName("navBarButton"); aboutButton.addStyleName("orangeBottom"); aboutButton.addStyleName("navBarFontLarge");
+				helpButton.setStyleName("navBarButton"); helpButton.addStyleName("tealBottom"); helpButton.addStyleName("navBarFontLarge");
+			}
+			else if (newWidth >= Global.MEDIUM_VIEWPORT_MIN_WIDTH)
+			{
+				//sidePanel.remove(subtitleLabel);
+				//bottomPanel.add(subtitleLabel);
+				//subtitleLabel.setVisible(true);
+				sidePanel.remove(titleImage);
+				bottomPanel.add(titleImage);
+				titleImage.setVisible(true);
+				menuImage.setVisible(false);
+				homeButton.setVisible(true); newsButton.setVisible(true); rrButton.setVisible(true);
+				resourcesButton.setVisible(true); aboutButton.setVisible(true); helpButton.setVisible(true);
+				
+				//navBarContent.setVisible(true);
+				logoImage.setWidth("100%"); logoImage.setHeight("100%");
+				sidePanel.setSpacing(12);
+				homeButton.setStyleName("navBarButton"); homeButton.addStyleName("redBottom"); homeButton.addStyleName("navBarFontMedium");
+				newsButton.setStyleName("navBarButton"); newsButton.addStyleName("orangeBottom"); newsButton.addStyleName("navBarFontMedium");
+				rrButton.setStyleName("navBarButton"); rrButton.addStyleName("tealBottom"); rrButton.addStyleName("navBarFontMedium");
+				resourcesButton.setStyleName("navBarButton"); resourcesButton.addStyleName("redBottom"); resourcesButton.addStyleName("navBarFontMedium");
+				aboutButton.setStyleName("navBarButton"); aboutButton.addStyleName("orangeBottom"); aboutButton.addStyleName("navBarFontMedium");
+				helpButton.setStyleName("navBarButton"); helpButton.addStyleName("tealBottom"); helpButton.addStyleName("navBarFontMedium");
+				
+				if (navBarContentLine2.remove(resourcesButton))
+					navBarContent.add(resourcesButton);
+				if (navBarContentLine2.remove(aboutButton))
+					navBarContent.add(aboutButton);
+				if (navBarContentLine2.remove(helpButton))
+					navBarContent.add(helpButton);
+			}
+			else // newWith < med min
+			{
+				//subtitleLabel.setVisible(false);
+				titleImage.setVisible(false);
+				menuImage.setVisible(true);
+				homeButton.setVisible(false); newsButton.setVisible(false); rrButton.setVisible(false);
+				resourcesButton.setVisible(false); aboutButton.setVisible(false); helpButton.setVisible(false);
+				
+				//navBarContent.setVisible(false);
+				logoImage.setWidth("60%"); logoImage.setHeight("60%");
+				sidePanel.setSpacing(0);
+				homeButton.setStyleName("navBarButton"); homeButton.addStyleName("redBottom"); homeButton.addStyleName("navBarFontSmall");
+				newsButton.setStyleName("navBarButton"); newsButton.addStyleName("orangeBottom"); newsButton.addStyleName("navBarFontSmall");
+				rrButton.setStyleName("navBarButton"); rrButton.addStyleName("tealBottom"); rrButton.addStyleName("navBarFontSmall");
+				resourcesButton.setStyleName("navBarButton"); resourcesButton.addStyleName("redBottom"); resourcesButton.addStyleName("navBarFontSmall");
+				aboutButton.setStyleName("navBarButton"); aboutButton.addStyleName("orangeBottom"); aboutButton.addStyleName("navBarFontSmall");
+				helpButton.setStyleName("navBarButton"); helpButton.addStyleName("tealBottom"); helpButton.addStyleName("navBarFontSmall");
+
+				if (navBarContent.remove(resourcesButton))
+					navBarContentLine2.add(resourcesButton);
+				if (navBarContent.remove(aboutButton))
+					navBarContentLine2.add(aboutButton);
+				if (navBarContent.remove(helpButton))
+					navBarContentLine2.add(helpButton);
+			}
+		}
+		
+		lastPortWidth = newWidth;
+	}
+	
+	@UiHandler("menuImage")
+	void onMenuClick(ClickEvent e)
+	{
+		PopupMenu menu = new PopupMenu();
+		//menu.setPopupPosition(menuImage.getAbsoluteLeft(), menuImage.getAbsoluteTop());
+		//menu.setPopupPosition(0, 0);
+		//menu.show();
+		menu.showRelativeTo(menuImage);
+	}
+
+	@UiHandler("logoImage") void onLogoClick(ClickEvent e) { Window.open(Global.HOME_URL, "_self", ""); }
+	@UiHandler("titleImage") void onTitleClick(ClickEvent e) { Window.open(Global.HOME_URL, "_self", ""); }
+	@UiHandler("homeButton") void onHomeClick(ClickEvent e) { Window.open(Global.HOME_URL, "_self", ""); }
+	@UiHandler("newsButton") void onNewsClick(ClickEvent e) { Window.open(Global.NEWS_URL, "_self", ""); }
+	@UiHandler("rrButton") void onRrClick(ClickEvent e) { Window.open(Global.RR_URL, "_self", ""); }
+	@UiHandler("resourcesButton") void onResourcesClick(ClickEvent e) { Window.open(Global.RESOURCES_URL, "_self", ""); }
+	@UiHandler("aboutButton") void onAboutClick(ClickEvent e) { Window.open(Global.ABOUT_URL, "_self", ""); }
+	@UiHandler("helpButton") void onHelpClick(ClickEvent e) { Window.open(Global.HELP_URL, "_self", ""); }
+}

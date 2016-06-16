@@ -1,0 +1,82 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style>
+	.important {
+		font-weight: bold;
+	}
+	</ui:style>
+	
+	<g:HTMLPanel width="100%">
+		<div align="center">
+
+		<!-- Section listing instance -->
+		<g:VerticalPanel width="100%" horizontalAlignment="ALIGN_CENTER">
+			<g:Grid ui:field="listingGrid" styleName="listing">
+				<g:row width="96%">
+					<!-- TOH -->
+					<g:customCell styleName="toh">
+						<g:VerticalPanel width="100%">
+							<g:Label ui:field="tohLabel" width="100%" styleName="sectionListingTitleEn">00</g:Label>
+						</g:VerticalPanel>
+					</g:customCell>
+					<!-- Title section -->
+					<g:customCell styleName="title">
+						<g:VerticalPanel ui:field="mainPanel" width="100%" horizontalAlignment="ALIGN_LEFT">
+							<g:Label ui:field="titleEnLabel" width="100%" horizontalAlignment="ALIGN_LEFT" styleName="sectionListingTitleEn">
+								The Perfection of Wisdom in Twenty Five Thousand Lines
+							</g:Label>
+							<g:HTML><hr size="1" width="96%" align="LEFT" color="#cf7a34" /></g:HTML>
+							<g:HorizontalPanel horizontalAlignment="ALIGN_LEFT">
+								<g:Label ui:field="titleTiLabel" horizontalAlignment="ALIGN_LEFT" styleName="sectionListingTitleTi">
+									ཤེར་ཕྱིན་སྟོང་ཕྲག་ཉི་ཤུ་ལྔ་པ།
+								</g:Label>
+								<g:Label addStyleNames="h2 h2_sa">&nbsp;&nbsp;</g:Label>
+								<!--
+								<g:Label horizontalAlignment="ALIGN_LEFT" styleName="sectionListingTitleTi">
+									&nbsp;&nbsp;
+								</g:Label>
+								-->
+								<g:Label ui:field="titleWyLabel" horizontalAlignment="ALIGN_LEFT" styleName="sectionListingTitleWy">
+									sher phyin stong phrag nyi shu Inga pa
+								</g:Label>
+							</g:HorizontalPanel>
+							<g:HTML><hr size="1" width="96%" align="LEFT" color="#cf7a34" /></g:HTML>
+							<g:Label ui:field="titleSaLabel" width="100%" horizontalAlignment="ALIGN_LEFT" styleName="sectionListingTitleSa">
+								Pañcaviṃśatisāhasrikāprajñāpāramitā
+							</g:Label>
+							<g:HTML><hr size="1" width="96%" align="LEFT" color="#cf7a34" /></g:HTML>
+							<g:Label ui:field="summaryLabel" styleName="ss-navigateright" addStyleNames="sectionControls">
+								&nbsp;&nbsp;Summary and Variant Titles
+							</g:Label>
+							<g:HTML ui:field="summaryText" styleName="sectionSummary"><!-- Actual summary text goes here --></g:HTML>
+							<g:HorizontalPanel ui:field="mainBottomHorizPanel">
+								<!-- buttons get moved here for medium viewport -->
+							</g:HorizontalPanel>
+							<g:VerticalPanel ui:field="mainBottomVertPanel">
+								<!-- buttons get moved here for small viewport -->
+							</g:VerticalPanel>
+						</g:VerticalPanel>
+					</g:customCell>
+					<!-- Translation section -->
+					<g:customCell styleName="translation">
+						<g:VerticalPanel ui:field="rightSidePanel" width="100%" horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_TOP">
+							<g:Button ui:field="actionButton" styleName="viewTransButton" addStyleNames="ss-view">
+								&nbsp;&nbsp;View Translation
+							</g:Button>
+							<g:Button ui:field="origButton" styleName="originalTextButton" addStyleNames="ss-compose">
+								&nbsp;&nbsp;Original Text
+							</g:Button>
+						</g:VerticalPanel>
+					</g:customCell>
+				</g:row>
+				<g:row>
+					<g:customCell styleName="toh"><g:Label></g:Label></g:customCell>
+					<g:customCell styleName="title"><g:Label></g:Label></g:customCell>
+					<g:customCell styleName="translation"><g:Label></g:Label></g:customCell>
+				</g:row>
+			</g:Grid>
+		</g:VerticalPanel>		
+		</div>
+	</g:HTMLPanel>
+</ui:UiBinder> 

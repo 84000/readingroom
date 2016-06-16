@@ -1,0 +1,136 @@
+package org.tbrc.readingroom.server;
+
+import org.tbrc.readingroom.client.ReadingRoomService;
+import org.tbrc.readingroom.shared.QueryVerifier;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xmldb.api.base.Collection;
+import org.xmldb.api.base.ResourceSet;
+import org.xmldb.api.modules.XMLResource;
+import org.xmldb.api.modules.XPathQueryService;
+
+import com.google.gwt.user.server.rpc.RemoteServiceServlet;
+
+/**
+ * The server-side implementation of the RPC service.
+ */
+@SuppressWarnings("serial")
+public class ReadingRoomServiceImpl extends RemoteServiceServlet implements ReadingRoomService
+{
+	// Class globals
+    //final String URI 		= "xmldb:exist://" + Constants.CAD_DOMAIN + ":" + Constants.CAD_SERVER_PORT + "/exist/xmlrpc";
+    //final String MOD_FOLDER = "/db/cubanart/modules";
+    final String URI 		= "xmldb:exist://tbrc.org:51173/exist/xmlrpc";
+    final String MOD_FOLDER = "/db/84000/modules";
+
+    /*
+	public String greetServer(String input) throws IllegalArgumentException
+	{
+		// Verify that the input is valid. 
+		if (!FieldVerifier.isValidName(input))
+		{
+			// If the input is not valid, throw an IllegalArgumentException back to
+			// the client.
+			throw new IllegalArgumentException("Name must be at least 4 characters long");
+		}
+
+		String serverInfo = getServletContext().getServerInfo();
+		String userAgent = getThreadLocalRequest().getHeader("User-Agent");
+
+		// Escape data from the client to avoid cross-site script vulnerabilities.
+		input = escapeHtml(input);
+		userAgent = escapeHtml(userAgent);
+
+		return "Hello, " + input + "!<br><br>I am running " + serverInfo + ".<br><br>It looks like you are using:<br>" + userAgent;
+	}
+	*/
+
+	/**
+	 * Escape an html string. Escaping data received from the client helps to
+	 * prevent cross-site script vulnerabilities.
+	 * 
+	 * @param html the html string to escape
+	 * @return the escaped string
+	 */
+//	private String escapeHtml(String html) {
+//		if (html == null) {
+//			return null;
+//		}
+//		return html.replaceAll("&", "&amp;").replaceAll("<", "&lt;")
+//				.replaceAll(">", "&gt;");
+//	}
+	
+	// Main query method for accessing eXist database
+	public String doQuery(String moduleName, String queryName, String[] args)
+	{
+		String returnStr = null;
+		
+		// Verify that the query is valid. 
+		if (!QueryVerifier.isValidName(queryName))
+		{
+			// If the query name is not valid, throw an IllegalArgumentException back to the client.
+			throw new IllegalArgumentException("Invalid query type received");
+		}
+
+		// Query eXist database
+		System.out.println("Querying eXist database...");
+        
+        try
+        {
+        	//Collection col = Data.getCollection(MOD_FOLDER, null, null);
+        	Collection col = Data.getCollection(MOD_FOLDER, "curtis", "#tbrc#");
+            
+            XPathQueryService service = (XPathQueryService)col.getService("XPathQueryService", "1.0");  
+            service.setProperty("indent", "yes");
+
+            // generate query
+    		//String xQuery = Data.generateQuery("queries", "allArtObjects", null, "q", 10);
+    		// moduleName = "84000", queryName = "lobby", args = null
+    		String xQuery = Data.generateQuery(moduleName, queryName, args, "ww", 10);
+
+    		// execute query
+            ResourceSet resSet = service.query(xQuery);
+            if (resSet == null)
+            	System.out.println("Query returned no results");
+            else
+            {
+            	System.out.println("Query returned results");
+				if (resSet.getSize() > 0)
+				{
+					XMLResource res = (XMLResource) resSet.getResource(0l);
+					Object cont = res.getContent();
+					returnStr = cont.toString();
+					System.out.println("XML CONTENT: " + returnStr);
+
+					// 
+					Document doc = (Document) res.getContentAsDOM();
+					Element parent = (Element) doc.getFirstChild();
+					NodeList nodes = parent.getChildNodes();
+
+					// count the number of result Element nodes
+					int elemNodes = nodes.getLength();
+					for (int i = 0; i < nodes.getLength(); i++)
+					{
+						if (nodes.item(i).getNodeType() != Node.ELEMENT_NODE)
+							elemNodes--;
+						else
+						{
+							//String content = nodes.item(i).getTextContent();
+							//System.out.println("Node items[" + i + "] " + nodes.item(i).getNodeName() + " content: " + content);
+						}
+					}
+
+					System.out.println("Query found " + elemNodes + " elements in results");
+            	}
+            }
+		}
+        catch (Exception e)
+        {
+			System.out.println("Exception in query: " + e.getMessage());
+        }
+
+		return returnStr;
+	}
+}

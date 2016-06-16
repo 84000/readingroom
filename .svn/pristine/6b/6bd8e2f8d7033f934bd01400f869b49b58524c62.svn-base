@@ -1,0 +1,101 @@
+<!doctype html>
+<!-- The DOCTYPE declaration above will set the     -->
+<!-- browser's rendering engine into                -->
+<!-- "Standards Mode". Replacing this declaration   -->
+<!-- with a "Quirks Mode" doctype is not supported. -->
+
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	<!-- <link href='http://fonts.googleapis.com/css?family=Oswald:400,300,700' rel='stylesheet' type='text/css'> -->
+
+	<!-- fonts.com fonts - requires subscription - using for Trade Gothic font -->
+	<!--  <script type="text/javascript" src="http://fast.fonts.net/jsapi/6b2dd2f3-dcda-4f84-ab7f-1281c25814a8.js"></script> -->
+	
+    <!--                                                               -->
+    <!-- Consider inlining CSS to reduce the number of requested files -->
+    <!--                                                               -->
+    <link type="text/css" rel="stylesheet" href="linotype-fonts.css" />
+    <link type="text/css" rel="stylesheet" href="ss-standard.css" />
+    <link type="text/css" rel="stylesheet" href="Readingroom.css" />
+
+    <!--                                           -->
+    <!-- Any title is fine                         -->
+    <!--                                           -->
+    <title>84000 Reading Room</title>
+    
+    <!-- THIS IS FOR ASYNCHRONOUS LOADING OF THE LINOTYPE FONTS!! -->
+    <!-- 
+	<script type="text/javascript">
+		var MTUserId='2f2b7444-fe9b-4532-bdae-95c912f0e401';
+		var MTFontIds = new Array();
+
+		MTFontIds.push("675535"); // Trade Gothic® W02 Roman 
+		MTFontIds.push("675532"); // Trade Gothic® W02 Oblique 
+		MTFontIds.push("675502"); // Trade Gothic® W02 Bold 
+		MTFontIds.push("675517"); // Trade Gothic® W02 Bold Oblique 
+
+		(function() {
+			var mtTracking = document.createElement('script');
+			mtTracking.type='text/javascript';
+			mtTracking.async='true';
+			mtTracking.src=('https:'==document.location.protocol?'https:':'http:')+'//fast.fonts.net/lt/trackingCode.js';
+
+			(document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(mtTracking);
+		})();
+	</script>
+	-->
+
+    <!--                                           -->
+    <!-- This script loads your compiled module.   -->
+    <!-- If you add any GWT meta tags, they must   -->
+    <!-- be added before this line.                -->
+    <!--                                           -->
+    <script type="text/javascript" language="javascript" src="readingroom/readingroom.nocache.js"></script>
+  </head>
+
+  <!--                                           -->
+  <!-- The body can have arbitrary html, or      -->
+  <!-- you can leave the body empty if you want  -->
+  <!-- to create a completely dynamic UI.        -->
+  <!--                                           -->
+  <body>
+    <!--
+	<style type="text/css">
+		html, body, #bg {
+			background-image:url(background-pattern.png);
+		}
+	</style>
+	-->
+
+    <!-- OPTIONAL: include this if you want history support -->
+    <iframe src="javascript:''" id="__gwt_historyFrame" tabIndex='-1' style="position:absolute;width:0;height:0;border:0"></iframe>
+    
+    <!-- RECOMMENDED if your web app will not function without JavaScript enabled -->
+    <noscript>
+      <div style="width: 22em; position: absolute; left: 50%; margin-left: -11em; color: red; background-color: white; border: 1px solid red; padding: 4px; font-family: sans-serif">
+        Your web browser must have JavaScript enabled
+        in order for this application to display correctly.
+      </div>
+    </noscript>
+
+    <div id="mainPanel"></div>
+
+	<!--
+    <h1>Web Application Starter Project</h1>
+
+    <table align="center">
+      <tr>
+        <td colspan="2" style="font-weight:bold;">Please enter your name:</td>        
+      </tr>
+      <tr>
+        <td id="nameFieldContainer"></td>
+        <td id="sendButtonContainer"></td>
+      </tr>
+      <tr>
+        <td colspan="2" style="color:red;" id="errorLabelContainer"></td>
+      </tr>
+    </table>
+    -->
+  </body>
+</html>

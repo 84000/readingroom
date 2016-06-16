@@ -1,0 +1,65 @@
+package org.tbrc.readingroom.client;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HasText;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Widget;
+
+public class LobbySection extends Composite implements HasText {
+
+	private static LobbySectionUiBinder uiBinder = GWT
+			.create(LobbySectionUiBinder.class);
+
+	interface LobbySectionUiBinder extends UiBinder<Widget, LobbySection> {
+	}
+
+	public LobbySection() {
+		initWidget(uiBinder.createAndBindUi(this));
+	}
+
+	@UiField HorizontalPanel sectionTable;
+	
+	@UiField Label titleEnLabel;
+	@UiField Label titleTiLabel;
+	@UiField Label titleWyLabel;
+	@UiField Label titleSaLabel;
+	@UiField Label textsLabel;
+	@UiField Label translatedLabel;
+	@UiField Label inProgressLabel;
+	@UiField Label notBegunLabel;
+
+	@UiHandler("titleEnLabel")
+	void onClick(ClickEvent e) {
+		Window.alert("Hello, " + titleEnLabel.getText() + "!");
+	}
+
+	@Override
+	public String getText() { return null; }
+	@Override
+	public void setText(String text) { }
+	
+	public void setCellText(int row, int col, String txt)
+	{
+		//sectionTable.setText(row, col, txt);
+	}
+	
+	public void setData(LobbyItem item)
+	{
+		titleEnLabel.setText(item.getNameEn());
+		titleTiLabel.setText(item.getNameTi());
+		titleWyLabel.setText(item.getNameWy());
+		titleSaLabel.setText(item.getNameSa());
+
+		textsLabel.setText(item.getStatsTotal());
+		translatedLabel.setText(item.getStatsTrans());
+		inProgressLabel.setText(item.getStatsInProg());
+		notBegunLabel.setText(item.getStatsNotBeg());
+	}
+}

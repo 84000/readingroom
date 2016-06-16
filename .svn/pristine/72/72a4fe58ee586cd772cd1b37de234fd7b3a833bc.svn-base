@@ -1,0 +1,18 @@
+package org.tbrc.readingroom.shared;
+
+import java.util.ArrayList;
+
+import com.google.gwt.user.client.rpc.IsSerializable;
+
+/*
+ * Data returned from server to the client
+ */
+public class MasterItemLists implements IsSerializable
+{
+	public ArrayList<GlossItem> glossItems = new ArrayList<GlossItem>();
+	public ArrayList<NoteItem> noteItems = new ArrayList<NoteItem>();
+	
+	public MasterItemLists()
+	{
+	}
+}

@@ -1,0 +1,40 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style>
+	.important {
+		font-weight: bold;
+	}
+	</ui:style>
+	
+	<g:HTMLPanel>
+		<!-- Header bar -->
+    	<g:VerticalPanel styleName="header">
+    		<g:HorizontalPanel ui:field="sidePanel" verticalAlignment="ALIGN_MIDDLE" styleName="headerTitle" spacing="12">
+    			<g:Image ui:field="logoImage" url="84000-logo.png"></g:Image>
+				<g:Label ui:field="subtitleLabel" styleName="mainFont" addStyleNames="tealColor">
+					TRANSLATING THE WORDS OF THE BUDDHA
+				</g:Label>
+    		</g:HorizontalPanel>
+    		<g:VerticalPanel ui:field="bottomPanel" horizontalAlignment="ALIGN_LEFT" styleName="headerContent" spacing="12">
+    			<!-- Subtitle label moves here for smaller viewports -->
+    		</g:VerticalPanel>
+    	</g:VerticalPanel>
+    	<!-- Nav bar -->
+    	<g:HorizontalPanel styleName="navBar" horizontalAlignment="ALIGN_LEFT">
+    		<g:HorizontalPanel ui:field="navBarContent" styleName="headerContent">
+    			<g:Button styleName="navBarButton">HOME</g:Button>
+    			<g:Button styleName="navBarButton">NEWS</g:Button>
+    			<g:Button styleName="navBarButton">READING ROOM</g:Button>
+    		</g:HorizontalPanel>
+    	</g:HorizontalPanel>
+    	<!-- Bread crumbs -->
+    	<g:VerticalPanel ui:field="breadCrumbPanel" styleName="headerContent" spacing="10" width="100%">
+    		<!--
+    		<g:BreadCrumb></g:BreadCrumb>
+    		<g:Label ui:field="homeBreadCrumb" styleName="breadCrumb">Home /</g:Label>
+    		<g:Label ui:field="rrBreadCrumb" styleName="breadCrumb" addStyleNames="blackColor">Reading Room</g:Label>
+    		-->
+    	</g:VerticalPanel>
+	</g:HTMLPanel>
+</ui:UiBinder> 

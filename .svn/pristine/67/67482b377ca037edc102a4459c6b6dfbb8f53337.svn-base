@@ -1,0 +1,295 @@
+/** Base (most-commonly used) font that can be modified as needed
+Trade Gothic W01 Light								"LEARN MORE ABOUT THE KANGYUR"
+Trade Gothic W01 Light Oblique
+Trade Gothic W01 Roman								"TRANSLATING THE WORDS OF THE BUDDHA", 
+Trade Gothic W01 Oblique
+Trade Gothic W01 Bold								Nav-bar button text, "The Kangyur"
+Trade Gothic W01 Bold Oblique
+Trade Gothic W01 Bold #2							"Discipline"
+Trade Gothic W01 Bold #2 Oblique
+Trade Gothic W01 Condensed #18
+Trade Gothic W01 Condensed #18 Oblique
+Trade Gothic W01 Condensed Bold #20
+Trade Gothic W01 Condensed Bold #20 Oblique
+*/
+
+@import "lobby.css";
+@import "section.css";
+@import "reader.css";
+
+@font-face {
+	font-family:"Tibetan";
+	src:url("Fonts/DDC_Uchen.ttf");
+}
+
+body {
+	margin: 0px;
+	padding: 0px;
+}
+
+/*
+------------------------------------------------------------------------------------------
+General Styles
+------------------------------------------------------------------------------------------
+*/
+h1 {
+	color: #426b9c;
+	/* font-family: Arial,Helvetica,sans-serif; */
+	font-family: "Arial", Serif;
+	font-weight: bold;
+	font-size: 18pt;
+}
+
+.h2 {
+	color: #426b9c;
+	padding: 0;
+/*	padding: .5em 0;
+	border-bottom: 1px solid #e2af85; */
+	font-family: Arial,Helvetica,sans-serif;
+}
+
+.h2_en {
+	font-size: 1.75em;
+	font-weight: bold;
+}
+
+.h2_ti {
+	font-family: 'Tibetan';
+	font-size: 1.1em;
+	line-height: 1.6em; /* 24px */
+	hyphens: none;
+}
+
+.h2_sa {
+	font-family: Georgia,"Times New Roman",Times,serif;
+	font-size: 1.1em;
+	line-height: 1.6em; /* 24px */
+	hyphens: none;
+}
+
+.h2_bo {
+	font-family: Georgia,"Times New Roman",Times,serif;
+	font-size: 1.1em;
+	line-height: 1.6em; /* 24px */
+	hyphens: none;
+	font-style: italic;
+}
+
+.descFont {
+	font-family: "Georgia", Serif;
+	font-size: 10pt;
+	text-align: center;
+	line-height: 140%;
+	color: #888888;
+    border: 0;
+	background-color: Transparent;
+	margin: 10px auto 10px auto;
+}
+.descFont:hover {
+	color: #222222;
+}
+.descFont:focus {
+    outline: 0;
+}
+
+/*
+------------------------------------------------------------------------------------------
+Main page frame/header styles
+------------------------------------------------------------------------------------------
+*/
+
+.mainPage {
+	width: 94%;
+	background-color: #fff;
+	margin: 0px auto;
+	padding: 0;
+    box-shadow: 0px 4px 25px #777;
+}
+
+.mainFont {
+	/* font-family: 'Oswald', sans-serif;
+    letter-spacing: 1px;
+	font-weight: 400; */
+	font-family: 'Trade Gothic W02 Roman';
+	color: #818181;
+	font-size: 14pt;
+	text-align: center;
+}
+
+.subtitleFont {
+	font-family: Georgia, Serif;
+	font-size: 12pt;
+	color: #444444;
+}
+
+.bigTitleFont {
+	font-family: 'Trade Gothic W02 Bold';
+	/* font-family: Arial,Helvetica,sans-serif; */
+	font-size: 32pt;
+	text-align: left;
+	color: #FFFFFF;
+	margin: 20px 10px 20px 20px;
+}
+
+.bigTitleTFont {
+	/* font-family: Georgia, Serif; */
+	/* font-family: Arial,Helvetica,sans-serif; */
+	/* font-family: 'Trade Gothic W02 Roman'; */
+	font-family: 'Tibetan';
+	font-size: 36pt;
+	text-align: left;
+	color: #FFFFFF;
+	margin: 14px auto 0px 10px;
+}
+
+.titleFontSmall  { font-size: 18pt; }
+.titleFontMedium { font-size: 24pt; }
+.titleFontLarge  { font-size: 32pt; }
+
+/** Main-page features */
+.background {
+	background-image: url("background-pattern.png");
+}
+
+.header {
+	width: 100%;
+	margin: 0px 0px 0px 0px;
+	background-color: #FFFFFF;
+}
+
+.headerTitle {
+	margin: 20px 0px 0px 50px;
+}
+
+.headerContent {
+	margin: 0px 0px 0px 50px;
+}
+ 
+.navBar {
+	width: 100%;
+	margin: 0px 0px 0px 0px;
+	background-color: #dddddd;
+    border-bottom: thick solid #888888;
+}
+
+.navBarButton {
+    background: #dddddd;
+    color: #333333;
+	/* font-family: 'Trade Gothic W02 Bold'; */
+	/*font-family: 'Trade Gothic W02 Roman';
+    font-size: 15px; */
+/*	font-family: 'Oswald', sans-serif; */
+	font-family: 'Arial Narrow', sans-serif;
+    letter-spacing: 1px;
+	font-weight: 400;
+    font-size: 12pt;
+	
+    padding-left: 15px;
+    padding-right: 15px;
+    /* height: 30px; */
+    /* margin: 5px 0px 0px 0px; */
+    text-align: center;
+    border: 0;
+    transition: all 0.3s ease 0s;
+    border-bottom: thick solid #888888;
+    margin-top: 5px;
+    margin-bottom: -5px;
+}
+
+
+.navBarButton:hover {
+	background: #426B9C;
+	color: #FFFFFF;
+}
+
+.navBarFontSmall  { font-size: 12px; }
+.navBarFontMedium { font-size: 12px; padding-left: 8px; padding-right: 8px; }
+.navBarFontLarge  { font-size: 16px; }
+
+/** Our own FlowPanel style */
+.flowPanel_inline {
+    display:inline-block;
+}
+
+.myHyperLink a{ 
+	font-family: Arial,Helvetica,sans-serif;
+    font-size: 12pt;
+	color: #426b9c;
+	margin: 10px 6px 6px 0px;
+} 
+
+.myHyperLink a:hover{ 
+	color: #426b9c;
+	cursor: pointer;
+} 
+
+.breadCrumb {
+	font-family: Arial,Helvetica,sans-serif;
+    font-size: 12pt;
+	color: #000000;
+	margin: 10px 6px 6px 0px;
+    display:inline-block;
+}
+
+.breadCrumb:hover {
+	cursor: default;
+}
+
+.infoButton
+{
+	margin: 10;
+	padding: 8px 15px 8px 15px;
+	font-family: 'Trade Gothic W02 Roman';
+    font-size: 14px;
+	white-space: pre;
+	background-color: #426b9c;
+	color: #FFFFFF;
+	border:none;
+	outline-style: none;
+	border-radius: 6px;
+}
+
+.infoButton:hover {
+	cursor: pointer;
+	background: #003f5f;
+}
+
+.infoButton:active {
+	background-color: #FFFFFF;
+	color: #426b9c;
+} 
+
+.infoButtonActivated {
+	background-color: #FFFFFF;
+	color: #426b9c;
+    border: 1px solid #426b9c;
+} 
+
+/*
+------------------------------------------------------------------------------------------
+General modifier styles
+------------------------------------------------------------------------------------------
+*/
+
+.alignRight { text-align: right; }
+.alignLeft  { text-align: left;  }
+.alignCenter { text-align: center; }
+.halfWidth { width: 50%; }
+.fullWidth { width: 100%; }
+
+.tealBottom { border-bottom: thick solid #426b9c; }
+.redBottom { border-bottom: thick solid #892629; }
+.orangeBottom { border-bottom: thick solid #cf7a34; }
+
+
+/*
+.tealBackground { background-color: #426b9c; }
+.orangeBackground { background-color: #cf7a34; }
+*/
+.blackColor { color: #000000; }
+.tealColor { color: #426b9c; }
+.redBackground { background-color: #892629; }
+.transparentBackground { background-color: Transparent; }
+
+.cursorPointer { cursor: pointer; }
+.cursorWait { cursor: progress; }

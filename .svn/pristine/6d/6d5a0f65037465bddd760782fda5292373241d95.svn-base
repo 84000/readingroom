@@ -1,0 +1,345 @@
+/*
+------------------------------------------------------------------------------------------
+Section-Specific Styles
+------------------------------------------------------------------------------------------
+*/
+@font-face {
+	font-family:"Tibetan";
+	src:url("Fonts/DDC_Uchen.ttf");
+}
+
+.sectionTitleEn {
+	font-family: 'Trade Gothic W02 Bold';
+	font-size: 32pt;
+	text-align: center;
+	color: #000000;
+	margin: 20px 10px 0px 10px;
+}
+
+.sectionTitleEnLarge  { font-size: 32pt; }
+.sectionTitleEnMedium { font-size: 32pt; }
+.sectionTitleEnSmall  {	font-size: 20pt; }
+
+.sectionTitleTi {
+	/* font-family: 'Trade Gothic W02 Bold'; */
+	/* font-family: Arial,Helvetica,sans-serif; */
+	/* font-family: "Georgia", Serif; */
+	font-family: 'Tibetan';
+	font-size: 14pt;
+	color: #000000;
+	margin: 0px;
+	line-height: 1.0em;
+	align: right;
+	text-align: right;
+}
+
+.sectionTitleWy {
+	/* font-family: 'Trade Gothic W02 Bold'; */
+	/* font-family: Arial,Helvetica,sans-serif; */
+	font-family: "Georgia", Serif;
+	font-size: 14pt;
+	color: #000000;
+	margin: 0px;
+	font-style: italic;
+	line-height: 1.0em;
+	text-align: left;
+}
+
+.sectionTitleSa {
+	/* font-family: 'Trade Gothic W02 Bold'; */
+	/* font-family: Arial,Helvetica,sans-serif; */
+	font-family: "Georgia", Serif;
+	font-size: 14pt;
+	color: #000000;
+	margin: 0px;
+	font-style: italic;
+	line-height: 1.8em;
+}
+.sectionTitleLarge  { font-size: 14pt; }
+.sectionTitleMedium { font-size: 14pt; }
+.sectionTitleSmall  { font-size: 12pt; }
+
+.sectionTitleDesc {
+	font-family: "Georgia", Serif;
+	font-size: 14pt;
+	text-align: center;
+	line-height: 140%;
+	width: 90%;
+	color: #000000;
+	background-color: Transparent;
+	margin: 10px auto 10px auto;
+}
+.sectionTitleDescLarge  { font-size: 14pt; }
+.sectionTitleDescMedium { font-size: 14pt; }
+.sectionTitleDescSmall  { font-size: 12pt; }
+
+.listingTitleBar {
+	font-family: Arial,Helvetica,sans-serif;
+	font-size: 12pt;
+	color: #FFFFFF;
+	background-color: #cf7a34;
+	text-transform: uppercase;
+	padding-left: 2.0%;
+	padding-right: 2.0%;
+	padding-top: 4px;
+	padding-bottom: 4px;
+/*	letter-spacing: .075em;
+	display: inline-block;
+	float: left; */
+}
+
+.title_toh { width: 6.09756097561%; }
+.title_title { width: 65.853658536585%; }
+.title_translation { width: 23.170731707317%; }
+
+.listing {
+	padding: 1.0%; /* 320/12 */
+	/* background: #f5e4d6;
+	border-radius: .75em; */
+	width: 100%;
+	/*max-width: 75em; /* 1200px */
+	min-width: 20em; /* 400px */
+	margin-bottom: 0px;
+}
+
+.listing_even { background: Transparent; }
+.listing_odd { background: #f5e4d6; border-radius: .5em; }
+
+.listingSmall  { padding: 0.0%; border-radius: 0.0em; }
+.listingMedium { padding: 1.0%; border-radius: .5em; }
+.listingLarge  { padding: 1.0%; border-radius: .5em; }
+
+.sectionListingTitleEn {
+	font-family: "Arial", Serif;
+	font-weight: bold;
+	font-size: 14pt;
+	text-align: center;
+	color: #426b9c;
+    border: 0;
+    background: Transparent;
+	margin: 5px 1px 1px 1px;
+	line-height: 2.0em;
+	/* border-bottom: 1px solid #e2af85; */
+}
+.sectionListingTitleEnLarge  { font-size: 14pt; }
+.sectionListingTitleEnMedium { font-size: 14pt; }
+.sectionListingTitleEnSmall  { font-size: 12pt; }
+
+.sectionListingTitleTi {
+	/* font-family: "Arial", Serif; */
+	/* font-family: "Georgia", Serif; */
+	font-family: 'Tibetan';
+	font-size: 14pt;
+	text-align: left;
+	color: #426b9c;
+    background: Transparent;
+	line-height: 1.5em;
+}
+
+.sectionListingTitleWy {
+	/* font-family: "Arial", Serif; */
+	font-family: "Georgia", Serif;
+	font-size: 14pt;
+	text-align: left;
+	color: #426b9c;
+    background: Transparent;
+	line-height: 1.5em;
+	font-style: italic;
+}
+
+.sectionListingTitleSa {
+	/* font-family: "Arial", Serif; */
+	font-family: "Georgia", Serif;
+	font-size: 14pt;
+	text-align: left;
+	color: #426b9c;
+    background: Transparent;
+	line-height: 1.5em;
+	/* font-style: italic; */
+}
+
+.sectionListingTitleLarge  { font-size: 14pt; }
+.sectionListingTitleMedium { font-size: 14pt; }
+.sectionListingTitleSmall  { font-size: 12pt; }
+
+.sectionControls {
+	font-family: 'Trade Gothic W02 Roman';
+	/* font-family: "Arial", Serif; */
+	font-size: 14px;
+	/* text-align: left; */
+	color: #cf7a34;
+    background: Transparent;
+	line-height: 1.5em;
+	outline-style: none;
+	text-transform: uppercase;
+}
+
+.sectionControls:hover {
+	cursor: pointer;
+}
+
+.sectionSummary {
+	font-family: "Georgia", Serif;
+	font-size: 11pt;
+	text-align: left;
+	color: #888888;
+    background: Transparent;
+	line-height: 1.5em;
+	margin: 8px 5px 0px 5px;
+}
+
+.filterButton {
+	margin: 0px;
+	padding: 8px 20px 8px 20px;
+	font-family: 'Trade Gothic W02 Roman';
+	/* font-family: Arial,Helvetica,sans-serif; */
+    font-size: 12px;
+    text-align: center;
+	background-color: Transparent;
+	color: #cf7a34;
+    border: 1px solid #cf7a34;
+	outline-style: none;
+	border-radius: 0px 6px 6px 0px;
+	min-width: 10.0em;
+	text-transform: uppercase;
+}
+
+.filterButtonSelected {
+	background-color: #cf7a34;
+	color: #FFFFFF;
+}
+
+.filterButtonLeft { border-radius: 6px 0px 0px 6px; }
+.filterButtonRight { border-radius: 0px 6px 6px 0px; }
+
+.transNotBegunButton
+{
+	margin: 10px 8px 0px 8px;
+	padding: 8px 15px 8px 15px;
+	font-family: 'Trade Gothic W02 Roman';
+	/* font-family: Arial,Helvetica,sans-serif; */
+    font-size: 12px;
+    text-align: left;
+	background-color: transparent;
+	color: #426b9c;
+    border: 1px solid #426b9c;
+	outline-style: none;
+	border-radius: 6px;
+	min-width: 14.0em;
+	text-transform: uppercase;
+}
+
+.viewTransButton:hover {
+	cursor: pointer;
+}
+
+.viewTransButton
+{
+	margin: 10px 8px 0px 8px;
+	padding: 8px 15px 8px 15px;
+	font-family: 'Trade Gothic W02 Roman';
+	/* font-family: Arial,Helvetica,sans-serif; */
+    font-size: 12px;
+    text-align: left;
+	background-color: #426b9c;
+	color: #FFFFFF;
+	border:none;
+	outline-style: none;
+	border-radius: 6px;
+	min-width: 14.0em;
+	text-transform: uppercase;
+}
+
+.viewTransButton:hover {
+	cursor: pointer;
+}
+
+.originalTextButton
+{
+	margin: 4px 8px 0px 8px;
+	padding: 8px 15px 8px 15px;
+	font-family: 'Trade Gothic W02 Roman';
+	/* font-family: Arial,Helvetica,sans-serif; */
+    font-size: 12px;
+    text-align: left;
+	background-color: Transparent;
+	color: #003f5f;
+	border: none;
+	border-bottom: 1px solid #003f5f;
+	min-width: 14.0em;
+	text-transform: uppercase;
+	outline: none;
+}
+
+
+/* Narrow */
+
+.toh {
+/*  float: left; */
+/*  font: bold .875em/1.28571428571429em Arial,Helvetica,sans-serif; /* 14px/18px */
+  /* color: #426b9c; */
+  /* padding-top: .5em; */
+  /* padding: 1em; */
+  }
+  
+.title {
+/*  vertical-align: top; */
+  }
+
+.translation {
+/*  padding: 1em 0; */
+  /* clear: both; */
+  }
+.toh { width: 6.0%; }
+.title { width: 66.0%; }
+.translation { width: 23.0%; }
+
+.titleFullWidth { width: 89.0%; }
+.zeroWidth { width: 0.0%; }
+
+/* Medium */
+
+@media screen and (min-width: 37.5em /* 600px */) {
+
+/*
+.toh {
+  text-align: right;
+  width: 12.5%;
+  }
+.title,
+.translation {
+  margin: 0 5% 0 17.5%; 
+  }
+*/
+  
+.toh { width: 6.09756097561%; }
+.title { width: 65.853658536585%; }
+.translation { width: 23.170731707317%; }
+
+.title_toh { width: 6.09756097561%; }
+.title_title { width: 65.853658536585%; }
+.title_translation { width: 23.170731707317%; }
+
+}
+
+/* Wide */
+
+@media screen and (min-width: 68.75em /* 1100px */) {
+
+.toh {
+/*  float: none; */
+  width: 6.09756097561%; /* 60/984 */
+  }
+.title {
+  width: 65.853658536585%; /* 648/984 */
+/*  padding: 0 2.439024390244%; /* 24/984 */
+  }
+.translation {
+  width: 23.170731707317%; /* 228/984 */
+  }
+
+.title_toh { width: 6.09756097561%; }
+.title_title { width: 65.853658536585%; }
+.title_translation { width: 23.170731707317%; }
+
+}
