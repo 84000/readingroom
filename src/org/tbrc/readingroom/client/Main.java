@@ -19,9 +19,11 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
@@ -38,6 +40,9 @@ public class Main extends Composite implements ValueChangeHandler<String>
 	@UiField Reader reader;
 	@UiField Header header;
 	@UiField DeckPanel deckPanel;
+	@UiField TranslatedTextList transTextList;
+	
+	boolean transListCompiled = false;
 
 	private class Page
 	{
@@ -59,8 +64,15 @@ public class Main extends Composite implements ValueChangeHandler<String>
 	private boolean ignoreQueryError = false;
 
 	// TEMPORARY label used for selecting folder to read from
-	final Label verLbl = new Label("Build #" + Global.version);
+	//final Label verLbl = new Label("Build #" + Global.version);
+	final Label adminLbl = new Label("Admin");
 	final Label dataLbl = new Label("PRODUCTION");
+	final Label listLbl = new Label("Translated Texts");
+	final Button donateButton = new Button("DONATE NOW");
+	
+	// Master set of items, used by translated list
+	ArrayList<DataItem> kangyurItems = new ArrayList<DataItem>();
+	ArrayList<DataItem> tengyurItems = new ArrayList<DataItem>();
 	
 	public Main()
 	{
@@ -84,17 +96,32 @@ public class Main extends Composite implements ValueChangeHandler<String>
 		// Add history listener
 	    History.addValueChangeHandler(this);
 	    History.fireCurrentHistoryState();
-		History.newItem("lobby");
+	    // We no longer force the lobby page (we allow direct access to texts via their ID)
+	    //History.newItem("lobby");
 	    
 		// TEST TEST
-		HorizontalPanel hp = new HorizontalPanel();
-		verLbl.setStyleName("testingLabel");
+		HorizontalPanel hp = new HorizontalPanel(); hp.setWidth("100%");
+		hp.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+		HorizontalPanel hpL = new HorizontalPanel(); hpL.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
+		HorizontalPanel hpR = new HorizontalPanel(); hpR.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+
+		adminLbl.setStyleName("testingLabel");
 		dataLbl.setStyleName("testingLabel");
-		dataLbl.addStyleName("redColor");
-		dataLbl.addStyleName("cursorPointer");
+		dataLbl.addStyleName("dataLabel");
 		dataLbl.setVisible(false);
-		hp.add(verLbl);
-		hp.add(dataLbl);
+		listLbl.setStyleName("testingLabel");
+
+		hpL.setWidth("100%");
+		hpL.add(dataLbl);
+		
+		hpR.add(listLbl);
+		hpR.add(adminLbl);
+		donateButton.setStyleName("donateButton");
+		hpR.add(donateButton);
+		hpR.setWidth("300px");
+		
+		hp.add(hpL);
+		hp.add(hpR);
 		header.topPanel.add(hp);
 		
 		// Add a handler to source button -- toggles among available folders
@@ -120,11 +147,35 @@ public class Main extends Composite implements ValueChangeHandler<String>
 		});
 		
 		// Add a handler to version button -- triggers login pop-up
-		verLbl.addClickHandler(new ClickHandler() {
+		adminLbl.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event)
 			{
-				
 				User.login(loginCallback);
+			}
+		});
+
+		// Add a handler to the "simplified list" button -- triggers list window
+		listLbl.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event)
+			{
+				//addSimpleListPage();
+				History.newItem("translatedTextList");
+				showTransTextList();
+				if (!transListCompiled)
+				{
+					transTextList.populate(kangyurItems, tengyurItems);
+					transListCompiled = true;
+				}
+			}
+		});
+
+		donateButton.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event)
+			{
+				//Window.open(thisItem.getUrl(), "_self", "");			// Opens in same browser window
+				//Window.open(thisItem.getUrl(), "_blank", "");			// Opens in new tab (Chrome, Safari, Firefox)
+				//Window.open(thisItem.getUrl(), "_blank", "enabled");	// Opens in new window (Chrome, Safari, Firefox)
+				Window.open(Global.donateUrl, "_blank", "");
 			}
 		});
 		
@@ -191,19 +242,19 @@ public class Main extends Composite implements ValueChangeHandler<String>
 			// If a dev has logged in, turn on the folder toggle
 			if (result.equals("dev"))
 			{
-				verLbl.setText("Build #" + Global.version);
+				adminLbl.setText("Admin");
 				dataLbl.setVisible(true);
 			}
 			else if (result.equals("admin"))
 			{
-				verLbl.setText("Build #" + Global.version + " (ADMIN)");
+				adminLbl.setText("Admin");
 				dataLbl.setText("STAGING");
 				Global.dataFolder = "Staging";
 				dataLbl.setVisible(false);
 			}
 			else // result = "none"
 			{
-				verLbl.setText("Build #" + Global.version);
+				adminLbl.setText("Admin");
 				dataLbl.setText("PRODUCTION");
 				Global.dataFolder = "tei";
 				dataLbl.setVisible(false);
@@ -247,6 +298,9 @@ public class Main extends Composite implements ValueChangeHandler<String>
 	public void onValueChange(ValueChangeEvent<String> event)
 	{
 		String token = event.getValue();
+		// If there's no token passed (i.e., just the home URL), go to the lobby by default
+		if (token == "")
+			token = "lobby";
 		//Window.alert("onValueChange: New value: " + token);
 		Log.info("BrowserHistoryChangeHandler ValueChangeEvent token: " + token);
 		GATracker.trackPageview("/" + token);
@@ -263,13 +317,21 @@ public class Main extends Composite implements ValueChangeHandler<String>
 		}
 		*/
 	
+		// First check to see if it's our translated text list
+		//Window.alert("TOKEN: " + token);
+		if (token.equals("translatedTextList"))
+		{
+			showTransTextList();
+			return;
+		}
+		
 		// Check for match in lobby/section pages - if no match, it must be a reader page
 		boolean readerPage = true;
 		for (int i = 0; i < pages.size(); i++)
 		{
 			if (token.equals(pages.get(i).historyId))
 			{
-				hideReader();
+				showDeckPanel();
 				readerPage = false;
 				
 				deckPanel.showWidget(i);
@@ -327,20 +389,39 @@ public class Main extends Composite implements ValueChangeHandler<String>
 		header.setVisible(false);
 		deckPanel.setVisible(false);
 		
+		// Turn off translated list
+		transTextList.setVisible(false);
+		
 		// Turn on reader
 		reader.setVisible(true);
 		reader.onViewportSizeChange(Window.getClientWidth());
 		reader.Initialize(rid, page, header.getBreadCrumb());
 	}
 	
-	public void hideReader()
+	public void showDeckPanel()
 	{
 		// Turn off reader
 		reader.setVisible(false);
+		
+		// Turn off translated text list
+		transTextList.setVisible(false);
 
 		// Turn off lobby
 		header.setVisible(true);
 		deckPanel.setVisible(true);
+	}
+	
+	public void showTransTextList()
+	{		
+		// Turn off lobby
+		deckPanel.setVisible(false);
+
+		// Turn off reader
+		reader.setVisible(false);
+		
+		// Turn on translated text list
+		header.setVisible(true);			// Header is common to lobby & text list
+		transTextList.setVisible(true);
 	}
 	
 	private void addNewPage(String style)
@@ -385,6 +466,19 @@ public class Main extends Composite implements ValueChangeHandler<String>
 		//header.addBreadCrumb(currentDataItem.getNameEn(), id);
 	}
 	
+	/*
+	private void addSimpleListPage()
+	{
+		String id = "simplifiedList";
+		History.newItem(id);
+		
+		TranslatedTextList textList = new TranslatedTextList();
+		deckPanel.add(textList);
+		textList.populate(lobby.getKangyurItems(), lobby.getTengyurItems());
+		showPage(deckPanel.getWidgetCount()-1);
+	}
+	*/
+	
 	//
 	// Call-back function from server query
 	//
@@ -401,16 +495,14 @@ public class Main extends Composite implements ValueChangeHandler<String>
 
 		public void onSuccess(String result)
 		{
-			ArrayList<DataItem> kItems = new ArrayList<DataItem>();
-			ArrayList<DataItem> tItems = new ArrayList<DataItem>();
-			kItems = Parser.parseLobbyQueryResult(result, "kanjur");
-			tItems = Parser.parseLobbyQueryResult(result, "tenjur");
+			kangyurItems = Parser.parseLobbyQueryResult(result, "kanjur");
+			tengyurItems = Parser.parseLobbyQueryResult(result, "tenjur");
 			String kDesc = Parser.getKangyurDesc();
 			String tDesc = Parser.getTengyurDesc();
 			String kLearnMore = Parser.getKangyurLearnMore();
 			String tLearnMore = Parser.getTengyurLearnMore();
 			
-			lobby.populatePage(kDesc, kLearnMore, kItems, tDesc, tLearnMore, tItems);
+			lobby.populatePage(kDesc, kLearnMore, kangyurItems, tDesc, tLearnMore, tengyurItems);
 			onViewportSizeChange();
 		}
 	};

@@ -194,6 +194,8 @@ Main page frame/header styles
     letter-spacing: 1px;
 	font-weight: 400;
     font-size: 12pt;
+    line-height: 1.5;
+    vertical-align: middle;
 	
     padding-left: 15px;
     padding-right: 15px;
@@ -203,12 +205,14 @@ Main page frame/header styles
     border: 0;
     transition: all 0.3s ease 0s;
     border-bottom: thick solid #888888;
-    margin-top: 5px;
+    margin-top: 0px;
     margin-bottom: -5px;
 }
 
 
 .navBarButton:hover {
+	/* margin-top: 0px;
+	margin-bottom: 0px; */
 	background: #426B9C;
 	color: #FFFFFF;
 }
@@ -243,11 +247,58 @@ Main page frame/header styles
 }
 
 .testingLabel {
-	font-family: Arial,Helvetica,sans-serif;
+	/* font-family: Arial,Helvetica,sans-serif; */
+	font-family: 'Trade Gothic W02 Roman';
     font-size: 10pt;
-	color: #000000;
-	margin: 0px 0px 6px 20px;
+	/* color: #000000; */
+	color: #cf7a34;
+	margin: 0px 5px 6px 5px;
     display:inline-block;
+	cursor: pointer;
+}
+
+.dataLabel {
+	margin-left: 25px;
+	color: #990000;
+}
+
+.donateButton
+{
+	margin-right: 30px;
+	padding: 2px 10px 2px 10px;
+	font-family: 'Trade Gothic W02 Roman';
+    font-size: 12px;
+	/* background-color: #426b9c; */
+	background-color: #cf7a34;
+	color: #FFFFFF;
+	border:none;
+	outline-style: none;
+	border-radius: 6px;
+	cursor: pointer;
+}
+.donateButton:hover {
+	color: #000000;
+}
+
+.textHeaderDonate {
+	margin: -20px 30px 5px 0px;
+}
+
+.transListNotice {
+	/* font-family: 'Trade Gothic W02 Roman'; */
+	font-family: Georgia,"Times New Roman",Times,serif;
+    font-size: 12pt;
+    color: #555555;
+	margin: 24px 0px 10px 0px;
+}
+
+.tantraWarningNotice {
+	/* font-family: 'Trade Gothic W02 Roman'; */
+	font-family: Georgia,"Times New Roman",Times,serif;
+    font-size: 11pt;
+	text-align: left;
+    color: #555555;
+	margin: 10px 20px 10px 40px;
 }
 
 .breadCrumb:hover {

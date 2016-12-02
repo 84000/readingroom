@@ -42,7 +42,7 @@ public class Reader extends Composite {
 	@UiField PopupNavPanel navPanel;
 	@UiField HTML footerPanel;
 
-	private String myToken = "";
+	//private String myToken = "";
 	
 	private TextItem textItem = new TextItem();
 	private int currentWidget = 0;
@@ -95,6 +95,7 @@ public class Reader extends Composite {
 			History.newItem(textItem.getId() + "/" + pageName);
 
 			// Clear any previously acquired text instance
+			/*
 			if (myToken.length() > 0)
 				Readingroom.rpcService.clearToken(myToken, new ClearTokenCallBack());
 			else
@@ -102,6 +103,8 @@ public class Reader extends Composite {
 				// Issue initial query via RPC service
 				Readingroom.rpcService.getToken(new TokenCallBack());
 			}
+			*/
+			Readingroom.rpcService.processText(textItem.getId(), Global.dataFolder, new TextCallBack());
 		}
 	}
 	
@@ -215,7 +218,7 @@ public class Reader extends Composite {
 				
 				TextPage page = (TextPage)textDeckPanel.getWidget(i);
 				if (!page.isDataSet())
-					Readingroom.rpcService.getTranslationPartByName(myToken, page.getTitle(), new TransPartCallBack());
+					Readingroom.rpcService.getTranslationPartByName(textItem.getId(), page.getTitle(), new TransPartCallBack());
 			}
 		}
 	}
@@ -280,6 +283,7 @@ public class Reader extends Composite {
 	//
 	// Call-back functions from server queries
 	//
+	/*
 	private class ClearTokenCallBack implements AsyncCallback<String>
 	{
 		public void onFailure(Throwable caught) { Window.alert("'clear-token' RPC failure"); }
@@ -305,6 +309,7 @@ public class Reader extends Composite {
 				Window.alert("RPC Error: Returned bad token");
 		}
 	}
+	*/
 
 	
 	private class TextCallBack implements AsyncCallback<String>
@@ -325,7 +330,7 @@ public class Reader extends Composite {
 				titlePage.setReader(me);
 				titlePage.setTitleData(textItem);
 				
-				Readingroom.rpcService.getTranslationPartByName(myToken, "summary", new SummaryCallBack());
+				Readingroom.rpcService.getTranslationPartByName(textItem.getId(), "summary", new SummaryCallBack());
 			}
 		}
 	}
@@ -343,7 +348,7 @@ public class Reader extends Composite {
 				summaryPage.setData(summaryData);
 				textDeckPanel.add(summaryPage);
 				
-				Readingroom.rpcService.getTranslationPartByName(myToken, "ack", new AckCallBack());
+				Readingroom.rpcService.getTranslationPartByName(textItem.getId(), "ack", new AckCallBack());
 			}
 		}
 	}
@@ -361,7 +366,7 @@ public class Reader extends Composite {
 				ackPage.setData(ackData);
 				textDeckPanel.add(ackPage);
 				
-				Readingroom.rpcService.getTranslationPartByName(myToken, "intro", new IntroCallBack());
+				Readingroom.rpcService.getTranslationPartByName(textItem.getId(), "intro", new IntroCallBack());
 			}
 		}
 	}
@@ -380,7 +385,7 @@ public class Reader extends Composite {
 				introPage.setData(introData);
 				textDeckPanel.add(introPage);
 
-				Readingroom.rpcService.getTextData(myToken, new ListsCallBack());
+				Readingroom.rpcService.getTextData(textItem.getId(), new ListsCallBack());
 			}
 		}
 	}
@@ -396,7 +401,7 @@ public class Reader extends Composite {
 				// Master lists are required for the navigation pop-up
 				textData = masterData;
 
-				Readingroom.rpcService.getTranslationPartNames(myToken, new TransPartNamesCallBack());
+				Readingroom.rpcService.getTranslationPartNames(textItem.getId(), new TransPartNamesCallBack());
 			}
 		}
 	}
@@ -436,11 +441,11 @@ public class Reader extends Composite {
 					
 					// Pre-load first 3 parts content
 					if (i <= 1)
-						Readingroom.rpcService.getTranslationPartByName(myToken, partNames.get(i).title, new TransPartCallBack());
+						Readingroom.rpcService.getTranslationPartByName(textItem.getId(), partNames.get(i).title, new TransPartCallBack());
 				}
 
 				// Now that we've created all the chapter pages, get the bibliography
-				Readingroom.rpcService.getTranslationPartByName(myToken, "bibl", new BiblCallBack());
+				Readingroom.rpcService.getTranslationPartByName(textItem.getId(), "bibl", new BiblCallBack());
 			}
 			else
 				Window.alert("Warning: No translation parts found");

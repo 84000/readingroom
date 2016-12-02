@@ -200,7 +200,8 @@
 	width: 100%;
 	height: 64px;
     text-align: center;
-	background: url(84000-logo.png) no-repeat center center;
+	/* background: url(84000-logo.png) no-repeat center center; */
+	background: url(84000-logo.png) no-repeat center bottom;
 	background-size: 120px;
 }
 
@@ -489,6 +490,33 @@ z-index: 2;
   background: #003f5f;
 }
 
+.download {
+  font-family: SSStandard;
+  /*line-height: 1em;
+  text-transform: uppercase;
+  letter-spacing: .075em;
+  margin: 3em 0;
+  
+  display: inline-block;*/
+  color: #fff;
+  background: #426b9c;
+  padding: 1em;
+  border: none;
+  border-radius: .5em;
+}
+
+.download:after {  
+  content: "\EB01";
+}
+.download:hover {
+  background: #003f5f;
+}
+.download:focus {
+	background: #003f5f;
+	outline: none;
+}
+
+
 .prev {
   font: .75em/1.5em Arial,Helvetica,sans-serif; /* 12/16, 18/12 */
   line-height: 1em;
@@ -551,7 +579,7 @@ z-index: 2;
 	font-family: SSStandard;
 	position: fixed;
 	/* right: 70px; */
-	top: 48px;
+	top: 24px;
 	margin: 12px;
 	
 	display: inline-block;

@@ -133,3 +133,31 @@ Lobby Styles
 	font-size: 15pt;
 	background-color: Transparent;
 }
+
+.version {
+	font-family: "Times New Roman",Georgia,serif;
+	font-size: 10pt;
+	font-style: italic;
+	text-align: center;
+	color: #BBBBBB;
+	line-height: 1.5em;
+	margin: 6px 0 0 0;
+}
+
+
+.listH1 { text-indent: 0px;  font-size: 18pt; color: #426b9c; font-family: Arial,Helvetica,sans-serif; margin: 10px; }
+.listH2 { text-indent: 20px; font-size: 16pt; font-family: Arial,Helvetica,sans-serif; margin: 6px;}
+.listH3 { text-indent: 40px; font-size: 14pt; font-family: Arial,Helvetica,sans-serif; margin: 2px;}
+.listH4 { text-indent: 60px; font-size: 12pt; font-family: Arial,Helvetica,sans-serif; margin: 2px;}
+.listH5 { text-indent: 80px; font-size: 12pt; font-family: Arial,Helvetica,sans-serif; margin: 2px;}
+.listLink {
+	cursor: pointer;
+}
+.listLink:hover {
+	color: #892629;
+	cursor: pointer;
+}
+.listLink:focus {
+    outline: 0;
+}
+

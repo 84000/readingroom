@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import org.tbrc.readingroom.shared.Global;
 
-import com.google.gwt.core.client.Callback;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -520,4 +519,7 @@ public class Lobby extends Composite {
 			}
 		}
 	}
+	
+	public ArrayList<DataItem> getKangyurItems() { return kangyurItems; }
+	public ArrayList<DataItem> getTengyurItems() { return tengyurItems; }
 }

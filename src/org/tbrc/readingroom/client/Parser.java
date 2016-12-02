@@ -217,6 +217,8 @@ public class Parser
 	    		lobbyItem.setNameTi(nameTi);
 	    		lobbyItem.setNameWy(nameWy);
 	    		lobbyItem.setNameSa(nameSa);
+	    		// Chapuza, convert TEI markup to HTML here
+	    		//String newStr = desc.replace("<lb/>", "<br/>");
 	    		lobbyItem.setDesc(desc);
 	    		lobbyItem.setLearnMore(learnMore);
 	    		lobbyItem.setNote(note);
@@ -248,6 +250,14 @@ public class Parser
 		    Document messageDom = XMLParser.parse(xml);
 
 		    // Get section data
+		    String parentId = "";
+		    Node idNode = messageDom.getElementsByTagName("section").item(0);
+		    if (idNode != null)
+		    {
+		    	Element ine = (Element)idNode;
+		    	parentId = ine.getAttribute("id");
+		    }
+		    
 		    sectionLearnMore = "";
     		Node learnMoreNode = messageDom.getElementsByTagName("learnMore").item(0);
     		if (learnMoreNode != null)
@@ -410,6 +420,7 @@ public class Parser
 				DataItem sectionItem = new DataItem();
 
 				sectionItem.setId(id);
+				sectionItem.setParentId(parentId);
 				sectionItem.setType(type);
 				sectionItem.setNumChapters(numChapters);
 				sectionItem.setUrl(url);

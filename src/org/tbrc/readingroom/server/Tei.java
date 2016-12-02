@@ -17,6 +17,7 @@ public class Tei
 	private final String INTRO_BEGIN = "<div type=\"introduction\">";
 	private final String MILESTONE = "<milestone unit=\"chunk\"/>";
 
+	public String teiStr = "";
 	public String header = "";
 	public String front = "";
 	public String body = "";
@@ -61,6 +62,9 @@ public class Tei
 	
 	public void parse(String textTei)
 	{
+		// Capture raw TEI string
+		teiStr = textTei;
+		
 		// First, reset relevant data
 		translationPartNames.clear();
 		translationParts.clear();
@@ -406,6 +410,10 @@ public class Tei
 		// "Name" is shown as bold
 		newStr = newStr.replace("<name>", "<strong>");
 		newStr = newStr.replace("</name>", "</strong>");
+		
+		// "Label" shown as bold
+		newStr = newStr.replace("<label>", "<br/><strong>");
+		newStr = newStr.replace("</label>", "</strong><br/>");
 	
 		return newStr;
 	}
@@ -670,6 +678,70 @@ public class Tei
 			int termBegin = 0, termEnd = 0, prevTermEnd = 0, searchPoint = 0;
 
 			String oldContent = translationPart.getContent();
+			String oldContentLower = oldContent.toLowerCase();
+			String newContent = "";
+
+			termBegin = 0; termEnd = 0; prevTermEnd = 0; searchPoint = 0;
+
+			// First check to see if the original instance of the term is on this page
+			// NOTE: No longer necessary - terms are all defined in the back matter
+			//if ((termBegin = oldContent.indexOf("'" + glossItem.id + "'", searchPoint)) >= 0)
+			//	searchPoint = termBegin + Global.HIGHLIGHT_SPACING_CHARS;
+
+			// Now look for additional instances of the term
+			int termCount = 0;
+			String term = glossItem.name.toLowerCase();
+			while ((termBegin = oldContentLower.indexOf(term, searchPoint)) >= 0)
+			{
+				termEnd = termBegin + term.length();
+
+				// Validate that this is a stand-alone word (not part of another word)
+				if (!XmlUtils.isIsolatedWord(term, oldContent, termBegin))
+				{
+					searchPoint = termEnd;
+					continue;
+				}
+
+				// Create new gloss item that is identical, except for unique ID
+				GlossItem newItem = glossItem.createDuplicate();
+				newItem.id = newItem.id + "." + partId + "." + termCount;
+
+				// New content string replaces gloss item with HTML
+				newContent += oldContent.substring(prevTermEnd, termBegin);
+				newContent += "<span id='" + newItem.id + "'></span>";
+
+				// Add new instance to text part
+				translationPart.glossItems.add(newItem);
+
+				prevTermEnd = termEnd;
+				termCount++;
+
+				// Check if there are > HIGHLIGHT_SPACING_CHARS remaining. If not, we're done
+				if (oldContent.length() > (prevTermEnd + Global.HIGHLIGHT_SPACING_CHARS))
+					searchPoint = prevTermEnd + Global.HIGHLIGHT_SPACING_CHARS;
+				else
+					break;
+			}
+
+			// Capture modified content
+			if (termCount > 0)
+			{
+				newContent += oldContent.substring(prevTermEnd);
+				translationPart.setContent(newContent);
+			}
+		}
+	}
+	
+	/*
+	private void processForwardGlossInstances(TextPartData translationPart, String partId)
+	{
+		// Loop through master list of glossary terms
+		for (int termNum = 0; termNum < textData.glossItems.size(); termNum++)
+		{
+			GlossItem glossItem = textData.glossItems.get(termNum);
+			int termBegin = 0, termEnd = 0, prevTermEnd = 0, searchPoint = 0;
+
+			String oldContent = translationPart.getContent();
 			String newContent = "";
 
 			termBegin = 0; termEnd = 0; prevTermEnd = 0; searchPoint = 0;
@@ -707,10 +779,11 @@ public class Tei
 				prevTermEnd = termEnd;
 				termCount++;
 
+				// Check if there are > HIGHLIGHT_SPACING_CHARS remaining. If not, we're done
 				if (oldContent.length() > (prevTermEnd + Global.HIGHLIGHT_SPACING_CHARS))
 					searchPoint = prevTermEnd + Global.HIGHLIGHT_SPACING_CHARS;
 				else
-					searchPoint = prevTermEnd;
+					break;
 			}
 
 			// Capture modified content
@@ -721,6 +794,7 @@ public class Tei
 			}
 		}
 	}
+	*/
 	
 	private int findAndProcessMilestones(TextPartData data, String prefix)
 	{

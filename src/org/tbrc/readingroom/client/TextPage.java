@@ -9,10 +9,13 @@ import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.CloseEvent;
+import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTML;
@@ -21,6 +24,7 @@ import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.InlineHTML;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -395,6 +399,36 @@ public class TextPage extends Composite
 		HTMLPanel pubNoticeHtml = new HTMLPanel(tItem.publisher);
 		pubNoticeHtml.setStyleName("pubNotice");
 		
+		// TEST TEST TEST
+		Label downloadLabel = new Label("Download this text");
+		//downloadLabel.setStyleName("textTitleNotice");
+		//downloadLabel.setHeight("2em");
+		Button downloadButton = new Button("");
+		downloadButton.setStyleName("download");
+		HorizontalPanel downloadPanel = new HorizontalPanel();
+		downloadPanel.setVerticalAlignment(HasAlignment.ALIGN_MIDDLE);
+		downloadPanel.setSpacing(10);
+		downloadPanel.add(downloadLabel);
+		downloadPanel.add(downloadButton);
+		
+		final String tId = tItem.getId();
+		
+		downloadButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				// TEMPORARILY DISABLE PDF-CONVERSION FOR NORMAL USERS
+				if (User.isAdmin() || User.isDev() || tId.equals("UT22084-044-005") || tId.equals("UT22084-044-006") || tId.equals("UT22084-055-004"))
+					Readingroom.rpcService.generatePdf(tId, new pdfCallBack());
+				else
+				{
+					AlertPanel alert = new AlertPanel("Conversion to, and downloading of, a PDF version of this translation will be available soon.");
+					alert.center();
+				}
+				//Readingroom.rpcService.generatePdf(tId, new pdfCallBack());
+			}
+		});
+		// TEST TEST TEST
+		
 		//String html = "<div>" + tItem.licenseText + "</div>";
 		HTMLPanel licNoticeHtml = new HTMLPanel(tItem.licenseText);
 		licNoticeHtml.setStyleName("licNotice");
@@ -419,6 +453,9 @@ public class TextPage extends Composite
 
 		innerPanel.add(editionLabel);
 		innerPanel.add(pubNoticeHtml);
+		// TEST TEST TEST
+		innerPanel.add(downloadPanel);
+		// TEST TEST TEST
 		innerPanel.add(licNoticeHtml);
 		
 		innerPanel.add(nextButton);
@@ -429,6 +466,41 @@ public class TextPage extends Composite
 		
 		// Set some text-part data, so we can know this has been loaded
 		textPartData.setContent("*");
+	}
+	
+	private class pdfCallBack implements AsyncCallback<String>
+	{
+		public void onFailure(Throwable caught) { Window.alert("'PDF generator' RPC failure"); }
+
+		public void onSuccess(String url)
+		{
+			// The initial query returns the title info (TEI header), so parse it and get summary
+			if (url == null)
+				Window.alert("failed to write PDF file!");
+			else
+			{
+				// Presenting custom alert allows us to trigger opening the PDF from a button event,
+				// This, in turn, prevents triggering browser's pop-up blocker
+				final AlertPanel alert = new AlertPanel("PDF will be opened in new browser tab");
+				final String pdfUrl = url;
+				alert.addCloseHandler(new CloseHandler<PopupPanel>() {
+					@Override
+					public void onClose(CloseEvent<PopupPanel> event)
+					{
+					    // If detail button was clicked, show correct detail panel
+						if (!alert.hasCancelled())
+						{
+							//Window.open(thisItem.getUrl(), "_self", "");			// Opens in same browser window
+							//Window.open(thisItem.getUrl(), "_blank", "");			// Opens in new tab (Chrome, Safari, Firefox)
+							//Window.open(thisItem.getUrl(), "_blank", "enabled");	// Opens in new window (Chrome, Safari, Firefox)
+							Window.open(pdfUrl, "_blank", "");
+						}
+					}
+				});
+
+				alert.center();
+			}
+		}
 	}
 	
 	private void activateNavButtons()

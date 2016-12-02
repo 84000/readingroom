@@ -23,12 +23,10 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class PopupNavPanel extends Composite {
 
-	//private int lastPortWidth = 0;
-	
-	private static TextInfoPanelUiBinder uiBinder = GWT
-			.create(TextInfoPanelUiBinder.class);
+	private static TextInfoPanelUiBinder uiBinder = GWT.create(TextInfoPanelUiBinder.class);
 
-	interface TextInfoPanelUiBinder extends UiBinder<Widget, PopupNavPanel> {
+	interface TextInfoPanelUiBinder extends UiBinder<Widget, PopupNavPanel>
+	{
 	}
 
 	public PopupNavPanel()
@@ -52,10 +50,6 @@ public class PopupNavPanel extends Composite {
 
 	Reader reader;
 	
-//	public void initialize(DeckPanel textDeckPanel)
-//	{
-//		deck = textDeckPanel;
-		
 	public void initialize(Reader r, int transStartPage, int appendixStartPage)
 	{
 		reader = r;

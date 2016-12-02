@@ -3,6 +3,7 @@ package org.tbrc.readingroom.client;
 public class DataItem
 {
 	private String id			= null;
+	private String parentId	 	= null;
 	private String category		= null;	// This does not come from the item XML, it holds "kangyur" or "tengyur"
 	private String type			= null;
 	private String numChapters	= null;
@@ -24,6 +25,7 @@ public class DataItem
 	private String statsNotBeg	= null;
 
 	public String getId() {return id;}					public void setId(String id) {this.id = id;}
+	public String getParentId() {return parentId;}		public void setParentId(String parentId) {this.parentId = parentId;}
 	public String getCategory() {return category;}		public void setCategory(String category) {this.category = category;}
 	public String getType() {return type;}				public void setType(String type) {this.type = type;}
 	public String getNumChapters() {return numChapters;}public void setNumChapters(String numChapters) {this.numChapters = numChapters;}

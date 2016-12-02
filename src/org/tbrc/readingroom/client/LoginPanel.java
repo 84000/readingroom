@@ -1,5 +1,7 @@
 package org.tbrc.readingroom.client;
 
+import org.tbrc.readingroom.shared.Global;
+
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -41,6 +43,9 @@ public class LoginPanel extends PopupPanel
 		AbsolutePanel authPanel = new AbsolutePanel();
 		authPanel.setPixelSize(PANEL_WIDTH, PANEL_HEIGHT);
 		
+		Label versionLabel = new Label("84000 Login - Build #" + Global.version);
+		versionLabel.setStyleName("version");
+		
 		Label nameLabel = new Label("User Name");
 		Label pswdLabel = new Label("Password");
 		
@@ -54,6 +59,7 @@ public class LoginPanel extends PopupPanel
 		authPanel.add(submitButton, 225, 130);
 		authPanel.add(cancelButton, 20, 130);
 		
+		mainPanel.add(versionLabel);
 		mainPanel.add(authPanel);
 		this.add(mainPanel);
 		

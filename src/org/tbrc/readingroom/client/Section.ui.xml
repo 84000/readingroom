@@ -75,13 +75,13 @@
 
 				<!-- Top-level options (expand all summaries, filter, etc.) -->
 				<g:HorizontalPanel width="94%" verticalAlignment="ALIGN_MIDDLE">
-					<g:HTMLPanel>
-						<div align="left">
+		 			<g:HTMLPanel>
+		 				<div align="left">
 							<g:VerticalPanel ui:field="expandPanel">
 								<g:Label ui:field="expandAllLabel" styleName="ss-navigateright" addStyleNames="sectionControls">&nbsp;&nbsp;EXPAND ALL SUMMARIES</g:Label>
 							</g:VerticalPanel>
-						</div>
-					</g:HTMLPanel>
+		 				</div>
+		 			</g:HTMLPanel>
 					<g:HTMLPanel>
 						<div align="right">
 							<g:VerticalPanel ui:field="widePanel">

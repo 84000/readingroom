@@ -14,11 +14,12 @@ import com.google.gwt.user.client.rpc.*;
 public interface ReadingRoomServiceAsync
 {
 	void doQuery(String queryName, String[] args, AsyncCallback<String> callback) throws IllegalArgumentException;
-	void clearToken(String token, AsyncCallback<String> callback) throws IllegalArgumentException;
-	void getToken(AsyncCallback<String> callback) throws IllegalArgumentException;
-	void processText(String token, String dataFolder, String textId, AsyncCallback<String> callback) throws IllegalArgumentException;
-	void getTranslationPartNames(String token, AsyncCallback<ArrayList<PartName>> callback) throws IllegalArgumentException;
-	void getTranslationPartByName(String token, String partName, AsyncCallback<TextPartData> callback) throws IllegalArgumentException;
-	void getTextData(String token, AsyncCallback<TextData> callback) throws IllegalArgumentException;
+	//void clearToken(String token, AsyncCallback<String> callback) throws IllegalArgumentException;
+	//void getToken(AsyncCallback<String> callback) throws IllegalArgumentException;
+	void processText(String textId, String dataFolder, AsyncCallback<String> callback) throws IllegalArgumentException;
+	void getTranslationPartNames(String textId, AsyncCallback<ArrayList<PartName>> callback) throws IllegalArgumentException;
+	void getTranslationPartByName(String textId, String partName, AsyncCallback<TextPartData> callback) throws IllegalArgumentException;
+	void getTextData(String textId, AsyncCallback<TextData> callback) throws IllegalArgumentException;
 	void authenticate(String[] creds, AsyncCallback<String> callback) throws IllegalArgumentException;
+	void generatePdf(String textId, AsyncCallback<String> callback) throws IllegalArgumentException;
 }

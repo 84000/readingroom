@@ -7,14 +7,17 @@
 		<!-- Main top panel -->
 		<!-- <g:VerticalPanel spacing="24"/>	Chapuza! cheesy way to add space at top -->
 		<g:VerticalPanel ui:field="mainHeaderPanel" styleName="textHeader" addStyleNames="limitWidth">
-			<!-- Header bar -->
-	    	<g:VerticalPanel styleName="textHeaderLogoBar">
-				<g:HorizontalPanel horizontalAlignment="center" verticalAlignment="middle">
+		    <!-- Header bar -->
+	    	<g:VerticalPanel height="74px" styleName="textHeaderLogoBar">
+				<g:HorizontalPanel ui:field="logoPanel" horizontalAlignment="center" verticalAlignment="middle">
 	   				<!-- <g:Image ui:field="logoImage" url="84000-logo.png" width="60%" height="60%"></g:Image> -->
 	   			</g:HorizontalPanel>
 	    	</g:VerticalPanel>
-	
-		   	<!-- Text title bar -->
+	    	
+	    	<!-- Panel for adding "Donate" button -->
+	    	<g:HorizontalPanel ui:field="donatePanel" width="100%" horizontalAlignment="right"></g:HorizontalPanel>
+	    	
+	    	<!-- Text title bar -->
 			<g:VerticalPanel styleName="textHeaderTitleBar">
 		    	<g:Label ui:field="titleEn" horizontalAlignment="center">Loading...</g:Label>
 			</g:VerticalPanel>

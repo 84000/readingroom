@@ -8,6 +8,7 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
@@ -29,7 +30,8 @@ public class LobbySection extends Composite {
 	@UiField Label titleWyLabel;
 	@UiField Label titleSaLabel;
 	@UiField Grid titleTiWyGrid;
-	@UiField Label descLabel;
+	//@UiField Label descLabel;
+	@UiField HTML descLabel;
 	@UiField Label textsLabel;
 	@UiField Label translatedLabel;
 	@UiField Label inProgressLabel;
@@ -64,8 +66,8 @@ public class LobbySection extends Composite {
 		titleTiWyGrid.getColumnFormatter().setWidth(0, "50%");
 		titleTiWyGrid.getColumnFormatter().setWidth(2, "50%");
 		
-		descLabel.setText(item.getDesc());
-
+		//descLabel.setText(item.getDesc());
+		descLabel.setHTML(item.getDesc());
 		textsLabel.setText(item.getStatsTotal());
 		translatedLabel.setText(item.getStatsTrans());
 		inProgressLabel.setText(item.getStatsInProg());

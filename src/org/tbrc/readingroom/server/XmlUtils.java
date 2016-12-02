@@ -142,34 +142,36 @@ public class XmlUtils
 				isIsolated = false;
 		}
 		
-		// Handle character after word
-		
-		// "s" in case term is plural
-		if (wordEnd < strLen)
+		// Handle character after word (if character before was OK)
+		if (isIsolated == true)
 		{
-			if (str.charAt(wordEnd) == 's')
-				wordEnd++;
-		}
+			// "s" in case term is plural
+			if (wordEnd < strLen)
+			{
+				if (str.charAt(wordEnd) == 's')
+					wordEnd++;
+			}
 
-		// "'" or "'s" in case term is possessive/genitive
-		if ((wordEnd+1) < strLen)
-		{
-			if (str.charAt(wordEnd) == '’' && str.charAt(wordEnd+1) == 's')
-				wordEnd += 2;
-		}
-		if (wordEnd < strLen)
-		{
-			if (str.charAt(wordEnd) == '’')
-				wordEnd++;
-		}
+			// "'" or "'s" in case term is possessive/genitive
+			if ((wordEnd+1) < strLen)
+			{
+				if (str.charAt(wordEnd) == '’' && str.charAt(wordEnd+1) == 's')
+					wordEnd += 2;
+			}
+			if (wordEnd < strLen)
+			{
+				if (str.charAt(wordEnd) == '’')
+					wordEnd++;
+			}
 
-		if (wordEnd < strLen)
-			charAfter = str.substring(wordEnd, wordEnd+1);
+			if (wordEnd < strLen)
+				charAfter = str.substring(wordEnd, wordEnd+1);
 		
-		if (charAfter != null)
-		{
-			if (!Global.SEPARATOR_CHARS.contains(charAfter))
-				isIsolated = false;
+			if (charAfter != null)
+			{
+				if (!Global.SEPARATOR_CHARS.contains(charAfter))
+					isIsolated = false;
+			}
 		}
 		
 		return isIsolated;

@@ -17,11 +17,12 @@ public interface ReadingRoomService extends RemoteService
 {
 	//String greetServer(String name) throws IllegalArgumentException;
 	String doQuery(String queryName, String[] args) throws IllegalArgumentException;
-	String clearToken(String token) throws IllegalArgumentException;
-	String getToken() throws IllegalArgumentException;
-	String processText(String token, String dataFolder, String textId) throws IllegalArgumentException;
-	ArrayList<PartName> getTranslationPartNames(String token) throws IllegalArgumentException;
-	TextPartData getTranslationPartByName(String token, String partName) throws IllegalArgumentException;
-	TextData getTextData(String token) throws IllegalArgumentException;
+	//String clearToken(String token) throws IllegalArgumentException;
+	//String getToken() throws IllegalArgumentException;
+	String processText(String textId, String dataFolder) throws IllegalArgumentException;
+	ArrayList<PartName> getTranslationPartNames(String textId) throws IllegalArgumentException;
+	TextPartData getTranslationPartByName(String textId, String partName) throws IllegalArgumentException;
+	TextData getTextData(String textId) throws IllegalArgumentException;
 	String authenticate(String[] creds) throws IllegalArgumentException;
+	String generatePdf(String textId) throws IllegalArgumentException;
 }

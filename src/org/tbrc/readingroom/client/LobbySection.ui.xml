@@ -46,9 +46,14 @@
 					<g:HTML><hr size="1" width="96%" align="CENTER" color="#e2af85" /></g:HTML>
 					<g:Label ui:field="titleSaLabel" addStyleNames="h2 h2_sa">Vinaya</g:Label>
 					<g:HTML><hr size="1" width="96%" align="CENTER" color="#e2af85" /></g:HTML>
+					<!-- 
 					<g:Label ui:field="descLabel" styleName="descFont">This is some place-holder text while the system is
 						retrieving data from the database.
 					</g:Label>
+					-->
+					<g:HTML ui:field="descLabel" styleName="descFont">This is some place-holder text while the system is
+						retrieving data from the database.
+					</g:HTML>
 				</g:VerticalPanel>
 			</g:HorizontalPanel>
 		

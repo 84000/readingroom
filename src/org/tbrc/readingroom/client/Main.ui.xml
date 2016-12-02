@@ -13,6 +13,7 @@
 			<!-- <my:Lobby ui:field="lob"/> -->
 			<!-- <my:Section ui:field="section"/> -->
 		</g:DeckPanel>
+		<my:TranslatedTextList ui:field="transTextList" visible="false"/>
 	<!-- </g:VerticalPanel> -->
 	</g:HTMLPanel>
 </ui:UiBinder> 
