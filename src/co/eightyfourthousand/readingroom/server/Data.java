@@ -1,0 +1,166 @@
+package co.eightyfourthousand.readingroom.server;
+
+import javax.xml.transform.OutputKeys;
+
+import org.xmldb.api.DatabaseManager;
+import org.xmldb.api.base.Collection;
+import org.xmldb.api.base.Database;
+import org.xmldb.api.modules.CollectionManagementService;
+
+import co.eightyfourthousand.readingroom.shared.Global;
+
+public class Data
+{
+	// Class globals
+    final static String DRIVER			= "org.exist.xmldb.DatabaseImpl";
+    final static String MOD_ADDR 		= "xmldb:exist:///db/84000/modules";	// "xmldb:exist:///db/84000/modules/84000.xqm"
+    final static String MOD_NAMESPACE	= "http://tbrc.org/exist/gwt/xquery/84000";
+
+	@SuppressWarnings("rawtypes")
+	public static Collection getCollection(String collectionPath, String user, String passwd)
+	{
+		Collection col = null;
+
+		try
+		{
+			// initialize database driver
+			Class cl = Class.forName(DRIVER);
+			Database database = (Database)cl.newInstance();
+			//database.setProperty("create-database", "true");
+			DatabaseManager.registerDatabase(database);
+    
+			// "ensure" collection
+			col = ensureCollection(collectionPath, user, passwd);
+
+			// configure collection
+			col.setProperty(OutputKeys.INDENT, "yes");
+		}
+		catch (ClassNotFoundException e)
+		{
+			System.out.println("ClassNotFoundException:");
+			e.printStackTrace();
+		}
+		catch (InstantiationException e)
+		{
+			System.out.println("InstantiationException:");
+			e.printStackTrace();
+		}
+		catch (IllegalAccessException e)
+		{
+			System.out.println("IllegalAccessException:");
+			e.printStackTrace();
+		}
+		catch (Exception e)
+		{
+			System.out.println("Exception in query: " + e.getMessage());
+		}
+        
+        return col;
+	}	
+
+	/**
+	 * This method is used to ensure that a specified eXist collection is present
+	 * on the server.
+	 * 
+	 * @param collectionPath is the path on the server to the collection
+	 * @param user is the user name for optional access credentials
+	 * @param passwd is the password for optional access credentials
+	 * @return the collection
+	 */
+	@SuppressWarnings("rawtypes")
+	protected static Collection ensureCollection(String collectionPath, String user, String passwd)
+	{
+		Collection col = null;
+		
+		// Make sure path starts with forward slash
+		if (!collectionPath.startsWith("/"))
+			collectionPath = "/" + collectionPath;
+
+		try
+		{
+			// initialize database driver
+			Class cl = Class.forName(DRIVER);
+			Database database = (Database)cl.newInstance();
+			DatabaseManager.registerDatabase(database);
+
+			String URI = "xmldb:exist://" + Global.dbUrl + ":" + Global.CAD_SERVER_PORT + "/exist/xmlrpc";
+			col = DatabaseManager.getCollection(URI + collectionPath,  user, passwd);
+			
+	        if (col == null)
+	        {
+        		System.out.println("Collection was null, creating new one");
+        		String[] steps = collectionPath.split("/");
+        		col = DatabaseManager.getCollection(URI + "/" + steps[1],  user, passwd);
+        		for (int i = 2; i < steps.length; i++)
+        		{
+        			CollectionManagementService mgtService = 
+        				(CollectionManagementService) col.getService("CollectionManagementService", "1.0");
+        			col = mgtService.createCollection(steps[i]);  // remove the "/" prefix - apparently not needed
+        		}
+	        }
+	        else
+	        	System.out.println("Collection ensured");
+	        
+		}
+		catch (Exception e)
+		{
+			System.out.println("Exception in ensureCollection: " + e.getMessage());
+		}
+
+		return col;
+	}
+
+	/**
+	 * This method is used to ensure that a specified eXist collection is present
+	 * on the server.
+	 * 
+	 * @param moduleName is the name of the XQuery module to retrieve 						("queries")
+	 * @param qName is the name of the query in the module to execute 						("allArtObjects")
+	 * @param args are optional arguments to pass to the query								("")
+	 * @param nameSpace is the id of the query nameSpace as imported via gwtqueries.xqm		("q")
+	 * @param timeout an optional timeout (in seconds)										(10)
+	 * @param return the fully formed query string
+	 */
+	public static String generateQuery(String moduleName, String qName, String[] args, String nameSpace, int timeout)
+	{
+		// main import section
+		// moduleName = "84000", qName = "lobby", args = null, nameSpace = "ww", timeout = 10
+		String imp = "import module namespace " + nameSpace + "=\"" + MOD_NAMESPACE + "\" at \"" + MOD_ADDR + "/" + moduleName + ".xqm\";";
+		
+		// timeout
+		String timeoutDecl = "";
+		if (timeout > 0)
+			timeoutDecl = "declare option exist:timeout \"" + (timeout * 1000) + "\";";
+		else if (timeout == -1)
+			timeoutDecl = "declare option exist:timeout \"-1\";";
+
+		// arguments, let, & return
+		String argStr = "";
+		argStr = argsString(args);
+		String letStr = "let $doc := " + nameSpace + ":" + qName + "(" + argStr + ") ";
+    	System.out.println(">>> letStr: " + letStr);	
+		String retStr = "return $doc";
+
+		// put it all together
+		String q = imp + timeoutDecl + letStr + retStr;
+
+		return q;
+	}
+
+	/*
+	 * Produce a single string with all arguments separated by commas
+	 */
+	protected static String argsString(String[] args)
+	{
+		String argStr = (args != null && args.length > 0) ? "\"" + args[0] + "\"" : "";
+	
+		if (args != null)
+		{
+			for (int i = 1; i < args.length; i++)
+				//argStr += ", " + args[i];
+				argStr += ", " + "\"" + args[i] + "\"";
+		}
+		
+		return argStr;
+	}
+}

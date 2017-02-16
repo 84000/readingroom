@@ -1,0 +1,31 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+
+	<!--  <g:HTMLPanel ui:field="wrapper" styleName="textInfoWrapper"> -->
+		<g:VerticalPanel ui:field="infoPanel" styleName="textInfoWrapper" verticalAlignment="top">
+			<g:HorizontalPanel ui:field="tabBar" styleName="infoPanelTabBar">
+				<g:Button ui:field="contentsTab" styleName="infoPanelTab" addStyleNames="infoPanelTabSelected">Contents</g:Button>
+				<g:Button ui:field="glossTab" styleName="infoPanelTab">Glossary</g:Button>
+				<g:Button ui:field="notesTab" styleName="infoPanelTab">Notes</g:Button>
+			</g:HorizontalPanel>
+			<g:ScrollPanel ui:field="contentsScrollPanel" styleName="navScrollPanel">
+				<g:VerticalPanel ui:field="contentsPanel" styleName="infoPanelContent">
+				</g:VerticalPanel>
+			</g:ScrollPanel>
+			<g:ScrollPanel ui:field="glossScrollPanel" styleName="navScrollPanel" visible="false">
+				<g:VerticalPanel ui:field="glossPanel" styleName="infoPanelContent">
+				</g:VerticalPanel>
+			</g:ScrollPanel>
+			<g:VerticalPanel>
+				<g:VerticalPanel ui:field="notesAbbrPanel" visible="false" width="100%">
+					<g:HTMLPanel ui:field="notesAbbr" styleName="noteAbbr"></g:HTMLPanel>
+				</g:VerticalPanel>
+				<g:ScrollPanel ui:field="notesScrollPanel" styleName="navScrollPanel" visible="false">
+					<g:VerticalPanel ui:field="notesPanel" styleName="infoPanelContent">
+					</g:VerticalPanel>
+				</g:ScrollPanel>
+			</g:VerticalPanel>
+		</g:VerticalPanel>
+	<!--  </g:HTMLPanel> -->
+</ui:UiBinder>

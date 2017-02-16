@@ -83,9 +83,6 @@ Section-Specific Styles
 	padding-right: 2.0%;
 	padding-top: 4px;
 	padding-bottom: 4px;
-/*	letter-spacing: .075em;
-	display: inline-block;
-	float: left; */
 }
 
 .title_toh { width: 6.09756097561%; }
@@ -93,12 +90,9 @@ Section-Specific Styles
 .title_translation { width: 23.170731707317%; }
 
 .listing {
-	padding: 1.0%; /* 320/12 */
-	/* background: #f5e4d6;
-	border-radius: .75em; */
+	padding: 1.0%;
 	width: 100%;
-	/*max-width: 75em; /* 1200px */
-	min-width: 20em; /* 400px */
+	min-width: 20em;
 	margin-bottom: 0px;
 }
 
@@ -155,7 +149,6 @@ Section-Specific Styles
 	color: #426b9c;
     background: Transparent;
 	line-height: 1.5em;
-	/* font-style: italic; */
 }
 
 .sectionListingTitleLarge  { font-size: 14pt; }
@@ -166,7 +159,6 @@ Section-Specific Styles
 	font-family: 'Trade Gothic W02 Roman';
 	/* font-family: "Arial", Serif; */
 	font-size: 14px;
-	/* text-align: left; */
 	color: #cf7a34;
     background: Transparent;
 	line-height: 1.5em;
@@ -274,22 +266,6 @@ Section-Specific Styles
 
 /* Narrow */
 
-.toh {
-/*  float: left; */
-/*  font: bold .875em/1.28571428571429em Arial,Helvetica,sans-serif; /* 14px/18px */
-  /* color: #426b9c; */
-  /* padding-top: .5em; */
-  /* padding: 1em; */
-  }
-  
-.title {
-/*  vertical-align: top; */
-  }
-
-.translation {
-/*  padding: 1em 0; */
-  /* clear: both; */
-  }
 .toh { width: 6.0%; }
 .title { width: 66.0%; }
 .translation { width: 23.0%; }
@@ -301,17 +277,6 @@ Section-Specific Styles
 
 @media screen and (min-width: 37.5em /* 600px */) {
 
-/*
-.toh {
-  text-align: right;
-  width: 12.5%;
-  }
-.title,
-.translation {
-  margin: 0 5% 0 17.5%; 
-  }
-*/
-  
 .toh { width: 6.09756097561%; }
 .title { width: 65.853658536585%; }
 .translation { width: 23.170731707317%; }

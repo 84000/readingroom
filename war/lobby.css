@@ -97,29 +97,11 @@ Lobby Styles
 	text-align: left;
 }
 
-/* TEST TEST TEST */
-.TEST {
-	position: fixed;
-	right: 0;
-	top: 0;
-	
-	padding: 2.0%; /* 320/12 */
-	background: #f5e4d6;
-	border-radius: .75em;
-	width: 48%;
-	/* max-width: 75em; /* 1200px */
-	/* min-width: 25em; /* 400px */
-	margin-bottom: 20px;
-}
-/* TEST TEST TEST */
-
 .catalog {
 	padding: 2.0%; /* 320/12 */
 	background: #f5e4d6;
 	border-radius: .75em;
 	width: 48%;
-	/* max-width: 75em; /* 1200px */
-	/* min-width: 25em; /* 400px */
 	margin-bottom: 20px;
 }
 

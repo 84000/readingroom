@@ -1,0 +1,55 @@
+package co.eightyfourthousand.readingroom.client;
+
+/**
+ * 
+ * Holds the data for an individual item in the hierarchy of visual "cards"
+ * 
+ * @author curtis
+ *
+ */
+public class DataItem
+{
+	private String id			= null;
+	private String parentId	 	= null;
+	private String category		= null;	// This does not come from the item XML, it holds "kangyur" or "tengyur"
+	private String type			= null;
+	private String numChapters	= null;
+	private String url			= null;
+	private String nameEn 		= null;
+	private String nameTi 		= null;
+	private String nameWy	 	= null;
+	private String nameSa		= null;
+	private String desc 		= null;
+	private String rid	 		= null;
+	private String summary 		= null;
+	private String titles 		= null;
+	private String learnMore	= null;
+	private String note			= null;
+	private String toh			= null;
+	private String statsTotal	= null;
+	private String statsTrans	= null;
+	private String statsInProg	= null;
+	private String statsNotBeg	= null;
+
+	public String getId() {return id;}					public void setId(String id) {this.id = id;}
+	public String getParentId() {return parentId;}		public void setParentId(String parentId) {this.parentId = parentId;}
+	public String getCategory() {return category;}		public void setCategory(String category) {this.category = category;}
+	public String getType() {return type;}				public void setType(String type) {this.type = type;}
+	public String getNumChapters() {return numChapters;}public void setNumChapters(String numChapters) {this.numChapters = numChapters;}
+	public String getUrl() {return url;}				public void setUrl(String url) {this.url = url;}
+	public String getNameEn() {return nameEn;}			public void setNameEn(String nameEn) {this.nameEn = nameEn;}
+	public String getNameTi() {return nameTi;}			public void setNameTi(String nameTi) {this.nameTi = nameTi;}
+	public String getNameWy() {return nameWy;}			public void setNameWy(String nameWy) {this.nameWy = nameWy;}
+	public String getNameSa() {return nameSa;}			public void setNameSa(String nameSa) {this.nameSa = nameSa;}
+	public String getDesc() {return desc;}				public void setDesc(String desc) {this.desc = desc;}
+	public String getRid() {return rid;}				public void setRid(String rid) {this.rid = rid;}
+	public String getSummary() {return summary;}		public void setSummary(String summary) {this.summary = summary;}
+	public String getTitles() {return titles;}			public void setTitles(String titles) {this.titles = titles;}
+	public String getLearnMore() {return learnMore;}	public void setLearnMore(String learnMore) {this.learnMore = learnMore;}
+	public String getNote() {return note;}				public void setNote(String note) {this.note = note;}
+	public String getToh() {return toh;}				public void setToh(String toh) {this.toh = toh;}
+	public String getStatsTotal() {return statsTotal;}	public void setStatsTotal(String statsTotal) {this.statsTotal = statsTotal;}
+	public String getStatsTrans() {return statsTrans;}	public void setStatsTrans(String statsTrans) {this.statsTrans = statsTrans;}
+	public String getStatsInProg() {return statsInProg;}public void setStatsInProg(String statsInProg) {this.statsInProg = statsInProg;}
+	public String getStatsNotBeg() {return statsNotBeg;}public void setStatsNotBeg(String statsNotBeg) {this.statsNotBeg = statsNotBeg;}
+}

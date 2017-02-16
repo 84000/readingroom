@@ -51,8 +51,6 @@ h2 {
 .h2 {
 	color: #426b9c;
 	padding: 0;
-/*	padding: .5em 0;
-	border-bottom: 1px solid #e2af85; */
 	font-family: Arial,Helvetica,sans-serif;
 }
 
@@ -64,21 +62,21 @@ h2 {
 .h2_ti {
 	font-family: 'Tibetan';
 	font-size: 1.1em;
-	line-height: 1.6em; /* 24px */
+	line-height: 1.6em;
 	hyphens: none;
 }
 
 .h2_sa {
 	font-family: Georgia,"Times New Roman",Times,serif;
 	font-size: 1.1em;
-	line-height: 1.6em; /* 24px */
+	line-height: 1.6em;
 	hyphens: none;
 }
 
 .h2_bo {
 	font-family: Georgia,"Times New Roman",Times,serif;
 	font-size: 1.1em;
-	line-height: 1.6em; /* 24px */
+	line-height: 1.6em;
 	hyphens: none;
 	font-style: italic;
 }
@@ -155,12 +153,6 @@ Main page frame/header styles
 .titleFontLarge  { font-size: 32pt; }
 
 /** Main-page features */
-/*
-.background {
-	background-image: url("background-pattern.png");
-	background-attachment: fixed;
-}
-*/
 
 .header {
 	width: 100%;
@@ -186,10 +178,8 @@ Main page frame/header styles
 .navBarButton {
     background: #dddddd;
     color: #333333;
-	/* font-family: 'Trade Gothic W02 Bold'; */
-	/*font-family: 'Trade Gothic W02 Roman';
+	/* font-family: 'Trade Gothic W02 Bold'; */	/*font-family: 'Trade Gothic W02 Roman';
     font-size: 15px; */
-/*	font-family: 'Oswald', sans-serif; */
 	font-family: 'Arial Narrow', sans-serif;
     letter-spacing: 1px;
 	font-weight: 400;
@@ -199,8 +189,6 @@ Main page frame/header styles
 	
     padding-left: 15px;
     padding-right: 15px;
-    /* height: 30px; */
-    /* margin: 5px 0px 0px 0px; */
     text-align: center;
     border: 0;
     transition: all 0.3s ease 0s;
@@ -208,11 +196,7 @@ Main page frame/header styles
     margin-top: 0px;
     margin-bottom: -5px;
 }
-
-
 .navBarButton:hover {
-	/* margin-top: 0px;
-	margin-bottom: 0px; */
 	background: #426B9C;
 	color: #FFFFFF;
 }
@@ -226,13 +210,12 @@ Main page frame/header styles
     display:inline-block;
 }
 
-.myHyperLink a{ 
+.myHyperLink a {
 	font-family: Arial,Helvetica,sans-serif;
     font-size: 12pt;
 	color: #426b9c;
 	margin: 10px 6px 6px 0px;
-} 
-
+}
 .myHyperLink a:hover{ 
 	color: #426b9c;
 	cursor: pointer;
@@ -245,12 +228,14 @@ Main page frame/header styles
 	margin: 10px 6px 6px 0px;
     display:inline-block;
 }
+.breadCrumb:hover {
+	cursor: default;
+}
 
-.testingLabel {
+.adminOptions {
 	/* font-family: Arial,Helvetica,sans-serif; */
 	font-family: 'Trade Gothic W02 Roman';
     font-size: 10pt;
-	/* color: #000000; */
 	color: #cf7a34;
 	margin: 0px 5px 6px 5px;
     display:inline-block;
@@ -301,10 +286,6 @@ Main page frame/header styles
 	margin: 10px 20px 10px 40px;
 }
 
-.breadCrumb:hover {
-	cursor: default;
-}
-
 .infoButton
 {
 	margin: 10;
@@ -318,17 +299,14 @@ Main page frame/header styles
 	outline-style: none;
 	border-radius: 6px;
 }
-
 .infoButton:hover {
 	cursor: pointer;
 	background: #003f5f;
 }
-
 .infoButton:active {
 	background-color: #FFFFFF;
 	color: #426b9c;
 } 
-
 .infoButtonActivated {
 	background-color: #FFFFFF;
 	color: #426b9c;
@@ -351,11 +329,6 @@ General modifier styles
 .redBottom { border-bottom: thick solid #892629; }
 .orangeBottom { border-bottom: thick solid #cf7a34; }
 
-
-/*
-.tealBackground { background-color: #426b9c; }
-.orangeBackground { background-color: #cf7a34; }
-*/
 .blackColor { color: #000000; }
 .tealColor { color: #426b9c; }
 .redColor { color: #990000; }
